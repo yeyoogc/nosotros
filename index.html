@@ -1687,9 +1687,9 @@
         } catch(e) { console.log("Firebase no disponible:", e); }
 
         /* ═══════════════════════════════════════════════════════════════════
-           GEMINI AI CONFIG
+           GROQ AI CONFIG
         ═══════════════════════════════════════════════════════════════════ */
-        const GEMINI_API_KEY = "AIzaSyABHsIk9DvF2Hc6B81KAHX9IYgywROsEwI";
+        const GROQ_API_KEY = "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";
 
         /* ═══════════════════════════════════════════════════════════════════
                           DATA ARRAYS
@@ -2755,7 +2755,7 @@
             } else if (q.match(/primer.*(mensaje|chat|conversacion)|primera vez.*(habla|escribi)/)) {
                 showFirstMessages();
             } else {
-                if (GEMINI_API_KEY) { await askGemini(query); }
+                if (GROQ_API_KEY) { await askAI(query); }
                 else { searchGeneric(query); }
             }
           } catch(err) {
@@ -2818,7 +2818,7 @@
         }
 
         function showTopWords(query) {
-            const stopWords = new Set(['de','la','el','en','que','y','a','los','las','un','una','es','por','con','no','se','del','lo','al','me','mi','te','tu','le','su','mas','pero','ya','o','para','como','todo','esta','hay','muy','fue','son','esta','era','ser','sin','sobre','tiene','hasta','cuando','entre','donde','despues','antes','tambien','puede','todos','asi','nos','uno','otro','otra','este','ese','ella','eso','esto','estas','estos','esas','esos','aqui','ahi','alli','cual','quien','cuyo','tanto','tan','poco','mucho','bien','mal','mejor','peor','hoy','ayer','sido','si','da','va','voy','vas','van','estoy','has','he','ha','hacer','puedo','quiero','jaja','jajaja','jajajaja','jajajajaja','xd','xdd','xddd','https','http','media','omitted','imagen','omitido','omitida','omitidos','omitidas','audio','sticker','video','gif','documento','contacto','ubicacion','adjunto','archivo','pdf','vcard','nota','voz','www','com','imagen_omitida','video_omitido','audio_omitido','sticker_omitido','gif_omitido','documento_omitido','mensaje','eliminaste','elimino','eliminado','eliminada','borrado','borrada','editado','editada','multimedia','archivo','llamada','perdida','grupo','cambio','cambiar','seguridad','cifrado','codigo','numero','anadio','salio','unio']);
+            const stopWords = new Set(['de','la','el','en','que','y','a','los','las','un','una','es','por','con','no','se','del','lo','al','me','mi','te','tu','le','su','mas','pero','ya','o','para','como','todo','esta','hay','muy','fue','son','esta','era','ser','sin','sobre','tiene','hasta','cuando','entre','donde','despues','antes','tambien','puede','todos','asi','nos','uno','otro','otra','este','ese','ella','eso','esto','estas','estos','esas','esos','aqui','ahi','alli','cual','quien','cuyo','tanto','tan','poco','mucho','bien','mal','mejor','peor','hoy','ayer','sido','si','da','va','voy','vas','van','estoy','has','he','ha','hacer','puedo','quiero','jaja','jajaja','jajajaja','jajajajaja','xd','xdd','xddd','https','http','media','omitted','imagen','omitido','omitida','omitidos','omitidas','audio','sticker','video','gif','documento','contacto','ubicacion','adjunto','archivo','pdf','vcard','nota','voz','www','com','imagen_omitida','video_omitido','audio_omitido','sticker_omitido','gif_omitido','documento_omitido','mensaje','eliminaste','elimino','eliminado','eliminada','borrado','borrada','editado','editada','multimedia','archivo','llamada','perdida','grupo','cambio','cambiar','seguridad','cifrado','codigo','numero','anadio','salio','unio','yeyo','vida','amor','bebe','bebe','cari','cielo','corazon','guapo','guapa','nano','nena','nene','bb']);
             const wordCount = {};
             const mediaPatterns = /^(<multimedia|\u200e?imagen|\u200e?audio|\u200e?sticker|\u200e?gif|\u200e?vcard|\u200e?documento|\u200e?video|\u200e|.*omitid[ao]s?$|.*omitted$)/i;
             waMessages.forEach(m => {
@@ -2958,7 +2958,7 @@
                 if (query.toLowerCase().includes(name)) { targetMonth = num; break; }
             }
             if (targetMonth === -1 || targetYear === -1) {
-                if (GEMINI_API_KEY) { askGemini(query); return; }
+                if (GROQ_API_KEY) { askAI(query); return; }
                 document.getElementById('wa-results').innerHTML = `<div class="wa-result-card"><div class="result-text">Especifica mes y año, ej: "Resumen de febrero 2024"</div></div>`;
                 return;
             }
@@ -3022,7 +3022,7 @@
                 found.map(m => `<div class="wa-result-card"><div class="result-title">${m.author} · ${formatDate(m)}</div><div class="result-text">${m.text.substring(0, 200)}</div></div>`).join('');
         }
 
-        async function askGemini(query) {
+        async function askAI(query) {
             const results = document.getElementById('wa-results');
             results.innerHTML = '<div class="wa-loading"><span class="spinner"></span>Preguntando a la IA...</div>';
             
@@ -3033,21 +3033,17 @@
                     return terms.some(t => norm.includes(t));
                 }).slice(0, 80);
                 
-                // Build diverse sample: relevant msgs + random spread + recent msgs
                 let sample = [];
                 if (relevant.length > 10) {
                     sample = relevant.slice(0, 50);
                 } else {
-                    // Take msgs spread across conversation
                     const step = Math.max(1, Math.floor(waMessages.length / 60));
                     for (let i = 0; i < waMessages.length && sample.length < 40; i += step) {
                         sample.push(waMessages[i]);
                     }
-                    // Add last 20 msgs for recency
                     sample = sample.concat(waMessages.slice(-20));
                 }
                 
-                // Filter out media placeholder messages
                 sample = sample.filter(m => !m.text.match(/^(<multimedia|imagen omitida|audio omitido|sticker omitido|gif omitido|video omitido|documento omitido|\u200e)/i));
                 
                 const counts = {}; 
@@ -3057,12 +3053,10 @@
                     charCounts[m.author] = (charCounts[m.author] || 0) + m.text.length;
                 });
                 
-                // Calculate hourly distribution
                 const hours = Array(24).fill(0);
                 waMessages.forEach(m => hours[m.hour]++);
                 const peakHour = hours.indexOf(Math.max(...hours));
                 
-                // Calculate monthly stats
                 const monthly = {};
                 waMessages.forEach(m => {
                     const key = `${m.year}-${String(m.month+1).padStart(2,'0')}`;
@@ -3097,38 +3091,27 @@ ${sample.map(m => `[${m.date.toLocaleDateString('es-ES')} ${String(m.hour).padSt
 
 PREGUNTA DEL USUARIO: ${query}`;
 
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${GROQ_API_KEY}`
+                    },
                     body: JSON.stringify({
-                        system_instruction: { parts: [{ text: systemPrompt }] },
-                        contents: [{ role: 'user', parts: [{ text: userPrompt }] }],
-                        generationConfig: { temperature: 0.7, maxOutputTokens: 1024 }
+                        model: 'llama-3.3-70b-versatile',
+                        messages: [
+                            { role: 'system', content: systemPrompt },
+                            { role: 'user', content: userPrompt }
+                        ],
+                        temperature: 0.7,
+                        max_tokens: 1024
                     })
                 });
                 
                 if (!res.ok) {
                     const errText = await res.text();
-                    console.error('Gemini API error:', res.status, errText);
-                    // Try fallback model if primary fails
-                    const fallbackRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            contents: [{ parts: [{ text: systemPrompt + '\n\n' + userPrompt }] }],
-                            generationConfig: { temperature: 0.7, maxOutputTokens: 1024 }
-                        })
-                    });
-                    if (!fallbackRes.ok) {
-                        throw new Error(`API error ${res.status}: ${errText.substring(0, 200)}`);
-                    }
-                    const fallbackData = await fallbackRes.json();
-                    const fallbackAnswer = fallbackData.candidates?.[0]?.content?.parts?.[0]?.text;
-                    if (fallbackAnswer) {
-                        results.innerHTML = `<div class="wa-result-card"><div class="result-title">✨ Respuesta IA <span class="wa-ai-badge">Gemini</span></div><div class="result-text">${fallbackAnswer.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>')}</div></div>`;
-                        return;
-                    }
-                    throw new Error('No se pudo obtener respuesta del modelo');
+                    console.error('Groq API error:', res.status, errText);
+                    throw new Error(`Error de la API (${res.status}): ${errText.substring(0, 200)}`);
                 }
                 
                 const data = await res.json();
@@ -3137,15 +3120,14 @@ PREGUNTA DEL USUARIO: ${query}`;
                     throw new Error(data.error.message || 'Error de la API');
                 }
                 
-                const answer = data.candidates?.[0]?.content?.parts?.[0]?.text;
+                const answer = data.choices?.[0]?.message?.content;
                 if (answer) {
-                    results.innerHTML = `<div class="wa-result-card"><div class="result-title">✨ Respuesta IA <span class="wa-ai-badge">Gemini</span></div><div class="result-text">${answer.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>').replace(/\n/g, '<br>')}</div></div>`;
+                    results.innerHTML = `<div class="wa-result-card"><div class="result-title">✨ Respuesta IA <span class="wa-ai-badge">Llama AI</span></div><div class="result-text">${answer.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>').replace(/\n/g, '<br>')}</div></div>`;
                 } else {
-                    const blockReason = data.candidates?.[0]?.finishReason;
-                    results.innerHTML = `<div class="wa-result-card"><div class="result-text">No se pudo obtener respuesta${blockReason ? ` (${blockReason})` : ''}. Intenta reformular la pregunta.</div></div>`;
+                    results.innerHTML = `<div class="wa-result-card"><div class="result-text">No se pudo obtener respuesta. Intenta reformular la pregunta.</div></div>`;
                 }
             } catch(e) {
-                console.error('askGemini error:', e);
+                console.error('askAI error:', e);
                 results.innerHTML = `<div class="wa-result-card"><div class="result-title">⚠️ Error</div><div class="result-text">${e.message}<br><br><small>Si el error persiste, intenta con otra pregunta o recarga la página.</small></div></div>`;
             }
         }
