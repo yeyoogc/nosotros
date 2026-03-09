@@ -1126,7 +1126,7 @@
 
         /* Selection prevention */
         * { -webkit-user-select: none; user-select: none; }
-        .text-input, .wa-search-input { -webkit-user-select: text; user-select: text; }
+        .text-input, .wa-search-input, .song-filter-input { -webkit-user-select: text; user-select: text; }
 
         /* ═══════════════════════════════════════════════════════════════
            DESIGN ENHANCEMENTS v2.1 - Warmth & Polish
@@ -1359,6 +1359,410 @@
             color: var(--text-light-secondary);
             font-weight: 400;
         }
+
+        /* ═══════════════════════════════════════════════════════════════
+           NEW FEATURES v3.0 - Enhanced Experience
+        ═══════════════════════════════════════════════════════════════ */
+
+        /* Greeting text */
+        .greeting-text {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+            margin-bottom: 2px;
+            font-style: italic;
+            opacity: 0;
+            animation: greetFade 1s ease 0.3s forwards;
+        }
+        @keyframes greetFade {
+            to { opacity: 1; }
+        }
+
+        /* Milestone countdown widget */
+        .milestone-widget {
+            width: 100%;
+            background: linear-gradient(135deg, rgba(232, 160, 191, 0.1), rgba(212, 165, 116, 0.1));
+            border: 1px solid rgba(232, 160, 191, 0.18);
+            border-radius: var(--radius-md);
+            padding: 13px 16px;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .milestone-widget:active { transform: scale(0.98); }
+        .milestone-widget::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: var(--progress, 0%);
+            height: 100%;
+            background: linear-gradient(90deg, rgba(232, 160, 191, 0.06), rgba(212, 165, 116, 0.06));
+            transition: width 1.5s cubic-bezier(0.32, 0.72, 0, 1);
+        }
+        .milestone-emoji { font-size: 1.4rem; z-index: 1; }
+        .milestone-info { flex: 1; z-index: 1; }
+        .milestone-label {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+        .milestone-value {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .milestone-days-left {
+            font-size: 0.62rem;
+            color: var(--rose-deep);
+            font-weight: 700;
+            z-index: 1;
+            background: rgba(232, 160, 191, 0.12);
+            padding: 4px 10px;
+            border-radius: 20px;
+            white-space: nowrap;
+        }
+
+        /* Quick actions row */
+        .quick-actions {
+            display: flex;
+            gap: 8px;
+            width: 100%;
+            margin-bottom: 14px;
+        }
+        .quick-action-btn {
+            flex: 1;
+            background: var(--glass-light);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-light-border);
+            border-radius: var(--radius-md);
+            padding: 10px 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .quick-action-btn:active {
+            transform: scale(0.94);
+        }
+        .quick-action-btn .qa-icon { font-size: 1.1rem; }
+        .quick-action-btn .qa-text {
+            font-size: 0.58rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+        .quick-action-btn.sent {
+            background: linear-gradient(135deg, rgba(76, 175, 130, 0.12), rgba(76, 175, 130, 0.06));
+            border-color: rgba(76, 175, 130, 0.2);
+        }
+        .quick-action-btn.sent .qa-text { color: var(--success); }
+
+        /* Love Notes Section */
+        #notas-section {
+            background: linear-gradient(180deg, #1A0F2E 0%, #2D1540 50%, #1A0F2E 100%);
+        }
+        #notas-section .back-button {
+            background: var(--glass-dark);
+            color: var(--text-light);
+            border: 1px solid var(--glass-dark-border);
+        }
+        #notas-section .section-title { color: var(--text-light); }
+
+        .love-note-card {
+            background: linear-gradient(145deg, rgba(232, 160, 191, 0.08), rgba(212, 165, 116, 0.04));
+            border: 1px solid rgba(232, 160, 191, 0.12);
+            border-radius: var(--radius-lg);
+            padding: 18px;
+            margin-bottom: 10px;
+            position: relative;
+            overflow: hidden;
+            animation: noteSlideIn 0.4s cubic-bezier(0.32, 0.72, 0, 1) both;
+        }
+        @keyframes noteSlideIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .love-note-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--rose), var(--gold), var(--rose));
+            opacity: 0.4;
+        }
+        .love-note-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .love-note-from {
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: var(--rose);
+            background: rgba(232, 160, 191, 0.12);
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+        .love-note-from.partner {
+            color: var(--gold-light);
+            background: rgba(212, 165, 116, 0.12);
+        }
+        .love-note-date {
+            font-size: 0.62rem;
+            color: var(--text-light-secondary);
+        }
+        .love-note-text {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 0.92rem;
+            color: var(--text-light);
+            line-height: 1.7;
+            font-style: italic;
+        }
+        .love-note-unread {
+            animation: noteGlow 2s ease-in-out infinite;
+        }
+        @keyframes noteGlow {
+            0%, 100% { box-shadow: 0 0 0 rgba(232, 160, 191, 0); }
+            50% { box-shadow: 0 0 16px rgba(232, 160, 191, 0.15); }
+        }
+        .note-unread-badge {
+            position: absolute;
+            top: 12px; right: 12px;
+            width: 8px; height: 8px;
+            background: var(--rose);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--rose-glow);
+        }
+
+        /* Notes menu card */
+        .menu-card.notes-card {
+            background: linear-gradient(145deg, #1A0F2E 0%, #2D1540 100%);
+            border: 1px solid rgba(232, 160, 191, 0.15);
+        }
+        .menu-card.notes-card::before { background: linear-gradient(90deg, var(--rose), var(--gold)); }
+        .menu-card.notes-card .icon { background: rgba(232, 160, 191, 0.12); }
+        .menu-card.notes-card .label { color: rgba(255, 255, 255, 0.9); }
+
+        /* Song filter & controls */
+        .song-controls {
+            width: 100%; max-width: 380px;
+            display: flex; flex-direction: column;
+            gap: 8px; margin-bottom: 10px;
+        }
+        .song-filter-row {
+            display: flex;
+            gap: 8px;
+        }
+        .song-filter-input {
+            flex: 1;
+            padding: 11px 16px;
+            border: none;
+            border-radius: var(--radius-md);
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-light);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.8rem;
+            outline: none;
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
+            -webkit-user-select: text;
+            user-select: text;
+        }
+        .song-filter-input::placeholder { color: var(--text-light-secondary); }
+        .song-filter-input:focus {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: var(--glass-dark-border);
+        }
+        .random-song-btn {
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, var(--apple-red), #ff6b81);
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(252, 60, 68, 0.3);
+        }
+        .random-song-btn:active { transform: scale(0.88) rotate(180deg); }
+        .song-count-label {
+            font-size: 0.65rem;
+            color: var(--text-light-secondary);
+            text-align: center;
+        }
+
+        /* Random song highlight */
+        .song-card.highlighted {
+            background: rgba(252, 60, 68, 0.15) !important;
+            border-color: rgba(252, 60, 68, 0.3) !important;
+            animation: songHighlight 0.6s ease;
+        }
+        @keyframes songHighlight {
+            0% { transform: scale(0.95); opacity: 0.5; }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Delete button for items */
+        .delete-item-btn {
+            width: 26px; height: 26px;
+            border-radius: 50%;
+            border: 1px solid rgba(224, 92, 107, 0.15);
+            background: rgba(224, 92, 107, 0.06);
+            color: var(--danger);
+            font-size: 0.65rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+            opacity: 0.4;
+        }
+        .delete-item-btn:active {
+            opacity: 1;
+            background: rgba(224, 92, 107, 0.2);
+            transform: scale(0.9);
+        }
+
+        /* Movie progress bar */
+        .movie-progress-bar {
+            width: 100%; max-width: 380px;
+            margin-bottom: 14px;
+        }
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+        .progress-label {
+            font-size: 0.68rem;
+            color: var(--text-light-secondary);
+            font-weight: 500;
+        }
+        .progress-count {
+            font-size: 0.68rem;
+            color: var(--success);
+            font-weight: 700;
+        }
+        .progress-track {
+            width: 100%;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success), #7dcea0);
+            border-radius: 3px;
+            transition: width 0.6s cubic-bezier(0.32, 0.72, 0, 1);
+            box-shadow: 0 0 8px rgba(76, 175, 130, 0.2);
+        }
+
+        /* Share result button */
+        .share-result-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 12px;
+            padding: 7px 14px;
+            border-radius: 50px;
+            border: 1px solid rgba(232, 160, 191, 0.15);
+            background: rgba(232, 160, 191, 0.06);
+            color: var(--rose);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.65rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .share-result-btn:active {
+            transform: scale(0.95);
+            background: rgba(232, 160, 191, 0.15);
+        }
+
+        /* Enhanced section decorative line */
+        .section-header::after {
+            content: '';
+            display: block;
+            width: 36px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--rose), var(--gold));
+            margin: 8px auto 0;
+            border-radius: 1px;
+            opacity: 0.5;
+        }
+
+        /* Confetti animation */
+        @keyframes confettiDrop {
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(105vh) rotate(720deg); opacity: 0; }
+        }
+        .confetti-piece {
+            position: fixed;
+            z-index: 9999;
+            pointer-events: none;
+            animation: confettiDrop 2.5s ease-in forwards;
+        }
+
+        /* Badge counter on menu card */
+        .menu-badge {
+            position: absolute;
+            top: 8px; right: 8px;
+            min-width: 18px; height: 18px;
+            background: var(--danger);
+            border-radius: 9px;
+            font-size: 0.55rem;
+            font-weight: 800;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 5px;
+            box-shadow: 0 2px 8px rgba(224, 92, 107, 0.4);
+            animation: badgePop 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+        }
+        @keyframes badgePop {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+
+        /* Improved date display on home */
+        .home-date {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            font-weight: 400;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        /* Dice/random animation */
+        @keyframes diceRoll {
+            0% { transform: rotate(0deg) scale(1); }
+            25% { transform: rotate(90deg) scale(0.9); }
+            50% { transform: rotate(180deg) scale(1.05); }
+            75% { transform: rotate(270deg) scale(0.95); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+        .dice-rolling .btn-icon { animation: diceRoll 0.4s ease; }
     </style>
 </head>
 <body>
@@ -1385,14 +1789,42 @@
             </div>
             
             <div class="home-content">
+                <p class="greeting-text" id="greeting-text"></p>
                 <p class="subtitle">nuestra historia</p>
                 <h1 class="main-title">Nosotros</h1>
+                <p class="home-date" id="home-date"></p>
                 
                 <div class="days-counter">
                     <span class="heart-icon">&#10084;&#65039;</span>
                     <span class="days-text"><span class="days-number" id="days-together">---</span> d&iacute;as juntos</span>
                 </div>
                 
+                <!-- Milestone countdown -->
+                <div class="milestone-widget" id="milestone-widget">
+                    <span class="milestone-emoji" id="milestone-emoji">&#127775;</span>
+                    <div class="milestone-info">
+                        <div class="milestone-label" id="milestone-label">Pr&oacute;ximo hito</div>
+                        <div class="milestone-value" id="milestone-value">...</div>
+                    </div>
+                    <span class="milestone-days-left" id="milestone-days-left">--</span>
+                </div>
+
+                <!-- Quick actions -->
+                <div class="quick-actions">
+                    <button class="quick-action-btn" id="miss-you-btn" onclick="sendMissYou()">
+                        <span class="qa-icon">&#128149;</span>
+                        <span class="qa-text">Te echo de menos</span>
+                    </button>
+                    <button class="quick-action-btn" onclick="quickRandomSong()">
+                        <span class="qa-icon">&#127925;</span>
+                        <span class="qa-text">Canci&oacute;n random</span>
+                    </button>
+                    <button class="quick-action-btn" onclick="quickRandomRazon()">
+                        <span class="qa-icon">&#128140;</span>
+                        <span class="qa-text">Raz&oacute;n de hoy</span>
+                    </button>
+                </div>
+
                 <!-- Status banner -->
                 <div class="status-banner" id="home-status-banner" onclick="navigateTo('estado')">
                     <div class="status-dot"></div>
@@ -1435,6 +1867,11 @@
                         <span class="icon">&#128269;</span>
                         <span class="label">Explorar nuestro chat</span>
                     </button>
+                    <button class="menu-card notes-card" onclick="navigateTo('notas')">
+                        <span class="icon">&#128140;</span>
+                        <span class="label">Notas de amor</span>
+                        <span class="menu-badge" id="notas-badge" style="display:none;"></span>
+                    </button>
                     <button class="menu-card vip" onclick="navigateTo('vip')" style="grid-column: span 2;">
                         <span class="icon">&#128274;</span>
                         <span class="label">Zona secreta</span>
@@ -1453,7 +1890,7 @@
             </header>
             <div class="content-area">
                 <button class="action-button" onclick="showRandom('razones')"><span class="btn-icon">&#128157;</span><span class="btn-text">Descubrir</span></button>
-                <div class="result-area"><div class="result-card" id="razones-result"><span class="quote-mark">&#10077;</span><p id="razones-text"></p><span class="quote-mark">&#10078;</span></div></div>
+                <div class="result-area"><div class="result-card" id="razones-result"><span class="quote-mark">&#10077;</span><p id="razones-text"></p><span class="quote-mark">&#10078;</span><button class="share-result-btn" onclick="shareResult('razones')">&#128228; Compartir</button></div></div>
             </div>
         </section>
         
@@ -1467,7 +1904,7 @@
             </header>
             <div class="content-area">
                 <button class="action-button" onclick="showRandom('planes')"><span class="btn-icon">&#127757;</span><span class="btn-text">So&ntilde;ar</span></button>
-                <div class="result-area"><div class="result-card" id="planes-result"><span class="quote-mark">&#10077;</span><p id="planes-text"></p><span class="quote-mark">&#10078;</span></div></div>
+                <div class="result-area"><div class="result-card" id="planes-result"><span class="quote-mark">&#10077;</span><p id="planes-text"></p><span class="quote-mark">&#10078;</span><button class="share-result-btn" onclick="shareResult('planes')">&#128228; Compartir</button></div></div>
             </div>
         </section>
         
@@ -1481,7 +1918,7 @@
             </header>
             <div class="content-area">
                 <button class="action-button" onclick="showRandom('recuerdos')"><span class="btn-icon">&#10024;</span><span class="btn-text">Recordar</span></button>
-                <div class="result-area"><div class="result-card" id="recuerdos-result"><span class="quote-mark">&#10077;</span><p id="recuerdos-text"></p><span class="quote-mark">&#10078;</span></div></div>
+                <div class="result-area"><div class="result-card" id="recuerdos-result"><span class="quote-mark">&#10077;</span><p id="recuerdos-text"></p><span class="quote-mark">&#10078;</span><button class="share-result-btn" onclick="shareResult('recuerdos')">&#128228; Compartir</button></div></div>
             </div>
         </section>
         
@@ -1493,6 +1930,13 @@
                 <h2 class="section-title">Nuestras canciones</h2>
                 <p class="section-subtitle" style="color: var(--text-light-secondary);">La banda sonora de lo nuestro</p>
             </header>
+            <div class="song-controls">
+                <div class="song-filter-row">
+                    <input type="text" class="song-filter-input" id="song-filter" placeholder="Buscar canci&oacute;n o artista..." oninput="filterSongs()">
+                    <button class="random-song-btn" onclick="randomSongPick()" title="Canci&oacute;n aleatoria">&#127922;</button>
+                </div>
+                <div class="song-count-label" id="song-count"></div>
+            </div>
             <div class="songs-list" id="songs-list"></div>
         </section>
         
@@ -1519,6 +1963,7 @@
             </header>
             <div class="user-switch"><button class="user-switch-btn active" onclick="setUser('sergio')">Sergio</button><button class="user-switch-btn" onclick="setUser('alba')">Alba</button></div>
             <div class="input-area"><div class="input-group"><input type="text" class="text-input" id="pelicula-input" placeholder="A&ntilde;adir pel&iacute;cula..."><button class="send-button" onclick="addPelicula()">&#127916;</button></div></div>
+            <div class="movie-progress-bar" id="movie-progress"><div class="progress-header"><span class="progress-label">Progreso</span><span class="progress-count" id="movie-progress-count">0/0</span></div><div class="progress-track"><div class="progress-fill" id="movie-progress-fill" style="width:0%"></div></div></div>
             <div class="shared-list" id="peliculas-list"></div>
         </section>
         
@@ -1620,6 +2065,27 @@
             <div class="wa-results" id="wa-results"></div>
         </section>
         
+        <!-- ═══ NOTAS DE AMOR ═══ -->
+        <section id="notas-section" class="screen section-screen">
+            <button class="back-button" onclick="navigateTo('home')"><span class="back-arrow">&#8592;</span> Volver</button>
+            <header class="section-header">
+                <span class="section-icon">&#128140;</span>
+                <h2 class="section-title">Notas de amor</h2>
+                <p class="section-subtitle" style="color: var(--text-light-secondary);">Deja un mensaje secreto para tu pareja</p>
+            </header>
+            <div class="user-switch">
+                <button class="user-switch-btn active" onclick="setUser('sergio')">Sergio</button>
+                <button class="user-switch-btn" onclick="setUser('alba')">Alba</button>
+            </div>
+            <div class="input-area">
+                <div class="input-group">
+                    <input type="text" class="text-input" id="nota-input" placeholder="Escribe una nota de amor...">
+                    <button class="send-button" onclick="addLoveNote()" style="background:linear-gradient(135deg, var(--rose), var(--gold));">&#128140;</button>
+                </div>
+            </div>
+            <div class="shared-list" id="notas-list"></div>
+        </section>
+
         <!-- ═══ ZONA SEGURA ═══ -->
         <section id="vip-section" class="screen section-screen">
             <div class="vip-particles" id="particles"></div>
@@ -2194,6 +2660,7 @@
             peliculas: document.getElementById('peliculas-section'),
             estado: document.getElementById('estado-section'),
             whatsapp: document.getElementById('whatsapp-section'),
+            notas: document.getElementById('notas-section'),
             vip: document.getElementById('vip-section')
         };
 
@@ -2210,9 +2677,10 @@
                 resetResult(screenId);
                 if (screenId === 'sentimientos') loadSentimientos();
                 if (screenId === 'peliculas') loadPeliculas();
-                if (screenId === 'canciones') renderSongs();
+                if (screenId === 'canciones') { renderSongs(); updateSongCount(); }
                 if (screenId === 'estado') loadStatuses();
-                if (screenId === 'home') loadPartnerStatus();
+                if (screenId === 'notas') loadLoveNotes();
+                if (screenId === 'home') { loadPartnerStatus(); updateMilestone(); checkUnreadNotes(); }
             }, 100);
         }
 
@@ -2359,7 +2827,7 @@
             items.forEach(i => {
                 const d = document.createElement('div');
                 d.className = 'shared-item';
-                d.innerHTML = `<div class="shared-item-header"><span class="shared-item-author ${i.author==='alba'?'partner':''}">${i.author==='sergio'?'Sergio':'Alba'}</span><span class="shared-item-date">${i.date}</span></div><p class="shared-item-text">${i.text}</p>`;
+                d.innerHTML = `<div class="shared-item-header"><span class="shared-item-author ${i.author==='alba'?'partner':''}">${i.author==='sergio'?'Sergio':'Alba'}</span><div style="display:flex;align-items:center;gap:8px;"><span class="shared-item-date">${i.date}</span>${i.author===currentUser?`<button class="delete-item-btn" onclick="deleteSentimiento(${i.id})">✕</button>`:''}</div></div><p class="shared-item-text">${i.text}</p>`;
                 c.appendChild(d);
             });
         }
@@ -2416,6 +2884,14 @@
         function renderPeliculas(items) {
             const c = document.getElementById('peliculas-list');
             c.innerHTML = '';
+            // Update progress bar
+            const total = items.length;
+            const watched = items.filter(i => i.watched).length;
+            const pct = total > 0 ? Math.round((watched / total) * 100) : 0;
+            document.getElementById('movie-progress-count').textContent = `${watched}/${total} vistas`;
+            document.getElementById('movie-progress-fill').style.width = pct + '%';
+            document.getElementById('movie-progress').style.display = total > 0 ? 'block' : 'none';
+
             if (!items.length) {
                 c.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🎬</div><p class="empty-state-text">Añade películas para ver juntos</p></div>';
                 return;
@@ -2423,7 +2899,7 @@
             items.forEach(i => {
                 const d = document.createElement('div');
                 d.className = 'shared-item';
-                d.innerHTML = `<div class="shared-item-header"><span class="shared-item-author ${i.author==='alba'?'partner':''}">${i.author==='sergio'?'Sergio':'Alba'}</span></div><div class="shared-item-checkbox"><div class="checkbox-custom ${i.watched?'checked':''}" onclick="togglePelicula(${i.id})"></div><span class="movie-title ${i.watched?'watched':''}">${i.title}</span></div>`;
+                d.innerHTML = `<div class="shared-item-header"><span class="shared-item-author ${i.author==='alba'?'partner':''}">${i.author==='sergio'?'Sergio':'Alba'}</span><div style="display:flex;align-items:center;gap:8px;">${i.author===currentUser?`<button class="delete-item-btn" onclick="deletePelicula(${i.id})">✕</button>`:''}</div></div><div class="shared-item-checkbox"><div class="checkbox-custom ${i.watched?'checked':''}" onclick="togglePelicula(${i.id})"></div><span class="movie-title ${i.watched?'watched':''}">${i.title}</span></div>`;
                 c.appendChild(d);
             });
         }
@@ -3153,6 +3629,427 @@ PREGUNTA DEL USUARIO: ${query}`;
         document.addEventListener('dblclick', e => { e.preventDefault(); }, { passive: false });
 
         document.getElementById('status-input')?.addEventListener('keypress', e => { if (e.key === 'Enter') { const v = e.target.value; if (v.trim()) setStatus(v); } });
+
+        /* ═══════════════════════════════════════════════════════════════════
+                    GREETING & DATE DISPLAY
+        ═══════════════════════════════════════════════════════════════════ */
+        function updateGreeting() {
+            const hour = new Date().getHours();
+            const partner = currentUser === 'sergio' ? 'Sergio' : 'Alba';
+            let greeting = '';
+            if (hour < 7) greeting = `Buenas noches, ${partner} 🌙`;
+            else if (hour < 12) greeting = `Buenos días, ${partner} ☀️`;
+            else if (hour < 20) greeting = `Buenas tardes, ${partner} 🌤️`;
+            else greeting = `Buenas noches, ${partner} 🌙`;
+            const el = document.getElementById('greeting-text');
+            if (el) el.textContent = greeting;
+
+            const dateEl = document.getElementById('home-date');
+            if (dateEl) {
+                const now = new Date();
+                const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+                let dateStr = now.toLocaleDateString('es-ES', options);
+                dateStr = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
+                dateEl.textContent = dateStr;
+            }
+        }
+        updateGreeting();
+        setInterval(updateGreeting, 60000);
+
+        /* ═══════════════════════════════════════════════════════════════════
+                    MILESTONE COUNTDOWN
+        ═══════════════════════════════════════════════════════════════════ */
+        function updateMilestone() {
+            const now = new Date();
+            const daysTogether = Math.floor((now - ANNIVERSARY_DATE) / (1000 * 60 * 60 * 24));
+
+            // Monthly anniversaries
+            const startMonth = ANNIVERSARY_DATE.getMonth();
+            const startDay = ANNIVERSARY_DATE.getDate();
+            const startYear = ANNIVERSARY_DATE.getFullYear();
+
+            // Find next mensiversary (monthly anniversary)
+            let nextMensiversary = new Date(now.getFullYear(), now.getMonth(), startDay);
+            if (nextMensiversary <= now) {
+                nextMensiversary = new Date(now.getFullYear(), now.getMonth() + 1, startDay);
+            }
+            const daysToMensiversary = Math.ceil((nextMensiversary - now) / (1000 * 60 * 60 * 24));
+            const monthsCount = (nextMensiversary.getFullYear() - startYear) * 12 + (nextMensiversary.getMonth() - startMonth);
+
+            // Year anniversary
+            let nextYearAnniversary = new Date(now.getFullYear(), startMonth, startDay);
+            if (nextYearAnniversary <= now) {
+                nextYearAnniversary = new Date(now.getFullYear() + 1, startMonth, startDay);
+            }
+            const daysToYearAnniversary = Math.ceil((nextYearAnniversary - now) / (1000 * 60 * 60 * 24));
+            const yearsCount = nextYearAnniversary.getFullYear() - startYear;
+
+            // Day milestones
+            const dayMilestones = [100, 200, 300, 365, 400, 500, 600, 700, 730, 800, 900, 1000, 1095, 1461, 1825];
+            let nextDayMilestone = null;
+            for (const m of dayMilestones) {
+                if (m > daysTogether) { nextDayMilestone = m; break; }
+            }
+
+            // Determine which milestone is closest
+            let emoji = '🎉', label = '', value = '', daysLeft = 0, progress = 0;
+
+            if (daysToYearAnniversary <= 30) {
+                emoji = '🎂';
+                label = 'Aniversario';
+                value = `${yearsCount} año${yearsCount > 1 ? 's' : ''} juntos`;
+                daysLeft = daysToYearAnniversary;
+                progress = Math.max(0, 100 - (daysLeft / 30 * 100));
+            } else if (nextDayMilestone && (nextDayMilestone - daysTogether) <= daysToMensiversary) {
+                emoji = '⭐';
+                label = 'Próximo hito';
+                value = `${nextDayMilestone} días juntos`;
+                daysLeft = nextDayMilestone - daysTogether;
+                progress = Math.max(0, (daysTogether / nextDayMilestone) * 100);
+            } else {
+                emoji = '💕';
+                label = 'Mensiversario';
+                value = `${monthsCount} meses juntos`;
+                daysLeft = daysToMensiversary;
+                const prevMensDate = new Date(nextMensiversary.getFullYear(), nextMensiversary.getMonth() - 1, startDay);
+                const totalDaysInPeriod = Math.ceil((nextMensiversary - prevMensDate) / (1000 * 60 * 60 * 24));
+                progress = Math.max(0, ((totalDaysInPeriod - daysLeft) / totalDaysInPeriod) * 100);
+            }
+
+            const widget = document.getElementById('milestone-widget');
+            if (widget) {
+                widget.style.setProperty('--progress', progress + '%');
+                document.getElementById('milestone-emoji').textContent = emoji;
+                document.getElementById('milestone-label').textContent = label;
+                document.getElementById('milestone-value').textContent = value;
+                document.getElementById('milestone-days-left').textContent =
+                    daysLeft === 0 ? '¡Hoy!' : daysLeft === 1 ? 'Mañana' : `${daysLeft} días`;
+            }
+        }
+        updateMilestone();
+
+        /* ═══════════════════════════════════════════════════════════════════
+                    TE ECHO DE MENOS - Quick notification
+        ═══════════════════════════════════════════════════════════════════ */
+        function sendMissYou() {
+            const btn = document.getElementById('miss-you-btn');
+            if (btn.classList.contains('sent')) return;
+
+            if (firebaseEnabled) {
+                const partner = currentUser === 'sergio' ? 'alba' : 'sergio';
+                const senderName = currentUser.charAt(0).toUpperCase() + currentUser.slice(1);
+                database.ref('missyou/' + partner).set({
+                    from: currentUser,
+                    time: Date.now(),
+                    timeStr: new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })
+                });
+            }
+
+            btn.classList.add('sent');
+            btn.querySelector('.qa-text').textContent = '¡Enviado! 💕';
+            if (navigator.vibrate) navigator.vibrate([30, 50, 30]);
+            launchConfetti();
+
+            showToast('💕', 'Te echo de menos enviado', 'Tu pareja lo recibirá');
+
+            setTimeout(() => {
+                btn.classList.remove('sent');
+                btn.querySelector('.qa-text').textContent = 'Te echo de menos';
+            }, 10000);
+        }
+
+        // Listen for miss you notifications
+        function setupMissYouListener() {
+            if (!firebaseEnabled) return;
+            let firstLoad = true;
+            database.ref('missyou/' + currentUser).on('value', snap => {
+                if (firstLoad) { firstLoad = false; return; }
+                const data = snap.val();
+                if (data && data.from) {
+                    const name = data.from.charAt(0).toUpperCase() + data.from.slice(1);
+                    showToast('💕', `${name} te echa de menos`, `Enviado a las ${data.timeStr || 'ahora'}`);
+                    showNotification(`${name} te echa de menos 💕`, 'Está pensando en ti ahora mismo');
+                    launchConfetti();
+                }
+            });
+        }
+        setupMissYouListener();
+
+        function launchConfetti() {
+            const colors = ['#E8A0BF', '#D4A574', '#F5D5E0', '#E8C9A0', '#C27095', '#6C9BD2'];
+            for (let i = 0; i < 30; i++) {
+                const piece = document.createElement('div');
+                piece.className = 'confetti-piece';
+                piece.style.left = Math.random() * 100 + 'vw';
+                piece.style.top = '-10px';
+                piece.style.width = (4 + Math.random() * 6) + 'px';
+                piece.style.height = (4 + Math.random() * 6) + 'px';
+                piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+                piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+                piece.style.animationDelay = (Math.random() * 0.8) + 's';
+                piece.style.animationDuration = (1.5 + Math.random() * 1.5) + 's';
+                document.body.appendChild(piece);
+                setTimeout(() => piece.remove(), 3500);
+            }
+        }
+
+        /* ═══════════════════════════════════════════════════════════════════
+                    QUICK ACTIONS FROM HOME
+        ═══════════════════════════════════════════════════════════════════ */
+        function quickRandomSong() {
+            const song = cancionesList[Math.floor(Math.random() * cancionesList.length)];
+            const firstArtist = song.artista.split(';')[0].trim();
+            showToast('🎵', song.titulo, firstArtist);
+            if (navigator.vibrate) navigator.vibrate(30);
+            setTimeout(() => {
+                const q = encodeURIComponent(song.titulo + ' ' + firstArtist + ' apple music');
+                if (confirm(`🎵 ${song.titulo} - ${firstArtist}\n\n¿Abrir en Apple Music?`)) {
+                    window.open('https://www.google.com/search?q=' + q, '_blank');
+                }
+            }, 500);
+        }
+
+        function quickRandomRazon() {
+            const razon = razonesList[Math.floor(Math.random() * razonesList.length)];
+            showToast('💝', 'Razón del día', razon.substring(0, 80) + (razon.length > 80 ? '...' : ''));
+            if (navigator.vibrate) navigator.vibrate(30);
+        }
+
+        /* ═══════════════════════════════════════════════════════════════════
+                    LOVE NOTES
+        ═══════════════════════════════════════════════════════════════════ */
+        let localNotas = JSON.parse(localStorage.getItem('nosotros-notas') || '[]');
+
+        function addLoveNote() {
+            const input = document.getElementById('nota-input');
+            const t = input.value.trim();
+            if (!t) return;
+            const nota = {
+                id: Date.now(),
+                text: t,
+                author: currentUser,
+                date: new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }),
+                readBy: [currentUser]
+            };
+            if (firebaseEnabled) {
+                database.ref('notas').push(nota);
+            } else {
+                localNotas.unshift(nota);
+                localStorage.setItem('nosotros-notas', JSON.stringify(localNotas));
+                renderLoveNotes(localNotas);
+            }
+            input.value = '';
+            if (navigator.vibrate) navigator.vibrate(30);
+            showToast('💌', 'Nota enviada', 'Tu pareja la descubrirá pronto');
+        }
+
+        function loadLoveNotes() {
+            if (firebaseEnabled) {
+                database.ref('notas').orderByChild('id').on('value', snap => {
+                    const d = snap.val();
+                    const notes = d ? Object.entries(d).map(([key, val]) => ({...val, firebaseKey: key})).reverse() : [];
+                    renderLoveNotes(notes);
+                    // Mark as read
+                    notes.forEach(n => {
+                        if (n.author !== currentUser && (!n.readBy || !n.readBy.includes(currentUser))) {
+                            const readBy = n.readBy || [n.author];
+                            if (!readBy.includes(currentUser)) readBy.push(currentUser);
+                            database.ref('notas/' + n.firebaseKey).update({ readBy: readBy });
+                        }
+                    });
+                });
+            } else {
+                renderLoveNotes(localNotas);
+            }
+        }
+
+        function renderLoveNotes(items) {
+            const c = document.getElementById('notas-list');
+            c.innerHTML = '';
+            if (!items.length) {
+                c.innerHTML = '<div class="empty-state"><div class="empty-state-icon">💌</div><p class="empty-state-text">Deja la primera nota de amor</p></div>';
+                return;
+            }
+            items.forEach((n, i) => {
+                const isUnread = n.author !== currentUser && (!n.readBy || !n.readBy.includes(currentUser));
+                const d = document.createElement('div');
+                d.className = 'love-note-card' + (isUnread ? ' love-note-unread' : '');
+                d.style.animationDelay = (i * 0.05) + 's';
+                d.innerHTML = `
+                    ${isUnread ? '<div class="note-unread-badge"></div>' : ''}
+                    <div class="love-note-header">
+                        <span class="love-note-from ${n.author === 'alba' ? 'partner' : ''}">${n.author === 'sergio' ? 'Sergio' : 'Alba'}</span>
+                        <div style="display:flex;align-items:center;gap:8px;">
+                            <span class="love-note-date">${n.date}</span>
+                            ${n.author === currentUser ? `<button class="delete-item-btn" onclick="deleteLoveNote('${n.firebaseKey || n.id}')">✕</button>` : ''}
+                        </div>
+                    </div>
+                    <p class="love-note-text">"${n.text}"</p>
+                `;
+                c.appendChild(d);
+            });
+        }
+
+        function deleteLoveNote(key) {
+            if (!confirm('¿Eliminar esta nota?')) return;
+            if (firebaseEnabled) {
+                database.ref('notas/' + key).remove();
+            } else {
+                localNotas = localNotas.filter(n => String(n.id) !== String(key));
+                localStorage.setItem('nosotros-notas', JSON.stringify(localNotas));
+                renderLoveNotes(localNotas);
+            }
+        }
+
+        function checkUnreadNotes() {
+            if (!firebaseEnabled) return;
+            database.ref('notas').orderByChild('id').once('value', snap => {
+                const d = snap.val();
+                if (!d) { hideNotasBadge(); return; }
+                const notes = Object.values(d);
+                const unread = notes.filter(n => n.author !== currentUser && (!n.readBy || !n.readBy.includes(currentUser)));
+                const badge = document.getElementById('notas-badge');
+                if (badge) {
+                    if (unread.length > 0) {
+                        badge.textContent = unread.length;
+                        badge.style.display = 'flex';
+                    } else {
+                        badge.style.display = 'none';
+                    }
+                }
+            });
+        }
+        function hideNotasBadge() {
+            const badge = document.getElementById('notas-badge');
+            if (badge) badge.style.display = 'none';
+        }
+
+        // Listen for new notes
+        function setupNotesListener() {
+            if (!firebaseEnabled) return;
+            let firstLoad = true;
+            database.ref('notas').on('child_added', snap => {
+                if (firstLoad) return;
+                const data = snap.val();
+                if (data && data.author !== currentUser) {
+                    const name = data.author.charAt(0).toUpperCase() + data.author.slice(1);
+                    showToast('💌', `${name} te dejó una nota`, data.text.substring(0, 50));
+                    showNotification(`${name} te dejó una nota de amor 💌`, data.text.substring(0, 80));
+                    checkUnreadNotes();
+                }
+            });
+            setTimeout(() => { firstLoad = false; }, 3000);
+        }
+        setupNotesListener();
+
+        document.getElementById('nota-input')?.addEventListener('keypress', e => { if (e.key === 'Enter') addLoveNote(); });
+
+        /* ═══════════════════════════════════════════════════════════════════
+                    SONG FILTER & RANDOM PICK
+        ═══════════════════════════════════════════════════════════════════ */
+        function filterSongs() {
+            const query = document.getElementById('song-filter').value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            const cards = document.querySelectorAll('#songs-list .song-card');
+            let visible = 0;
+            cards.forEach(card => {
+                const title = card.querySelector('.song-title').textContent.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                const artist = card.querySelector('.song-artist').textContent.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                const match = !query || title.includes(query) || artist.includes(query);
+                card.style.display = match ? 'flex' : 'none';
+                if (match) visible++;
+            });
+            document.getElementById('song-count').textContent = query ? `${visible} de ${cancionesList.length} canciones` : `${cancionesList.length} canciones`;
+        }
+
+        function updateSongCount() {
+            const el = document.getElementById('song-count');
+            if (el) el.textContent = `${cancionesList.length} canciones`;
+        }
+
+        function randomSongPick() {
+            const cards = document.querySelectorAll('#songs-list .song-card');
+            cards.forEach(c => c.classList.remove('highlighted'));
+
+            const idx = Math.floor(Math.random() * cancionesList.length);
+            const card = cards[idx];
+            if (card) {
+                // Clear filter
+                document.getElementById('song-filter').value = '';
+                cards.forEach(c => c.style.display = 'flex');
+                updateSongCount();
+
+                card.classList.add('highlighted');
+                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                if (navigator.vibrate) navigator.vibrate([20, 30, 20]);
+
+                setTimeout(() => card.classList.remove('highlighted'), 3000);
+            }
+        }
+
+        /* ═══════════════════════════════════════════════════════════════════
+                    DELETE SENTIMIENTOS & PELÍCULAS
+        ═══════════════════════════════════════════════════════════════════ */
+        function deleteSentimiento(key) {
+            if (!confirm('¿Eliminar este sentimiento?')) return;
+            if (firebaseEnabled) {
+                database.ref('sentimientos').orderByChild('id').equalTo(key).once('value', snap => {
+                    snap.forEach(c => c.ref.remove());
+                });
+            } else {
+                localSentimientos = localSentimientos.filter(s => s.id !== key);
+                localStorage.setItem('nosotros-sentimientos', JSON.stringify(localSentimientos));
+                renderSentimientos(localSentimientos);
+            }
+        }
+
+        function deletePelicula(id) {
+            if (!confirm('¿Eliminar esta película?')) return;
+            if (firebaseEnabled) {
+                database.ref('peliculas').orderByChild('id').equalTo(id).once('value', snap => {
+                    snap.forEach(c => c.ref.remove());
+                });
+            } else {
+                localPeliculas = localPeliculas.filter(p => p.id !== id);
+                localStorage.setItem('nosotros-peliculas', JSON.stringify(localPeliculas));
+                renderPeliculas(localPeliculas);
+            }
+        }
+
+        /* ═══════════════════════════════════════════════════════════════════
+                    SHARE RESULT
+        ═══════════════════════════════════════════════════════════════════ */
+        function shareResult(section) {
+            const text = document.getElementById(`${section}-text`)?.textContent;
+            if (!text) return;
+
+            const labels = { razones: 'Razón por la que te quiero', planes: 'Plan juntos', recuerdos: 'Recuerdo nuestro' };
+            const shareText = `💕 ${labels[section] || 'Nosotros'}:\n\n"${text}"\n\n— De Nosotros App`;
+
+            if (navigator.share) {
+                navigator.share({ text: shareText }).catch(() => {});
+            } else {
+                navigator.clipboard?.writeText(shareText).then(() => {
+                    showToast('📋', 'Copiado al portapapeles', '');
+                }).catch(() => {
+                    showToast('💕', labels[section], text);
+                });
+            }
+            if (navigator.vibrate) navigator.vibrate(20);
+        }
+
+        /* ═══════════════════════════════════════════════════════════════════
+                    ENHANCED ACTION BUTTON ANIMATION
+        ═══════════════════════════════════════════════════════════════════ */
+        const origShowRandom = showRandom;
+        showRandom = function(section) {
+            const btn = document.querySelector(`#${section}-section .action-button, #${section === 'vip' ? 'vip-content' : section + '-section'} .action-button`);
+            if (btn) btn.classList.add('dice-rolling');
+            setTimeout(() => { if (btn) btn.classList.remove('dice-rolling'); }, 450);
+            origShowRandom(section);
+        };
+
+        // Init on load
+        setTimeout(() => { checkUnreadNotes(); updateMilestone(); }, 1000);
 
         if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
             navigator.serviceWorker.register('./sw.js').then(() => console.log('SW registered')).catch(() => {});
