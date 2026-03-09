@@ -1127,6 +1127,238 @@
         /* Selection prevention */
         * { -webkit-user-select: none; user-select: none; }
         .text-input, .wa-search-input { -webkit-user-select: text; user-select: text; }
+
+        /* ═══════════════════════════════════════════════════════════════
+           DESIGN ENHANCEMENTS v2.1 - Warmth & Polish
+        ═══════════════════════════════════════════════════════════════ */
+        
+        /* Smooth fade-in for menu cards */
+        .menu-card {
+            animation: cardFadeIn 0.6s cubic-bezier(0.32, 0.72, 0, 1) both;
+        }
+        .menu-card:nth-child(1) { animation-delay: 0.05s; }
+        .menu-card:nth-child(2) { animation-delay: 0.1s; }
+        .menu-card:nth-child(3) { animation-delay: 0.15s; }
+        .menu-card:nth-child(4) { animation-delay: 0.2s; }
+        .menu-card:nth-child(5) { animation-delay: 0.25s; }
+        .menu-card:nth-child(6) { animation-delay: 0.3s; }
+        .menu-card:nth-child(7) { animation-delay: 0.35s; }
+        .menu-card:nth-child(8) { animation-delay: 0.4s; }
+        
+        @keyframes cardFadeIn {
+            from { opacity: 0; transform: translateY(16px) scale(0.96); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* Enhanced section entrance */
+        .section-header {
+            animation: sectionHeaderIn 0.5s cubic-bezier(0.32, 0.72, 0, 1) 0.1s both;
+        }
+        @keyframes sectionHeaderIn {
+            from { opacity: 0; transform: translateY(-12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Result card shimmer effect */
+        .result-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+            transition: left 0.8s ease;
+            pointer-events: none;
+        }
+        .result-card.visible::before {
+            left: 100%;
+        }
+        .result-card { position: relative; overflow: hidden; }
+
+        /* Status banner warm glow */
+        .status-banner {
+            position: relative;
+        }
+        .status-banner::after {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: inherit;
+            background: linear-gradient(135deg, rgba(232, 160, 191, 0.15), rgba(212, 165, 116, 0.15));
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        .status-banner:active::after { opacity: 1; }
+
+        /* Enhanced song items with stagger */
+        .song-item {
+            animation: songSlideIn 0.4s cubic-bezier(0.32, 0.72, 0, 1) both;
+        }
+        @keyframes songSlideIn {
+            from { opacity: 0; transform: translateX(-12px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Better list items with hover accent */
+        .shared-item, .movie-item {
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+        }
+        .shared-item:active, .movie-item:active {
+            transform: scale(0.98);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        /* Enhanced WA result cards */
+        .wa-result-card {
+            animation: waCardIn 0.5s cubic-bezier(0.32, 0.72, 0, 1) both;
+            position: relative;
+            overflow: hidden;
+        }
+        .wa-result-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--whatsapp), rgba(37, 211, 102, 0.3));
+            opacity: 0.6;
+        }
+        @keyframes waCardIn {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Days counter sparkle */
+        .days-counter {
+            position: relative;
+        }
+        .days-counter::before {
+            content: '✦';
+            position: absolute;
+            right: -8px; top: -4px;
+            font-size: 0.5rem;
+            color: var(--gold);
+            opacity: 0.6;
+            animation: sparkle 3s ease-in-out infinite;
+        }
+        @keyframes sparkle {
+            0%, 100% { opacity: 0.3; transform: scale(0.8) rotate(0deg); }
+            50% { opacity: 0.8; transform: scale(1.2) rotate(180deg); }
+        }
+
+        /* Warmer back button */
+        .back-button {
+            position: relative;
+            overflow: hidden;
+        }
+        .back-button::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(232, 160, 191, 0.08), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .back-button:active::after { opacity: 1; }
+
+        /* Notification permission banner */
+        .notif-banner {
+            position: fixed;
+            bottom: 24px; left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(26, 16, 37, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(232, 160, 191, 0.2);
+            border-radius: var(--radius-lg);
+            padding: 16px 20px;
+            display: flex; align-items: center; gap: 12px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+            z-index: 1000;
+            transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+            max-width: 340px;
+        }
+        .notif-banner.show { transform: translateX(-50%) translateY(0); }
+        .notif-banner .notif-text {
+            font-size: 0.72rem;
+            color: var(--text-light-secondary);
+            line-height: 1.4;
+        }
+        .notif-banner .notif-btn {
+            background: var(--rose);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 8px 16px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            cursor: pointer;
+            flex-shrink: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        /* Warm glow on action button hover */
+        .action-button {
+            position: relative;
+        }
+        .action-button::before {
+            content: '';
+            position: absolute;
+            inset: -20px;
+            background: radial-gradient(circle, var(--rose-glow), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+            z-index: -1;
+        }
+        .action-button:active::before { opacity: 0.5; }
+
+        /* Enhanced WA example chips */
+        .wa-example-chip {
+            position: relative;
+            overflow: hidden;
+        }
+        .wa-example-chip::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(37, 211, 102, 0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .wa-example-chip:active::before { opacity: 1; }
+
+        /* Smooth toast notifications */
+        .toast-notification {
+            position: fixed;
+            top: calc(16px + var(--safe-top));
+            left: 50%; 
+            transform: translateX(-50%) translateY(-100px);
+            background: rgba(26, 16, 37, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(232, 160, 191, 0.2);
+            border-radius: var(--radius-md);
+            padding: 12px 20px;
+            display: flex; align-items: center; gap: 10px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            z-index: 2000;
+            transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+            max-width: 320px;
+        }
+        .toast-notification.show {
+            transform: translateX(-50%) translateY(0);
+        }
+        .toast-notification .toast-icon { font-size: 1.2rem; }
+        .toast-notification .toast-text {
+            font-size: 0.72rem;
+            color: var(--text-light);
+            font-weight: 500;
+            line-height: 1.3;
+        }
+        .toast-notification .toast-sub {
+            font-size: 0.65rem;
+            color: var(--text-light-secondary);
+            font-weight: 400;
+        }
     </style>
 </head>
 <body>
@@ -1588,51 +1820,331 @@
 { titulo:"Persia - Remix", artista:"Jossef;Jamby El Favo;Eix", url:"https://music.apple.com/es/search?term=Persia%20-%20Remix%20Jossef%3BJamby%20El%20Favo%3BEix" },
 { titulo:"No Fue - Remix", artista:"Leebrian;Cauty;Rauw Alejandro;Brray;Feid", url:"https://music.apple.com/es/search?term=No%20Fue%20-%20Remix%20Leebrian%3BCauty%3BRauw%20Alejandro%3BBrray%3BFeid" },
 { titulo:"Velitas", artista:"Darell;Brytiago", url:"https://music.apple.com/es/search?term=Velitas%20Darell%3BBrytiago" },
-{ titulo:"105 F Remix", artista:"KEVVO;Farruko;Chencho Corleone;Arcángel;Darell;Ñengo Flow;Brytiago;Myke Towers", url:"https://music.apple.com/es/search?term=105%20F%20Remix" },
-{ titulo:"Mi Error - Remix", artista:"Eladio Carrion;Zion & Lennox;Wisin & Yandel;Lunay", url:"https://music.apple.com/es/search?term=Mi%20Error%20-%20Remix%20Eladio%20Carrion" },
+{ titulo:"105 F Remix", artista:"KEVVO;Farruko;Chencho Corleone;Arcángel;Darell;Ñengo Flow;Brytiago;Myke Towers", url:"https://music.apple.com/es/search?term=105%20F%20Remix%20KEVVO%3BFarruko%3BChencho%20Corleone%3BArc%C3%A1ngel%3BDarell%3B%C3%91engo%20Flow%3BBrytiago%3BMyke%20Towers" },
+{ titulo:"Mi Error - Remix", artista:"Eladio Carrion;Zion & Lennox;Wisin & Yandel;Lunay", url:"https://music.apple.com/es/search?term=Mi%20Error%20-%20Remix%20Eladio%20Carrion%3BZion%20%26%20Lennox%3BWisin%20%26%20Yandel%3BLunay" },
+{ titulo:"Percocet (Remix)", artista:"Alex Rose;Lenny Tavárez;Quimico Ultra Mega;Chris Wandell", url:"https://music.apple.com/es/search?term=Percocet%20%28Remix%29%20Alex%20Rose%3BLenny%20Tav%C3%A1rez%3BQuimico%20Ultra%20Mega%3BChris%20Wandell" },
 { titulo:"T.T.I.", artista:"Rauw Alejandro", url:"https://music.apple.com/es/search?term=T.T.I.%20Rauw%20Alejandro" },
 { titulo:"Inocente", artista:"Myke Towers", url:"https://music.apple.com/es/search?term=Inocente%20Myke%20Towers" },
+{ titulo:"Explícale (feat. Cosculluela & Brytiago) - Remix", artista:"Yandel;Bad Bunny;Noriel;Cosculluela;Brytiago", url:"https://music.apple.com/es/search?term=Expl%C3%ADcale%20%28feat.%20Cosculluela%20%26%20Brytiago%29%20-%20Remix%20Yandel%3BBad%20Bunny%3BNoriel%3BCosculluela%3BBrytiago" },
 { titulo:"Reloj", artista:"Rauw Alejandro;Anuel AA", url:"https://music.apple.com/es/search?term=Reloj%20Rauw%20Alejandro%3BAnuel%20AA" },
-{ titulo:"911 (Remix)", artista:"Sech;JHAYCO", url:"https://music.apple.com/es/search?term=911%20Remix%20Sech%3BJHAYCO" },
+{ titulo:"El Efecto - Remix", artista:"Rauw Alejandro;Chencho Corleone;KEVVO;Bryant Myers;Lyanno;Dalex", url:"https://music.apple.com/es/search?term=El%20Efecto%20-%20Remix%20Rauw%20Alejandro%3BChencho%20Corleone%3BKEVVO%3BBryant%20Myers%3BLyanno%3BDalex" },
+{ titulo:"911 (Remix)", artista:"Sech;JHAYCO", url:"https://music.apple.com/es/search?term=911%20%28Remix%29%20Sech%3BJHAYCO" },
+{ titulo:"Ponte Pa' Mi", artista:"Rauw Alejandro;Myke Towers;Sky Rompiendo", url:"https://music.apple.com/es/search?term=Ponte%20Pa%27%20Mi%20Rauw%20Alejandro%3BMyke%20Towers%3BSky%20Rompiendo" },
+{ titulo:"Santa Diabla", artista:"Amarion;Luar La L;Lyanno", url:"https://music.apple.com/es/search?term=Santa%20Diabla%20Amarion%3BLuar%20La%20L%3BLyanno" },
+{ titulo:"Indica", artista:"Bryant Myers;Zion & Lennox", url:"https://music.apple.com/es/search?term=Indica%20Bryant%20Myers%3BZion%20%26%20Lennox" },
+{ titulo:"Amandita", artista:"Omar Courtz;Young Miko", url:"https://music.apple.com/es/search?term=Amandita%20Omar%20Courtz%3BYoung%20Miko" },
 { titulo:"LOKITA", artista:"Mora", url:"https://music.apple.com/es/search?term=LOKITA%20Mora" },
-{ titulo:"Hey Lil Mama", artista:"Eladio Carrion;Rauw Alejandro", url:"https://music.apple.com/es/search?term=Hey%20Lil%20Mama%20Eladio%20Carrion" },
-{ titulo:"CÓMO SE SIENTE - Remix", artista:"JHAYCO;Bad Bunny", url:"https://music.apple.com/es/search?term=COMO%20SE%20SIENTE%20Remix%20JHAYCO" },
+{ titulo:"Hey Lil Mama", artista:"Eladio Carrion;Rauw Alejandro", url:"https://music.apple.com/es/search?term=Hey%20Lil%20Mama%20Eladio%20Carrion%3BRauw%20Alejandro" },
+{ titulo:"Dile a El", artista:"Rauw Alejandro", url:"https://music.apple.com/es/search?term=Dile%20a%20El%20Rauw%20Alejandro" },
+{ titulo:"La Old Skul", artista:"Rauw Alejandro", url:"https://music.apple.com/es/search?term=La%20Old%20Skul%20Rauw%20Alejandro" },
+{ titulo:"CÓMO SE SIENTE - Remix", artista:"JHAYCO;Bad Bunny", url:"https://music.apple.com/es/search?term=C%C3%93MO%20SE%20SIENTE%20-%20Remix%20JHAYCO%3BBad%20Bunny" },
+{ titulo:"Cúrame", artista:"Rauw Alejandro", url:"https://music.apple.com/es/search?term=C%C3%BArame%20Rauw%20Alejandro" },
 { titulo:"Ley Seca", artista:"JHAYCO;Anuel AA", url:"https://music.apple.com/es/search?term=Ley%20Seca%20JHAYCO%3BAnuel%20AA" },
+{ titulo:"HASTA ABAJO", artista:"KEVIN ROLDAN;Bryant Myers;Lyanno", url:"https://music.apple.com/es/search?term=HASTA%20ABAJO%20KEVIN%20ROLDAN%3BBryant%20Myers%3BLyanno" },
+{ titulo:"Porno", artista:"Rich Music LTD;Sech;Dalex;Justin Quiles;Lenny Tavárez;Feid", url:"https://music.apple.com/es/search?term=Porno%20Rich%20Music%20LTD%3BSech%3BDalex%3BJustin%20Quiles%3BLenny%20Tav%C3%A1rez%3BFeid" },
 { titulo:"512", artista:"Mora;JHAYCO", url:"https://music.apple.com/es/search?term=512%20Mora%3BJHAYCO" },
+{ titulo:"Nada", artista:"Cazzu;Lyanno;Rauw Alejandro;Dalex", url:"https://music.apple.com/es/search?term=Nada%20Cazzu%3BLyanno%3BRauw%20Alejandro%3BDalex" },
+{ titulo:"La Curiosidad (feat. Dj Nelson, JHAYCO, Lunay & Kendo Kaponi) - Blue Grand Prix Remix", artista:"Jay Wheeler;Myke Towers;Rauw Alejandro;DJ Nelson;JHAYCO;Lunay;Kendo Kaponi", url:"https://music.apple.com/es/search?term=La%20Curiosidad%20%28feat.%20Dj%20Nelson%2C%20JHAYCO%2C%20Lunay%20%26%20Kendo%20Kaponi%29%20-%20Blue%20Grand%20Prix%20Remix%20Jay%20Wheeler%3BMyke%20Towers%3BRauw%20Alejandro%3BDJ%20Nelson%3BJHAYCO%3BLunay%3BKendo%20Kaponi" },
+{ titulo:"Relación Rota", artista:"Myke Towers", url:"https://music.apple.com/es/search?term=Relaci%C3%B3n%20Rota%20Myke%20Towers" },
 { titulo:"Enchule", artista:"Rauw Alejandro", url:"https://music.apple.com/es/search?term=Enchule%20Rauw%20Alejandro" },
+{ titulo:"Que Malo", artista:"Bad Bunny;Ñengo Flow", url:"https://music.apple.com/es/search?term=Que%20Malo%20Bad%20Bunny%3B%C3%91engo%20Flow" },
+{ titulo:"La Forma en Que Me Miras", artista:"Super Yei;Sammy Baby;Jone Quest;Myke Towers;Lenny Tavárez;Rafa Pabön", url:"https://music.apple.com/es/search?term=La%20Forma%20en%20Que%20Me%20Miras%20Super%20Yei%3BSammy%20Baby%3BJone%20Quest%3BMyke%20Towers%3BLenny%20Tav%C3%A1rez%3BRafa%20Pab%C3%B6n" },
 { titulo:"La Zona", artista:"Bad Bunny", url:"https://music.apple.com/es/search?term=La%20Zona%20Bad%20Bunny" },
+{ titulo:"Si Se Da - Remix", artista:"Myke Towers;Farruko;Arcángel;Sech;Zion", url:"https://music.apple.com/es/search?term=Si%20Se%20Da%20-%20Remix%20Myke%20Towers%3BFarruko%3BArc%C3%A1ngel%3BSech%3BZion" },
 { titulo:"120", artista:"Bad Bunny", url:"https://music.apple.com/es/search?term=120%20Bad%20Bunny" },
-{ titulo:"PERRO NEGRO", artista:"Bad Bunny;Feid", url:"https://music.apple.com/es/search?term=PERRO%20NEGRO%20Bad%20Bunny%3BFeid" },
-{ titulo:"Tattoo", artista:"Rauw Alejandro", url:"https://music.apple.com/es/search?term=Tattoo%20Rauw%20Alejandro" },
-{ titulo:"Jordan I", artista:"SAIKO;Quevedo;La mano de oro", url:"https://music.apple.com/es/search?term=Jordan%20I%20SAIKO%3BQuevedo" },
+{ titulo:"Déjate Llevar", artista:"Alex Rose;Lyanno", url:"https://music.apple.com/es/search?term=D%C3%A9jate%20Llevar%20Alex%20Rose%3BLyanno" },
+{ titulo:"Fiel - Remix", artista:"Wisin;JHAYCO;Anuel AA;Los Legendarios;Myke Towers", url:"https://music.apple.com/es/search?term=Fiel%20-%20Remix%20Wisin%3BJHAYCO%3BAnuel%20AA%3BLos%20Legendarios%3BMyke%20Towers" },
+{ titulo:"Perreo Pesau'", artista:"Rauw Alejandro", url:"https://music.apple.com/es/search?term=Perreo%20Pesau%27%20Rauw%20Alejandro" },
+{ titulo:"Lloras - Remix", artista:"Cauty;Lenny Tavarez;Jay Wheeler;Noriel;Alex Rose", url:"https://music.apple.com/es/search?term=Lloras%20-%20Remix%20Cauty%3BLenny%20Tavarez%3BJay%20Wheeler%3BNoriel%3BAlex%20Rose" },
+{ titulo:"Infeliz", artista:"Arcángel;Bad Bunny", url:"https://music.apple.com/es/search?term=Infeliz%20Arc%C3%A1ngel%3BBad%20Bunny" },
+{ titulo:"TE MUDASTE", artista:"Bad Bunny", url:"https://music.apple.com/es/search?term=TE%20MUDASTE%20Bad%20Bunny" },
+{ titulo:"Imaginaste", artista:"JHAYCO;Tainy", url:"https://music.apple.com/es/search?term=Imaginaste%20JHAYCO%3BTainy" },
+{ titulo:"Feel Me", artista:"Rich Music LTD;Sech;Dalex;Justin Quiles;Lenny Tavárez;Feid;Mariah Angeliq", url:"https://music.apple.com/es/search?term=Feel%20Me%20Rich%20Music%20LTD%3BSech%3BDalex%3BJustin%20Quiles%3BLenny%20Tav%C3%A1rez%3BFeid%3BMariah%20Angeliq" },
+{ titulo:"THUNDER Y LIGHTNING", artista:"Bad Bunny;Eladio Carrion", url:"https://music.apple.com/es/search?term=THUNDER%20Y%20LIGHTNING%20Bad%20Bunny%3BEladio%20Carrion" },
+{ titulo:"Que Somos", artista:"Rauw Alejandro;Lyanno;Mathew", url:"https://music.apple.com/es/search?term=Que%20Somos%20Rauw%20Alejandro%3BLyanno%3BMathew" },
+{ titulo:"BONNIE AND CLYDE - REMIX", artista:"iZaak;Luar La L;Omar Courtz", url:"https://music.apple.com/es/search?term=BONNIE%20AND%20CLYDE%20-%20REMIX%20iZaak%3BLuar%20La%20L%3BOmar%20Courtz" },
+{ titulo:"Hola - Remix", artista:"Dalex;Lenny Tavárez;Chencho Corleone;Juhn;Dímelo Flow", url:"https://music.apple.com/es/search?term=Hola%20-%20Remix%20Dalex%3BLenny%20Tav%C3%A1rez%3BChencho%20Corleone%3BJuhn%3BD%C3%ADmelo%20Flow" },
+{ titulo:"VVS", artista:"Dei V", url:"https://music.apple.com/es/search?term=VVS%20Dei%20V" },
+{ titulo:"Diabólica", artista:"Cris MJ;Dei V", url:"https://music.apple.com/es/search?term=Diab%C3%B3lica%20Cris%20MJ%3BDei%20V" },
+{ titulo:"Elegí (feat. Dímelo Flow)", artista:"Rauw Alejandro;Dalex;Lenny Tavárez;Dímelo Flow", url:"https://music.apple.com/es/search?term=Eleg%C3%AD%20%28feat.%20D%C3%ADmelo%20Flow%29%20Rauw%20Alejandro%3BDalex%3BLenny%20Tav%C3%A1rez%3BD%C3%ADmelo%20Flow" },
+{ titulo:"Al Mismo Tiempo", artista:"Rauw Alejandro", url:"https://music.apple.com/es/search?term=Al%20Mismo%20Tiempo%20Rauw%20Alejandro" },
+{ titulo:"3 Am", artista:"Eladio Carrion;Brytiago", url:"https://music.apple.com/es/search?term=3%20Am%20Eladio%20Carrion%3BBrytiago" },
+{ titulo:"Como Panas", artista:"Bryant Myers", url:"https://music.apple.com/es/search?term=Como%20Panas%20Bryant%20Myers" },
+{ titulo:"MODELITO", artista:"Mora;YOVNGCHIMI", url:"https://music.apple.com/es/search?term=MODELITO%20Mora%3BYOVNGCHIMI" },
+{ titulo:"Pensabas", artista:"Mora;Joyce Santana;Brray;Eladio Carrion", url:"https://music.apple.com/es/search?term=Pensabas%20Mora%3BJoyce%20Santana%3BBrray%3BEladio%20Carrion" },
+{ titulo:"El Cielo", artista:"Sky Rompiendo;Feid;Myke Towers", url:"https://music.apple.com/es/search?term=El%20Cielo%20Sky%20Rompiendo%3BFeid%3BMyke%20Towers" },
 { titulo:"REINA", artista:"Mora;SAIKO", url:"https://music.apple.com/es/search?term=REINA%20Mora%3BSAIKO" },
-{ titulo:"Algo Mágico", artista:"Rauw Alejandro", url:"https://music.apple.com/es/search?term=Algo%20Magico%20Rauw%20Alejandro" },
+{ titulo:"PERRO NEGRO", artista:"Bad Bunny;Feid", url:"https://music.apple.com/es/search?term=PERRO%20NEGRO%20Bad%20Bunny%3BFeid" },
+{ titulo:"NO ME QUIERO CASAR", artista:"Bad Bunny", url:"https://music.apple.com/es/search?term=NO%20ME%20QUIERO%20CASAR%20Bad%20Bunny" },
+{ titulo:"PACTO (feat. Bryant Myers & Dei V) - Remix", artista:"Jay Wheeler;Anuel AA;Hades66;Bryant Myers;Dei V", url:"https://music.apple.com/es/search?term=PACTO%20%28feat.%20Bryant%20Myers%20%26%20Dei%20V%29%20-%20Remix%20Jay%20Wheeler%3BAnuel%20AA%3BHades66%3BBryant%20Myers%3BDei%20V" },
+{ titulo:"Problemón", artista:"Alvaro Diaz;Rauw Alejandro", url:"https://music.apple.com/es/search?term=Problem%C3%B3n%20Alvaro%20Diaz%3BRauw%20Alejandro" },
+{ titulo:"Conexión", artista:"Foreign Teck;Justin Quiles;Jay Wheeler;Bryant Myers;Eladio Carrion;Tory Lanez", url:"https://music.apple.com/es/search?term=Conexi%C3%B3n%20Foreign%20Teck%3BJustin%20Quiles%3BJay%20Wheeler%3BBryant%20Myers%3BEladio%20Carrion%3BTory%20Lanez" },
+{ titulo:"7 Lágrimas - Remix", artista:"Soge Culebra;Mora;GARABATTO", url:"https://music.apple.com/es/search?term=7%20L%C3%A1grimas%20-%20Remix%20Soge%20Culebra%3BMora%3BGARABATTO" },
+{ titulo:"Toda - Remix", artista:"Alex Rose;Rauw Alejandro;Lenny Tavárez;Cazzu;Lyanno", url:"https://music.apple.com/es/search?term=Toda%20-%20Remix%20Alex%20Rose%3BRauw%20Alejandro%3BLenny%20Tav%C3%A1rez%3BCazzu%3BLyanno" },
+{ titulo:"Sexo Virtual", artista:"Rauw Alejandro", url:"https://music.apple.com/es/search?term=Sexo%20Virtual%20Rauw%20Alejandro" },
+{ titulo:"Kemba Walker", artista:"Eladio Carrion;Bad Bunny", url:"https://music.apple.com/es/search?term=Kemba%20Walker%20Eladio%20Carrion%3BBad%20Bunny" },
+{ titulo:"LA DROGA", artista:"Bad Bunny", url:"https://music.apple.com/es/search?term=LA%20DROGA%20Bad%20Bunny" },
+{ titulo:"HACIENDO QUE ME AMAS", artista:"Bad Bunny", url:"https://music.apple.com/es/search?term=HACIENDO%20QUE%20ME%20AMAS%20Bad%20Bunny" },
+{ titulo:"2/Catorce", artista:"Rauw Alejandro;Mr. Naisgai", url:"https://music.apple.com/es/search?term=2/Catorce%20Rauw%20Alejandro%3BMr.%20Naisgai" },
+{ titulo:"Algo Mágico", artista:"Rauw Alejandro", url:"https://music.apple.com/es/search?term=Algo%20M%C3%A1gico%20Rauw%20Alejandro" },
+{ titulo:"Si Estuviésemos Juntos", artista:"Bad Bunny", url:"https://music.apple.com/es/search?term=Si%20Estuvi%C3%A9semos%20Juntos%20Bad%20Bunny" },
+{ titulo:"Cuatro Babys (feat. Trap Capos, Noriel, Bryant Myers & Juhn)", artista:"Maluma;Trap Capos;Noriel;Bryant Myers;Juhn", url:"https://music.apple.com/es/search?term=Cuatro%20Babys%20%28feat.%20Trap%20Capos%2C%20Noriel%2C%20Bryant%20Myers%20%26%20Juhn%29%20Maluma%3BTrap%20Capos%3BNoriel%3BBryant%20Myers%3BJuhn" },
+{ titulo:"La Jeepeta - Remix", artista:"Nio Garcia;Anuel AA;Myke Towers;Brray;Juanka", url:"https://music.apple.com/es/search?term=La%20Jeepeta%20-%20Remix%20Nio%20Garcia%3BAnuel%20AA%3BMyke%20Towers%3BBrray%3BJuanka" },
+{ titulo:"MUSEO", artista:"Rauw Alejandro", url:"https://music.apple.com/es/search?term=MUSEO%20Rauw%20Alejandro" },
+{ titulo:"Volando - Remix", artista:"Mora;Bad Bunny;Sech", url:"https://music.apple.com/es/search?term=Volando%20-%20Remix%20Mora%3BBad%20Bunny%3BSech" },
+{ titulo:"Cosa Guapa", artista:"Rauw Alejandro", url:"https://music.apple.com/es/search?term=Cosa%20Guapa%20Rauw%20Alejandro" },
+{ titulo:"Sola (Remix)", artista:"Anuel AA;Daddy Yankee;Zion & Lennox;Farruko;Wisin", url:"https://music.apple.com/es/search?term=Sola%20%28Remix%29%20Anuel%20AA%3BDaddy%20Yankee%3BZion%20%26%20Lennox%3BFarruko%3BWisin" },
+{ titulo:"Soliá", artista:"Bad Bunny", url:"https://music.apple.com/es/search?term=Soli%C3%A1%20Bad%20Bunny" },
+{ titulo:"Llori Pari", artista:"Alvaro Diaz;Feid;Tainy", url:"https://music.apple.com/es/search?term=Llori%20Pari%20Alvaro%20Diaz%3BFeid%3BTainy" },
+{ titulo:"MALA (feat. Anuel AA)", artista:"6ix9ine;Anuel AA", url:"https://music.apple.com/es/search?term=MALA%20%28feat.%20Anuel%20AA%29%206ix9ine%3BAnuel%20AA" },
+{ titulo:"Toa la Vida", artista:"Nicki Nicole;Mora", url:"https://music.apple.com/es/search?term=Toa%20la%20Vida%20Nicki%20Nicole%3BMora" },
+{ titulo:"La Romana", artista:"Bad Bunny;El Alfa", url:"https://music.apple.com/es/search?term=La%20Romana%20Bad%20Bunny%3BEl%20Alfa" },
+{ titulo:"Sola", artista:"KHEA;Myke Towers;Dayme y El High;Alex Rose", url:"https://music.apple.com/es/search?term=Sola%20KHEA%3BMyke%20Towers%3BDayme%20y%20El%20High%3BAlex%20Rose" },
+{ titulo:"Yo Voy (feat. Daddy Yankee)", artista:"Zion & Lennox", url:"https://music.apple.com/es/search?term=Yo%20Voy%20%28feat.%20Daddy%20Yankee%29%20Zion%20%26%20Lennox" },
+{ titulo:"RÁPIDO", artista:"Mora", url:"https://music.apple.com/es/search?term=R%C3%81PIDO%20Mora" },
+{ titulo:"Caile", artista:"Luar La L", url:"https://music.apple.com/es/search?term=Caile%20Luar%20La%20L" },
+{ titulo:"Criminal", artista:"NATTI NATASHA;Ozuna", url:"https://music.apple.com/es/search?term=Criminal%20NATTI%20NATASHA%3BOzuna" },
+{ titulo:"Solita", artista:"Ozuna;Mambo Kingz;DJ Luian;Bad Bunny;Wisin;Almighty", url:"https://music.apple.com/es/search?term=Solita%20Ozuna%3BMambo%20Kingz%3BDJ%20Luian%3BBad%20Bunny%3BWisin%3BAlmighty" },
+{ titulo:"Adicto", artista:"Tainy;Anuel AA;Ozuna", url:"https://music.apple.com/es/search?term=Adicto%20Tainy%3BAnuel%20AA%3BOzuna" },
+{ titulo:"No Me Conoce - Remix", artista:"JHAYCO;J Balvin;Bad Bunny", url:"https://music.apple.com/es/search?term=No%20Me%20Conoce%20-%20Remix%20JHAYCO%3BJ%20Balvin%3BBad%20Bunny" },
+{ titulo:"QUE PRETENDES", artista:"J Balvin;Bad Bunny", url:"https://music.apple.com/es/search?term=QUE%20PRETENDES%20J%20Balvin%3BBad%20Bunny" },
+{ titulo:"Corazón Roto pt. 3", artista:"Brray;Anuel AA;Chencho Corleone;JHAYCO;Ryan Castro", url:"https://music.apple.com/es/search?term=Coraz%C3%B3n%20Roto%20pt.%203%20Brray%3BAnuel%20AA%3BChencho%20Corleone%3BJHAYCO%3BRyan%20Castro" },
+{ titulo:"Mamichula - con Nicki Nicole", artista:"Trueno;Nicki Nicole;Bizarrap;Taiu;tatool", url:"https://music.apple.com/es/search?term=Mamichula%20-%20con%20Nicki%20Nicole%20Trueno%3BNicki%20Nicole%3BBizarrap%3BTaiu%3Btatool" },
 { titulo:"Dos Mil 16", artista:"Bad Bunny", url:"https://music.apple.com/es/search?term=Dos%20Mil%2016%20Bad%20Bunny" },
-{ titulo:"Si Estuviésemos Juntos", artista:"Bad Bunny", url:"https://music.apple.com/es/search?term=Si%20Estuviesemos%20Juntos%20Bad%20Bunny" },
-{ titulo:"BAILE INoLVIDABLE", artista:"Bad Bunny", url:"https://music.apple.com/es/search?term=BAILE%20INoLVIDABLE%20Bad%20Bunny" },
-{ titulo:"BESO", artista:"ROSALÍA;Rauw Alejandro", url:"https://music.apple.com/es/search?term=BESO%20ROSALIA%3BRauw%20Alejandro" },
-{ titulo:"LA FAMA", artista:"ROSALÍA;The Weeknd", url:"https://music.apple.com/es/search?term=LA%20FAMA%20ROSALIA%3BThe%20Weeknd" },
-{ titulo:"BAGDAD - Cap.7: Liturgia", artista:"ROSALÍA", url:"https://music.apple.com/es/search?term=BAGDAD%20ROSALIA" },
-{ titulo:"MALAMENTE - Cap.1: Augurio", artista:"ROSALÍA", url:"https://music.apple.com/es/search?term=MALAMENTE%20ROSALIA" },
-{ titulo:"Contando Lunares", artista:"Don Patricio;Cruz Cafuné", url:"https://music.apple.com/es/search?term=Contando%20Lunares%20Don%20Patricio" },
-{ titulo:"Rosas", artista:"La Oreja de Van Gogh", url:"https://music.apple.com/es/search?term=Rosas%20La%20Oreja%20de%20Van%20Gogh" },
-{ titulo:"La flaca", artista:"Jarabe De Palo", url:"https://music.apple.com/es/search?term=La%20flaca%20Jarabe%20De%20Palo" },
-{ titulo:"Flaca", artista:"Andrés Calamaro", url:"https://music.apple.com/es/search?term=Flaca%20Andres%20Calamaro" },
-{ titulo:"Limón y Sal", artista:"Julieta Venegas", url:"https://music.apple.com/es/search?term=Limon%20y%20Sal%20Julieta%20Venegas" },
-{ titulo:"Me Rehúso", artista:"Danny Ocean", url:"https://music.apple.com/es/search?term=Me%20Rehuso%20Danny%20Ocean" },
-{ titulo:"ESCALOFRÍOS", artista:"Mora", url:"https://music.apple.com/es/search?term=ESCALOFRIOS%20Mora" },
-{ titulo:"DROGA", artista:"Mora;C. Tangana", url:"https://music.apple.com/es/search?term=DROGA%20Mora%20C%20Tangana" },
-{ titulo:"DETRÁS DE TU ALMA", artista:"Mora", url:"https://music.apple.com/es/search?term=DETRAS%20DE%20TU%20ALMA%20Mora" },
+{ titulo:"Bellaquita", artista:"Dalex;Lenny Tavárez", url:"https://music.apple.com/es/search?term=Bellaquita%20Dalex%3BLenny%20Tav%C3%A1rez" },
+{ titulo:"Cuaderno", artista:"Dalex;Nicky Jam;Justin Quiles;Sech;Lenny Tavárez;Feid;Rafa Pabön", url:"https://music.apple.com/es/search?term=Cuaderno%20Dalex%3BNicky%20Jam%3BJustin%20Quiles%3BSech%3BLenny%20Tav%C3%A1rez%3BFeid%3BRafa%20Pab%C3%B6n" },
+{ titulo:"La Cama", artista:"Lunay;Myke Towers", url:"https://music.apple.com/es/search?term=La%20Cama%20Lunay%3BMyke%20Towers" },
+{ titulo:"Perreo en La Luna", artista:"Rich Music LTD;Sech;Dalex;Justin Quiles;Lenny Tavárez;Feid", url:"https://music.apple.com/es/search?term=Perreo%20en%20La%20Luna%20Rich%20Music%20LTD%3BSech%3BDalex%3BJustin%20Quiles%3BLenny%20Tav%C3%A1rez%3BFeid" },
+{ titulo:"Corazón Roto - Remix", artista:"Brray;JHAYCO;Ryan Castro", url:"https://music.apple.com/es/search?term=Coraz%C3%B3n%20Roto%20-%20Remix%20Brray%3BJHAYCO%3BRyan%20Castro" },
+{ titulo:"Easy - Remix", artista:"JHAYCO;Ozuna", url:"https://music.apple.com/es/search?term=Easy%20-%20Remix%20JHAYCO%3BOzuna" },
+{ titulo:"Detective", artista:"Rauw Alejandro", url:"https://music.apple.com/es/search?term=Detective%20Rauw%20Alejandro" },
+{ titulo:"Pensándote", artista:"Rauw Alejandro;Tainy", url:"https://music.apple.com/es/search?term=Pens%C3%A1ndote%20Rauw%20Alejandro%3BTainy" },
+{ titulo:"Sur y Norte", artista:"Ñengo Flow;Anuel AA", url:"https://music.apple.com/es/search?term=Sur%20y%20Norte%20%C3%91engo%20Flow%3BAnuel%20AA" },
+{ titulo:"Estadia", artista:"Omy de Oro;Rauw Alejandro", url:"https://music.apple.com/es/search?term=Estadia%20Omy%20de%20Oro%3BRauw%20Alejandro" },
+{ titulo:"La Calle", artista:"Alex Sensation;Myke Towers;JHAYCO;Arcángel;De La Ghetto;Darell", url:"https://music.apple.com/es/search?term=La%20Calle%20Alex%20Sensation%3BMyke%20Towers%3BJHAYCO%3BArc%C3%A1ngel%3BDe%20La%20Ghetto%3BDarell" },
+{ titulo:"Medusa", artista:"JHAYCO;Anuel AA;J Balvin", url:"https://music.apple.com/es/search?term=Medusa%20JHAYCO%3BAnuel%20AA%3BJ%20Balvin" },
+{ titulo:"Explícito", artista:"Myke Towers", url:"https://music.apple.com/es/search?term=Expl%C3%ADcito%20Myke%20Towers" },
+{ titulo:"La Difícil", artista:"Bad Bunny", url:"https://music.apple.com/es/search?term=La%20Dif%C3%ADcil%20Bad%20Bunny" },
+{ titulo:"A Solas (Remix)", artista:"Lunay;Lyanno;Anuel AA;Brytiago;Alex Rose", url:"https://music.apple.com/es/search?term=A%20Solas%20%28Remix%29%20Lunay%3BLyanno%3BAnuel%20AA%3BBrytiago%3BAlex%20Rose" },
+{ titulo:"Fragancia", artista:"Juhn;Jay Wheeler", url:"https://music.apple.com/es/search?term=Fragancia%20Juhn%3BJay%20Wheeler" },
+{ titulo:"Tattoo", artista:"Rauw Alejandro", url:"https://music.apple.com/es/search?term=Tattoo%20Rauw%20Alejandro" },
+{ titulo:"La Playa - Remix", artista:"Myke Towers;Maluma;Farruko", url:"https://music.apple.com/es/search?term=La%20Playa%20-%20Remix%20Myke%20Towers%3BMaluma%3BFarruko" },
+{ titulo:"Siempre Me Llama - Remix", artista:"Opi the Hit Machine;Farruko;Maldy;Yaviah", url:"https://music.apple.com/es/search?term=Siempre%20Me%20Llama%20-%20Remix%20Opi%20the%20Hit%20Machine%3BFarruko%3BMaldy%3BYaviah" },
+{ titulo:"Fabuloso", artista:"Sech;Justin Quiles", url:"https://music.apple.com/es/search?term=Fabuloso%20Sech%3BJustin%20Quiles" },
+{ titulo:"Jordan I", artista:"SAIKO;Quevedo;La mano de oro", url:"https://music.apple.com/es/search?term=Jordan%20I%20SAIKO%3BQuevedo%3BLa%20mano%20de%20oro" },
+{ titulo:"Extasisssssss", artista:"SAIKO", url:"https://music.apple.com/es/search?term=Extasisssssss%20SAIKO" },
+{ titulo:"Recuerdos", artista:"Juhn", url:"https://music.apple.com/es/search?term=Recuerdos%20Juhn" },
+{ titulo:"UN DESEO", artista:"Mora;RaiNao", url:"https://music.apple.com/es/search?term=UN%20DESEO%20Mora%3BRaiNao" },
+{ titulo:"BAD BOY", artista:"Chris Jedi;Gaby Music;Dei V;Anuel AA;Ozuna", url:"https://music.apple.com/es/search?term=BAD%20BOY%20Chris%20Jedi%3BGaby%20Music%3BDei%20V%3BAnuel%20AA%3BOzuna" },
+{ titulo:"UNA NOTi", artista:"Omar Courtz", url:"https://music.apple.com/es/search?term=UNA%20NOTi%20Omar%20Courtz" },
+{ titulo:"MARGIELA", artista:"Omar Courtz", url:"https://music.apple.com/es/search?term=MARGIELA%20Omar%20Courtz" },
+{ titulo:"Yo No Me Enamoro", artista:"Dalex;Justin Quiles", url:"https://music.apple.com/es/search?term=Yo%20No%20Me%20Enamoro%20Dalex%3BJustin%20Quiles" },
+{ titulo:"D X VIDA", artista:"Alejo;SAIKO", url:"https://music.apple.com/es/search?term=D%20X%20VIDA%20Alejo%3BSAIKO" },
+{ titulo:"Merry Remix", artista:"DIA;Jay Wheeler;Randy Nota Loca;RMAND", url:"https://music.apple.com/es/search?term=Merry%20Remix%20DIA%3BJay%20Wheeler%3BRandy%20Nota%20Loca%3BRMAND" },
+{ titulo:"Vibras", artista:"Pablo Chill-E", url:"https://music.apple.com/es/search?term=Vibras%20Pablo%20Chill-E" },
+{ titulo:"Dream Girl - Remix", artista:"Ir Sais;Rauw Alejandro", url:"https://music.apple.com/es/search?term=Dream%20Girl%20-%20Remix%20Ir%20Sais%3BRauw%20Alejandro" },
+{ titulo:"Downtown", artista:"Anitta;J Balvin", url:"https://music.apple.com/es/search?term=Downtown%20Anitta%3BJ%20Balvin" },
+{ titulo:"Nena Sad", artista:"ORO600;Pablo Chill-E;0-600;Orodembow", url:"https://music.apple.com/es/search?term=Nena%20Sad%20ORO600%3BPablo%20Chill-E%3B0-600%3BOrodembow" },
+{ titulo:"Problemón", artista:"Alvaro Diaz;Rauw Alejandro", url:"https://music.apple.com/es/search?term=Problem%C3%B3n%20Alvaro%20Diaz%3BRauw%20Alejandro" },
+{ titulo:"Follow", artista:"KAROL G;Anuel AA", url:"https://music.apple.com/es/search?term=Follow%20KAROL%20G%3BAnuel%20AA" },
+{ titulo:"Anoche", artista:"Rauw Alejandro", url:"https://music.apple.com/es/search?term=Anoche%20Rauw%20Alejandro" },
+{ titulo:"Hickey", artista:"Dímelo Flow;Dalex;Justin Quiles;iZaak", url:"https://music.apple.com/es/search?term=Hickey%20D%C3%ADmelo%20Flow%3BDalex%3BJustin%20Quiles%3BiZaak" },
+{ titulo:"Bonnie and Clyde", artista:"iZaak", url:"https://music.apple.com/es/search?term=Bonnie%20and%20Clyde%20iZaak" },
+{ titulo:"Elegí (feat. Farruko, Anuel AA, Sech, Dímelo Flow & Justin Quiles) - Remix", artista:"Rauw Alejandro;Dalex;Lenny Tavárez;Farruko;Anuel AA;Sech;Dímelo Flow;Justin Quiles", url:"https://music.apple.com/es/search?term=Eleg%C3%AD%20%28feat.%20Farruko%2C%20Anuel%20AA%2C%20Sech%2C%20D%C3%ADmelo%20Flow%20%26%20Justin%20Quiles%29%20-%20Remix%20Rauw%20Alejandro%3BDalex%3BLenny%20Tav%C3%A1rez%3BFarruko%3BAnuel%20AA%3BSech%3BD%C3%ADmelo%20Flow%3BJustin%20Quiles" },
+{ titulo:"No Te Creo", artista:"Rauw Alejandro;Wisin & Yandel;Mr. Naisgai", url:"https://music.apple.com/es/search?term=No%20Te%20Creo%20Rauw%20Alejandro%3BWisin%20%26%20Yandel%3BMr.%20Naisgai" },
+{ titulo:"Triste", artista:"Bryant Myers;Bad Bunny", url:"https://music.apple.com/es/search?term=Triste%20Bryant%20Myers%3BBad%20Bunny" },
+{ titulo:"No Te Hagas", artista:"Jory Boy;Bad Bunny", url:"https://music.apple.com/es/search?term=No%20Te%20Hagas%20Jory%20Boy%3BBad%20Bunny" },
+{ titulo:"La Ocasión", artista:"DJ Luian;Mambo Kingz;De La Ghetto;Arcángel;Ozuna;Anuel AA", url:"https://music.apple.com/es/search?term=La%20Ocasi%C3%B3n%20DJ%20Luian%3BMambo%20Kingz%3BDe%20La%20Ghetto%3BArc%C3%A1ngel%3BOzuna%3BAnuel%20AA" },
+{ titulo:"Solo", artista:"Amenazzy;Lary Over", url:"https://music.apple.com/es/search?term=Solo%20Amenazzy%3BLary%20Over" },
+{ titulo:"Ayúdame a Imaginar", artista:"Soto Asa;Pablo Chill-E", url:"https://music.apple.com/es/search?term=Ay%C3%BAdame%20a%20Imaginar%20Soto%20Asa%3BPablo%20Chill-E" },
+{ titulo:"LA INOCENTE", artista:"Mora;Feid", url:"https://music.apple.com/es/search?term=LA%20INOCENTE%20Mora%3BFeid" },
+{ titulo:"Jugador 9", artista:"Soto Asa", url:"https://music.apple.com/es/search?term=Jugador%209%20Soto%20Asa" },
+{ titulo:"MEMORIAS", artista:"Mora;JHAYCO", url:"https://music.apple.com/es/search?term=MEMORIAS%20Mora%3BJHAYCO" },
+{ titulo:"PASAJERO", artista:"Mora", url:"https://music.apple.com/es/search?term=PASAJERO%20Mora" },
+{ titulo:"Café Malibú", artista:"Sech;Mora;SAIKO", url:"https://music.apple.com/es/search?term=Caf%C3%A9%20Malib%C3%BA%20Sech%3BMora%3BSAIKO" },
+{ titulo:"En To Lao", artista:"Haze;JHAYCO", url:"https://music.apple.com/es/search?term=En%20To%20Lao%20Haze%3BJHAYCO" },
+{ titulo:"HIBIKI", artista:"Bad Bunny;Mora", url:"https://music.apple.com/es/search?term=HIBIKI%20Bad%20Bunny%3BMora" },
+{ titulo:"Sabe", artista:"Nicki Nicole;Rauw Alejandro", url:"https://music.apple.com/es/search?term=Sabe%20Nicki%20Nicole%3BRauw%20Alejandro" },
+{ titulo:"NO PIENSO LLAMAR", artista:"Soge Culebra;Quevedo;GARABATTO", url:"https://music.apple.com/es/search?term=NO%20PIENSO%20LLAMAR%20Soge%20Culebra%3BQuevedo%3BGARABATTO" },
+{ titulo:"Bluetooth", artista:"Amarion", url:"https://music.apple.com/es/search?term=Bluetooth%20Amarion" },
+{ titulo:"HOY AQUÍ", artista:"Rauw Alejandro", url:"https://music.apple.com/es/search?term=HOY%20AQU%C3%8D%20Rauw%20Alejandro" },
+{ titulo:"LOYAL (feat. Drake and Bad Bunny) - Remix", artista:"PARTYNEXTDOOR;Drake;Bad Bunny", url:"https://music.apple.com/es/search?term=LOYAL%20%28feat.%20Drake%20and%20Bad%20Bunny%29%20-%20Remix%20PARTYNEXTDOOR%3BDrake%3BBad%20Bunny" },
+{ titulo:"LOKERA", artista:"Rauw Alejandro;Lyanno;Brray", url:"https://music.apple.com/es/search?term=LOKERA%20Rauw%20Alejandro%3BLyanno%3BBrray" },
+{ titulo:"23 Preguntas", artista:"Anuel AA", url:"https://music.apple.com/es/search?term=23%20Preguntas%20Anuel%20AA" },
+{ titulo:"QUÉ RICO CH**GAMOS", artista:"Rauw Alejandro", url:"https://music.apple.com/es/search?term=QU%C3%89%20RICO%20CH%2A%2AGAMOS%20Rauw%20Alejandro" },
+{ titulo:"Prométeme", artista:"Camin", url:"https://music.apple.com/es/search?term=Prom%C3%A9teme%20Camin" },
+{ titulo:"Madrid (feat. Myke Towers)", artista:"Maluma;Myke Towers", url:"https://music.apple.com/es/search?term=Madrid%20%28feat.%20Myke%20Towers%29%20Maluma%3BMyke%20Towers" },
+{ titulo:"No Me Quiere Ver - ft. Javiielo", artista:"Rvfv;Javiielo", url:"https://music.apple.com/es/search?term=No%20Me%20Quiere%20Ver%20-%20ft.%20Javiielo%20Rvfv%3BJaviielo" },
+{ titulo:"No Te Quieren Conmigo", artista:"Gaby Music;Lunay;Luar La L", url:"https://music.apple.com/es/search?term=No%20Te%20Quieren%20Conmigo%20Gaby%20Music%3BLunay%3BLuar%20La%20L" },
+{ titulo:"Baja y Sube", artista:"Rokero;Luar La L", url:"https://music.apple.com/es/search?term=Baja%20y%20Sube%20Rokero%3BLuar%20La%20L" },
+{ titulo:"El Patio", artista:"Pepe y Vizio;Delaossa;KIDDO", url:"https://music.apple.com/es/search?term=El%20Patio%20Pepe%20y%20Vizio%3BDelaossa%3BKIDDO" },
+{ titulo:"Todavía - Remix", artista:"Green Cookie;iZaak;Marconi Impara;Amarion", url:"https://music.apple.com/es/search?term=Todav%C3%ADa%20-%20Remix%20Green%20Cookie%3BiZaak%3BMarconi%20Impara%3BAmarion" },
+{ titulo:"TODO O NADA", artista:"Lunay;Anitta", url:"https://music.apple.com/es/search?term=TODO%20O%20NADA%20Lunay%3BAnitta" },
+{ titulo:"Maquillaje", artista:"Renn;Yexel", url:"https://music.apple.com/es/search?term=Maquillaje%20Renn%3BYexel" },
+{ titulo:"Tu Peor Error", artista:"Darell", url:"https://music.apple.com/es/search?term=Tu%20Peor%20Error%20Darell" },
+{ titulo:"Nocturna", artista:"Nio Garcia;Bryant Myers", url:"https://music.apple.com/es/search?term=Nocturna%20Nio%20Garcia%3BBryant%20Myers" },
+{ titulo:"Recuerdos", artista:"Luar La L;Chanell", url:"https://music.apple.com/es/search?term=Recuerdos%20Luar%20La%20L%3BChanell" },
+{ titulo:"Lately", artista:"Luar La L", url:"https://music.apple.com/es/search?term=Lately%20Luar%20La%20L" },
+{ titulo:"Kyoto", artista:"Omar Courtz;De La Rose;Haze", url:"https://music.apple.com/es/search?term=Kyoto%20Omar%20Courtz%3BDe%20La%20Rose%3BHaze" },
+{ titulo:"BB ;(", artista:"SAIKO;Came Beats", url:"https://music.apple.com/es/search?term=BB%20%3B%28%20SAIKO%3BCame%20Beats" },
+{ titulo:"D X VIDA", artista:"Alejo;SAIKO", url:"https://music.apple.com/es/search?term=D%20X%20VIDA%20Alejo%3BSAIKO" },
+{ titulo:"Prendi", artista:"Amarion", url:"https://music.apple.com/es/search?term=Prendi%20Amarion" },
+{ titulo:"UuU 2", artista:"ROA;Hades66;Luar La L", url:"https://music.apple.com/es/search?term=UuU%202%20ROA%3BHades66%3BLuar%20La%20L" },
 { titulo:"Universitaria", artista:"Quevedo", url:"https://music.apple.com/es/search?term=Universitaria%20Quevedo" },
-{ titulo:"BUENAS NOCHES", artista:"Quevedo", url:"https://music.apple.com/es/search?term=BUENAS%20NOCHES%20Quevedo" },
-{ titulo:"Guerrera", artista:"DELLAFUENTE;C. Tangana", url:"https://music.apple.com/es/search?term=Guerrera%20DELLAFUENTE%20C%20Tangana" },
-{ titulo:"Mala Mujer", artista:"C. Tangana", url:"https://music.apple.com/es/search?term=Mala%20Mujer%20C%20Tangana" },
+{ titulo:"DUBAI", artista:"Trueno;Beny Jr", url:"https://music.apple.com/es/search?term=DUBAI%20Trueno%3BBeny%20Jr" },
+{ titulo:"Y Cuando Llego (feat. Pipo Beatz)", artista:"Yung Beef;Pablo Chill-E;Pipo Beatz", url:"https://music.apple.com/es/search?term=Y%20Cuando%20Llego%20%28feat.%20Pipo%20Beatz%29%20Yung%20Beef%3BPablo%20Chill-E%3BPipo%20Beatz" },
+{ titulo:"Maya (Remix)", artista:"De La Rose;Mora;SHARIF RAFAEL", url:"https://music.apple.com/es/search?term=Maya%20%28Remix%29%20De%20La%20Rose%3BMora%3BSHARIF%20RAFAEL" },
+{ titulo:"El Farsante", artista:"Ozuna", url:"https://music.apple.com/es/search?term=El%20Farsante%20Ozuna" },
+{ titulo:"Desenfocao'", artista:"Rauw Alejandro", url:"https://music.apple.com/es/search?term=Desenfocao%27%20Rauw%20Alejandro" },
+{ titulo:"Mai Mai (feat. Ñengo Flow & Jory Boy)", artista:"Maluma;Ñengo Flow;Jory Boy", url:"https://music.apple.com/es/search?term=Mai%20Mai%20%28feat.%20%C3%91engo%20Flow%20%26%20Jory%20Boy%29%20Maluma%3B%C3%91engo%20Flow%3BJory%20Boy" },
+{ titulo:"Presidentes Muertos", artista:"Casper Magico;Anuel AA;Bryant Myers;YOVNGCHIMI", url:"https://music.apple.com/es/search?term=Presidentes%20Muertos%20Casper%20Magico%3BAnuel%20AA%3BBryant%20Myers%3BYOVNGCHIMI" },
+{ titulo:"VVS Switch", artista:"Pressure 9X19", url:"https://music.apple.com/es/search?term=VVS%20Switch%20Pressure%209X19" },
+{ titulo:"X'CLUSIVO (REMIX)", artista:"Gonzy;SAIKO;Arcángel", url:"https://music.apple.com/es/search?term=X%27CLUSIVO%20%28REMIX%29%20Gonzy%3BSAIKO%3BArc%C3%A1ngel" },
+{ titulo:"Colalé", artista:"Nickzzy;Raul Clyde;Came Beats", url:"https://music.apple.com/es/search?term=Colal%C3%A9%20Nickzzy%3BRaul%20Clyde%3BCame%20Beats" },
+{ titulo:"FARDOS", artista:"JC Reyes;De La Ghetto", url:"https://music.apple.com/es/search?term=FARDOS%20JC%20Reyes%3BDe%20La%20Ghetto" },
+{ titulo:"Cartier", artista:"SAIKO;JC Reyes", url:"https://music.apple.com/es/search?term=Cartier%20SAIKO%3BJC%20Reyes" },
+{ titulo:"Si Te Sentis Sola", artista:"Duki", url:"https://music.apple.com/es/search?term=Si%20Te%20Sentis%20Sola%20Duki" },
+{ titulo:"El Conjuntito", artista:"El Bobe;Omar Montes", url:"https://music.apple.com/es/search?term=El%20Conjuntito%20El%20Bobe%3BOmar%20Montes" },
 { titulo:"LUCES DE TECNO", artista:"Feid", url:"https://music.apple.com/es/search?term=LUCES%20DE%20TECNO%20Feid" },
-{ titulo:"HIBIKI", artista:"Bad Bunny;Mora", url:"https://music.apple.com/es/search?term=HIBIKI%20Bad%20Bunny%20Mora" },
-{ titulo:"Qué Pasaría...", artista:"Rauw Alejandro;Bad Bunny", url:"https://music.apple.com/es/search?term=Que%20Pasaria%20Rauw%20Alejandro%20Bad%20Bunny" },
-{ titulo:"AURORA", artista:"Mora;De La Rose", url:"https://music.apple.com/es/search?term=AURORA%20Mora%20De%20La%20Rose" },
-{ titulo:"Polaris", artista:"SAIKO;Came Beats", url:"https://music.apple.com/es/search?term=Polaris%20SAIKO" },
-{ titulo:"APA", artista:"Mora;Quevedo", url:"https://music.apple.com/es/search?term=APA%20Mora%20Quevedo" },
+{ titulo:"UuU", artista:"ROA;Hades66", url:"https://music.apple.com/es/search?term=UuU%20ROA%3BHades66" },
+{ titulo:"Tuyo", artista:"Mora", url:"https://music.apple.com/es/search?term=Tuyo%20Mora" },
+{ titulo:"Extasy", artista:"Myke Towers", url:"https://music.apple.com/es/search?term=Extasy%20Myke%20Towers" },
+{ titulo:"COSAS QUE NO TE DIJE", artista:"SAIKO", url:"https://music.apple.com/es/search?term=COSAS%20QUE%20NO%20TE%20DIJE%20SAIKO" },
+{ titulo:"Fiebre - Prod. King DouDou", artista:"Bad Gyal", url:"https://music.apple.com/es/search?term=Fiebre%20-%20Prod.%20King%20DouDou%20Bad%20Gyal" },
+{ titulo:"Mala Mujer", artista:"C. Tangana", url:"https://music.apple.com/es/search?term=Mala%20Mujer%20C.%20Tangana" },
+{ titulo:"No Te Debí Besar", artista:"C. Tangana;Paloma Mami", url:"https://music.apple.com/es/search?term=No%20Te%20Deb%C3%AD%20Besar%20C.%20Tangana%3BPaloma%20Mami" },
+{ titulo:"Pa' Llamar Tu Atención (feat. MC Bin Laden)", artista:"C. Tangana;MC Bin Laden", url:"https://music.apple.com/es/search?term=Pa%27%20Llamar%20Tu%20Atenci%C3%B3n%20%28feat.%20MC%20Bin%20Laden%29%20C.%20Tangana%3BMC%20Bin%20Laden" },
+{ titulo:"La Perla", artista:"ROSALÍA;Yahritza Y Su Esencia", url:"https://music.apple.com/es/search?term=La%20Perla%20ROSAL%C3%8DA%3BYahritza%20Y%20Su%20Esencia" },
+{ titulo:"BAILE INoLVIDABLE", artista:"Bad Bunny", url:"https://music.apple.com/es/search?term=BAILE%20INoLVIDABLE%20Bad%20Bunny" },
+{ titulo:"Berghain", artista:"ROSALÍA;Björk;Yves Tumor", url:"https://music.apple.com/es/search?term=Berghain%20ROSAL%C3%8DA%3BBj%C3%B6rk%3BYves%20Tumor" },
+{ titulo:"malibU", artista:"rusowsky", url:"https://music.apple.com/es/search?term=malibU%20rusowsky" },
+{ titulo:"KLOuFRENS", artista:"Bad Bunny", url:"https://music.apple.com/es/search?term=KLOuFRENS%20Bad%20Bunny" },
+{ titulo:"Khé?", artista:"Rauw Alejandro;Romeo Santos", url:"https://music.apple.com/es/search?term=Kh%C3%A9%3F%20Rauw%20Alejandro%3BRomeo%20Santos" },
+{ titulo:"Cuando No Era Cantante", artista:"El Bogueto;Yung Beef", url:"https://music.apple.com/es/search?term=Cuando%20No%20Era%20Cantante%20El%20Bogueto%3BYung%20Beef" },
+{ titulo:"QLOO*", artista:"Young Cister;Kreamly", url:"https://music.apple.com/es/search?term=QLOO%2A%20Young%20Cister%3BKreamly" },
+{ titulo:"si te pillara", artista:"Beéle", url:"https://music.apple.com/es/search?term=si%20te%20pillara%20Be%C3%A9le" },
+{ titulo:"SOLEAO", artista:"Myke Towers;Quevedo", url:"https://music.apple.com/es/search?term=SOLEAO%20Myke%20Towers%3BQuevedo" },
+{ titulo:"VeLDÁ", artista:"Bad Bunny;Omar Courtz;Dei V", url:"https://music.apple.com/es/search?term=VeLD%C3%81%20Bad%20Bunny%3BOmar%20Courtz%3BDei%20V" },
+{ titulo:"Qué Pasaría...", artista:"Rauw Alejandro;Bad Bunny", url:"https://music.apple.com/es/search?term=Qu%C3%A9%20Pasar%C3%ADa...%20Rauw%20Alejandro%3BBad%20Bunny" },
+{ titulo:"SI NO ES CONTIGO - REMIX", artista:"Cris MJ;Kali Uchis;JHAYCO", url:"https://music.apple.com/es/search?term=SI%20NO%20ES%20CONTIGO%20-%20REMIX%20Cris%20MJ%3BKali%20Uchis%3BJHAYCO" },
+{ titulo:"Q U E V A S H A C E R H O Y ?", artista:"Omar Courtz;De La Rose", url:"https://music.apple.com/es/search?term=Q%20U%20E%20V%20A%20S%20H%20A%20C%20E%20R%20H%20O%20Y%20%3F%20Omar%20Courtz%3BDe%20La%20Rose" },
+{ titulo:"LA FAMA", artista:"ROSALÍA;The Weeknd", url:"https://music.apple.com/es/search?term=LA%20FAMA%20ROSAL%C3%8DA%3BThe%20Weeknd" },
+{ titulo:"BESO", artista:"ROSALÍA;Rauw Alejandro", url:"https://music.apple.com/es/search?term=BESO%20ROSAL%C3%8DA%3BRauw%20Alejandro" },
+{ titulo:"Dardos", artista:"Romeo Santos;Prince Royce", url:"https://music.apple.com/es/search?term=Dardos%20Romeo%20Santos%3BPrince%20Royce" },
+{ titulo:"TU VAS SIN (fav)", artista:"Rels B", url:"https://music.apple.com/es/search?term=TU%20VAS%20SIN%20%28fav%29%20Rels%20B" },
+{ titulo:"Antes de Morirme - feat. ROSALÍA", artista:"C. Tangana;ROSALÍA", url:"https://music.apple.com/es/search?term=Antes%20de%20Morirme%20-%20feat.%20ROSAL%C3%8DA%20C.%20Tangana%3BROSAL%C3%8DA" },
+{ titulo:"Guerrera", artista:"DELLAFUENTE;C. Tangana", url:"https://music.apple.com/es/search?term=Guerrera%20DELLAFUENTE%3BC.%20Tangana" },
+{ titulo:"BAGDAD - Cap.7: Liturgia", artista:"ROSALÍA", url:"https://music.apple.com/es/search?term=BAGDAD%20-%20Cap.7%3A%20Liturgia%20ROSAL%C3%8DA" },
+{ titulo:"Pa Que Brille", artista:"C. Tangana", url:"https://music.apple.com/es/search?term=Pa%20Que%20Brille%20C.%20Tangana" },
+{ titulo:"MALAMENTE - Cap.1: Augurio", artista:"ROSALÍA", url:"https://music.apple.com/es/search?term=MALAMENTE%20-%20Cap.1%3A%20Augurio%20ROSAL%C3%8DA" },
+{ titulo:"PIENSO EN TU MIRÁ - Cap.3: Celos", artista:"ROSALÍA", url:"https://music.apple.com/es/search?term=PIENSO%20EN%20TU%20MIR%C3%81%20-%20Cap.3%3A%20Celos%20ROSAL%C3%8DA" },
+{ titulo:"Yo x Ti, Tu x Mi", artista:"ROSALÍA;Ozuna", url:"https://music.apple.com/es/search?term=Yo%20x%20Ti%2C%20Tu%20x%20Mi%20ROSAL%C3%8DA%3BOzuna" },
+{ titulo:"Un Veneno", artista:"C. Tangana;Niño de Elche", url:"https://music.apple.com/es/search?term=Un%20Veneno%20C.%20Tangana%3BNi%C3%B1o%20de%20Elche" },
+{ titulo:"A NINGÚN HOMBRE - Cap.11: Poder", artista:"ROSALÍA", url:"https://music.apple.com/es/search?term=A%20NING%C3%9AN%20HOMBRE%20-%20Cap.11%3A%20Poder%20ROSAL%C3%8DA" },
+{ titulo:"El Efecto", artista:"Rauw Alejandro;Chencho Corleone", url:"https://music.apple.com/es/search?term=El%20Efecto%20Rauw%20Alejandro%3BChencho%20Corleone" },
+{ titulo:"Es un Secreto", artista:"Plan B", url:"https://music.apple.com/es/search?term=Es%20un%20Secreto%20Plan%20B" },
+{ titulo:"Diosa", artista:"Myke Towers", url:"https://music.apple.com/es/search?term=Diosa%20Myke%20Towers" },
+{ titulo:"Por Que Te Demoras?", artista:"Plan B", url:"https://music.apple.com/es/search?term=Por%20Que%20Te%20Demoras%3F%20Plan%20B" },
+{ titulo:"More", artista:"Zion;Jory Boy;Ken-Y", url:"https://music.apple.com/es/search?term=More%20Zion%3BJory%20Boy%3BKen-Y" },
+{ titulo:"Fantasias", artista:"Rauw Alejandro;Farruko", url:"https://music.apple.com/es/search?term=Fantasias%20Rauw%20Alejandro%3BFarruko" },
+{ titulo:"Adicto (with Anuel AA & Ozuna)", artista:"Tainy;Anuel AA;Ozuna", url:"https://music.apple.com/es/search?term=Adicto%20%28with%20Anuel%20AA%20%26%20Ozuna%29%20Tainy%3BAnuel%20AA%3BOzuna" },
+{ titulo:"Pa Mí (Remix)", artista:"Dalex;Rafa Pabön;KHEA;Sech;Feid;Cazzu;Lenny Tavárez", url:"https://music.apple.com/es/search?term=Pa%20M%C3%AD%20%28Remix%29%20Dalex%3BRafa%20Pab%C3%B6n%3BKHEA%3BSech%3BFeid%3BCazzu%3BLenny%20Tav%C3%A1rez" },
+{ titulo:"La Playa", artista:"Myke Towers", url:"https://music.apple.com/es/search?term=La%20Playa%20Myke%20Towers" },
+{ titulo:"Rojo", artista:"J Balvin", url:"https://music.apple.com/es/search?term=Rojo%20J%20Balvin" },
+{ titulo:"La Curiosidad", artista:"Jay Wheeler;DJ Nelson;Myke Towers", url:"https://music.apple.com/es/search?term=La%20Curiosidad%20Jay%20Wheeler%3BDJ%20Nelson%3BMyke%20Towers" },
+{ titulo:"Ignorantes", artista:"Bad Bunny;Sech", url:"https://music.apple.com/es/search?term=Ignorantes%20Bad%20Bunny%3BSech" },
+{ titulo:"Contando Lunares (feat. Cruz Cafuné)", artista:"Don Patricio;Cruz Cafuné", url:"https://music.apple.com/es/search?term=Contando%20Lunares%20%28feat.%20Cruz%20Cafun%C3%A9%29%20Don%20Patricio%3BCruz%20Cafun%C3%A9" },
+{ titulo:"Adan y Eva", artista:"Paulo Londra", url:"https://music.apple.com/es/search?term=Adan%20y%20Eva%20Paulo%20Londra" },
+{ titulo:"Llorando en la Limo (feat. Alizzz)", artista:"C. Tangana;Alizzz", url:"https://music.apple.com/es/search?term=Llorando%20en%20la%20Limo%20%28feat.%20Alizzz%29%20C.%20Tangana%3BAlizzz" },
+{ titulo:"Mi Lova", artista:"Bad Gyal;Myke Towers", url:"https://music.apple.com/es/search?term=Mi%20Lova%20Bad%20Gyal%3BMyke%20Towers" },
+{ titulo:"Me Rehúso", artista:"Danny Ocean", url:"https://music.apple.com/es/search?term=Me%20Reh%C3%BAso%20Danny%20Ocean" },
+{ titulo:"Ahora Dice", artista:"Chris Jedi;J Balvin;Ozuna;Arcángel", url:"https://music.apple.com/es/search?term=Ahora%20Dice%20Chris%20Jedi%3BJ%20Balvin%3BOzuna%3BArc%C3%A1ngel" },
+{ titulo:"Bonita", artista:"J Balvin;Jowell & Randy", url:"https://music.apple.com/es/search?term=Bonita%20J%20Balvin%3BJowell%20%26%20Randy" },
+{ titulo:"Vuelve", artista:"Daddy Yankee;Bad Bunny", url:"https://music.apple.com/es/search?term=Vuelve%20Daddy%20Yankee%3BBad%20Bunny" },
+{ titulo:"La flaca", artista:"Jarabe De Palo", url:"https://music.apple.com/es/search?term=La%20flaca%20Jarabe%20De%20Palo" },
+{ titulo:"Flaca", artista:"Andrés Calamaro", url:"https://music.apple.com/es/search?term=Flaca%20Andr%C3%A9s%20Calamaro" },
+{ titulo:"Limón y Sal", artista:"Julieta Venegas", url:"https://music.apple.com/es/search?term=Lim%C3%B3n%20y%20Sal%20Julieta%20Venegas" },
+{ titulo:"Morena mía", artista:"Miguel Bosé", url:"https://music.apple.com/es/search?term=Morena%20m%C3%ADa%20Miguel%20Bos%C3%A9" },
+{ titulo:"Devuélveme a mi chica", artista:"Hombres G", url:"https://music.apple.com/es/search?term=Devu%C3%A9lveme%20a%20mi%20chica%20Hombres%20G" },
+{ titulo:"Rosas", artista:"La Oreja de Van Gogh", url:"https://music.apple.com/es/search?term=Rosas%20La%20Oreja%20de%20Van%20Gogh" },
+{ titulo:"Hasta Que Dios Diga", artista:"Anuel AA;Bad Bunny", url:"https://music.apple.com/es/search?term=Hasta%20Que%20Dios%20Diga%20Anuel%20AA%3BBad%20Bunny" },
+{ titulo:"Aventura", artista:"Lunay;Anuel AA;Ozuna", url:"https://music.apple.com/es/search?term=Aventura%20Lunay%3BAnuel%20AA%3BOzuna" },
+{ titulo:"Chulo pt.2", artista:"Bad Gyal;Tokischa;Young Miko", url:"https://music.apple.com/es/search?term=Chulo%20pt.2%20Bad%20Gyal%3BTokischa%3BYoung%20Miko" },
+{ titulo:"She Don't Give a Fo", artista:"Duki;KHEA", url:"https://music.apple.com/es/search?term=She%20Don%27t%20Give%20a%20Fo%20Duki%3BKHEA" },
+{ titulo:"A Mí", artista:"Rels B", url:"https://music.apple.com/es/search?term=A%20M%C3%AD%20Rels%20B" },
+{ titulo:"Mami", artista:"Ptazeta;Juacko", url:"https://music.apple.com/es/search?term=Mami%20Ptazeta%3BJuacko" },
+{ titulo:"Manley", artista:"Lucho RK;Nake", url:"https://music.apple.com/es/search?term=Manley%20Lucho%20RK%3BNake" },
+{ titulo:"AQUÍ ESTOY", artista:"Lucho RK;D3llano", url:"https://music.apple.com/es/search?term=AQU%C3%8D%20ESTOY%20Lucho%20RK%3BD3llano" },
+{ titulo:"Cosquilleo", artista:"Lucho RK;Juacko", url:"https://music.apple.com/es/search?term=Cosquilleo%20Lucho%20RK%3BJuacko" },
+{ titulo:"UN AÑITO MÁS", artista:"Lucho RK;AFTERMUSIC", url:"https://music.apple.com/es/search?term=UN%20A%C3%91ITO%20M%C3%81S%20Lucho%20RK%3BAFTERMUSIC" },
+{ titulo:"PINKY PROMISE", artista:"La Pantera", url:"https://music.apple.com/es/search?term=PINKY%20PROMISE%20La%20Pantera" },
+{ titulo:"Caramelo", artista:"Lucho RK", url:"https://music.apple.com/es/search?term=Caramelo%20Lucho%20RK" },
+{ titulo:"AIAIAI", artista:"Lucho RK", url:"https://music.apple.com/es/search?term=AIAIAI%20Lucho%20RK" },
+{ titulo:"BUENAS NOCHES", artista:"Quevedo", url:"https://music.apple.com/es/search?term=BUENAS%20NOCHES%20Quevedo" },
+{ titulo:"Piel de Cordero", artista:"Quevedo;La Pantera", url:"https://music.apple.com/es/search?term=Piel%20de%20Cordero%20Quevedo%3BLa%20Pantera" },
+{ titulo:"Me Gustas Natural", artista:"Eladio Carrion;Rels B", url:"https://music.apple.com/es/search?term=Me%20Gustas%20Natural%20Eladio%20Carrion%3BRels%20B" },
+{ titulo:"Tuenti - Remix", artista:"Raul Clyde;SAIKO", url:"https://music.apple.com/es/search?term=Tuenti%20-%20Remix%20Raul%20Clyde%3BSAIKO" },
+{ titulo:"Tú", artista:"Myke Towers", url:"https://music.apple.com/es/search?term=T%C3%BA%20Myke%20Towers" },
+{ titulo:"ESCALOFRÍOS", artista:"Mora", url:"https://music.apple.com/es/search?term=ESCALOFR%C3%8DOS%20Mora" },
+{ titulo:"COMO HAS ESTAU?", artista:"Mora", url:"https://music.apple.com/es/search?term=COMO%20HAS%20ESTAU%3F%20Mora" },
+{ titulo:"DONDE SE APRENDE A QUERER?", artista:"Mora", url:"https://music.apple.com/es/search?term=DONDE%20SE%20APRENDE%20A%20QUERER%3F%20Mora" },
+{ titulo:"badtrip :(", artista:"Mora", url:"https://music.apple.com/es/search?term=badtrip%20%3A%28%20Mora" },
+{ titulo:"OJOS COLORAU", artista:"Mora", url:"https://music.apple.com/es/search?term=OJOS%20COLORAU%20Mora" },
+{ titulo:"Chamaquita", artista:"Quevedo;Juseph", url:"https://music.apple.com/es/search?term=Chamaquita%20Quevedo%3BJuseph" },
+{ titulo:"Dejavu", artista:"JC Reyes;Pedro Calderon", url:"https://music.apple.com/es/search?term=Dejavu%20JC%20Reyes%3BPedro%20Calderon" },
+{ titulo:"Celine (with Kidd Keo)", artista:"Ghost Killer Track;Kidd Keo", url:"https://music.apple.com/es/search?term=Celine%20%28with%20Kidd%20Keo%29%20Ghost%20Killer%20Track%3BKidd%20Keo" },
+{ titulo:"BESOS (with Kidd Keo & Neelo)", artista:"SwaggGlock;Neelo;Kidd Keo", url:"https://music.apple.com/es/search?term=BESOS%20%28with%20Kidd%20Keo%20%26%20Neelo%29%20SwaggGlock%3BNeelo%3BKidd%20Keo" },
+{ titulo:"Movezz en silencio", artista:"Cruz Cafuné", url:"https://music.apple.com/es/search?term=Movezz%20en%20silencio%20Cruz%20Cafun%C3%A9" },
+{ titulo:"Cangrinaje", artista:"Cruz Cafuné", url:"https://music.apple.com/es/search?term=Cangrinaje%20Cruz%20Cafun%C3%A9" },
+{ titulo:"CALENTÓN", artista:"Mora", url:"https://music.apple.com/es/search?term=CALENT%C3%93N%20Mora" },
+{ titulo:"SIN SEÑAL", artista:"Quevedo;Ovy On the Drums", url:"https://music.apple.com/es/search?term=SIN%20SE%C3%91AL%20Quevedo%3BOvy%20On%20the%20Drums" },
+{ titulo:"Suelta", artista:"Jay Wheeler;Mora", url:"https://music.apple.com/es/search?term=Suelta%20Jay%20Wheeler%3BMora" },
+{ titulo:"Lugar Seguro", artista:"Jay Wheeler;NOREH", url:"https://music.apple.com/es/search?term=Lugar%20Seguro%20Jay%20Wheeler%3BNOREH" },
+{ titulo:"ETA - RMX", artista:"ROA;De La Rose;Luar La L;Yan Block;Omar Courtz", url:"https://music.apple.com/es/search?term=ETA%20-%20RMX%20ROA%3BDe%20La%20Rose%3BLuar%20La%20L%3BYan%20Block%3BOmar%20Courtz" },
+{ titulo:"Esa Mirada", artista:"Yan Block;KARBeats", url:"https://music.apple.com/es/search?term=Esa%20Mirada%20Yan%20Block%3BKARBeats" },
+{ titulo:"M U S A E L E V Á", artista:"Omar Courtz", url:"https://music.apple.com/es/search?term=M%20U%20S%20A%20E%20L%20E%20V%20%C3%81%20Omar%20Courtz" },
+{ titulo:"G O D D E S S", artista:"Omar Courtz", url:"https://music.apple.com/es/search?term=G%20O%20D%20D%20E%20S%20S%20Omar%20Courtz" },
+{ titulo:"Cobro", artista:"De La Rose", url:"https://music.apple.com/es/search?term=Cobro%20De%20La%20Rose" },
+{ titulo:"AURORA", artista:"Mora;De La Rose", url:"https://music.apple.com/es/search?term=AURORA%20Mora%3BDe%20La%20Rose" },
+{ titulo:"LOKENECESITAS", artista:"SAIKO;Omar Courtz", url:"https://music.apple.com/es/search?term=LOKENECESITAS%20SAIKO%3BOmar%20Courtz" },
+{ titulo:"MIL VIDAS", artista:"Mora;Ryan Castro", url:"https://music.apple.com/es/search?term=MIL%20VIDAS%20Mora%3BRyan%20Castro" },
+{ titulo:"DETRÁS DE TU ALMA", artista:"Mora", url:"https://music.apple.com/es/search?term=DETR%C3%81S%20DE%20TU%20ALMA%20Mora" },
+{ titulo:"DROGA", artista:"Mora;C. Tangana", url:"https://music.apple.com/es/search?term=DROGA%20Mora%3BC.%20Tangana" },
+{ titulo:"Still Luvin", artista:"Delaossa;Quevedo;Bigla The Kid", url:"https://music.apple.com/es/search?term=Still%20Luvin%20Delaossa%3BQuevedo%3BBigla%20The%20Kid" },
+{ titulo:"CHAPIADORA.COM", artista:"Quevedo", url:"https://music.apple.com/es/search?term=CHAPIADORA.COM%20Quevedo" },
+{ titulo:"NUBES", artista:"De La Rose;Omar Courtz", url:"https://music.apple.com/es/search?term=NUBES%20De%20La%20Rose%3BOmar%20Courtz" },
+{ titulo:"Comernos", artista:"Omar Courtz;Bad Gyal", url:"https://music.apple.com/es/search?term=Comernos%20Omar%20Courtz%3BBad%20Gyal" },
+{ titulo:"TUCHAT", artista:"Quevedo", url:"https://music.apple.com/es/search?term=TUCHAT%20Quevedo" },
+{ titulo:"⁠LUCES DE COLORES", artista:"Omar Courtz", url:"https://music.apple.com/es/search?term=%E2%81%A0LUCES%20DE%20COLORES%20Omar%20Courtz" },
+{ titulo:"Scat Pack", artista:"Clarent;Omar Courtz", url:"https://music.apple.com/es/search?term=Scat%20Pack%20Clarent%3BOmar%20Courtz" },
+{ titulo:"secuestro", artista:"Slayter;Yan Block;NTG", url:"https://music.apple.com/es/search?term=secuestro%20Slayter%3BYan%20Block%3BNTG" },
+{ titulo:"444 - Remix", artista:"Yan Block;De La Rose;Hades66;Ñengo Flow", url:"https://music.apple.com/es/search?term=444%20-%20Remix%20Yan%20Block%3BDe%20La%20Rose%3BHades66%3B%C3%91engo%20Flow" },
+{ titulo:"TATE QUIETA", artista:"ROA;CDobleta", url:"https://music.apple.com/es/search?term=TATE%20QUIETA%20ROA%3BCDobleta" },
+{ titulo:"Problema (with Luar La L)", artista:"Dei V;Luar La L", url:"https://music.apple.com/es/search?term=Problema%20%28with%20Luar%20La%20L%29%20Dei%20V%3BLuar%20La%20L" },
+{ titulo:"YOGURCITO REMIX (feat. Kris R., ROA)", artista:"Blessd;Anuel AA;Yan Block;Luar La L;Kris R.;ROA", url:"https://music.apple.com/es/search?term=YOGURCITO%20REMIX%20%28feat.%20Kris%20R.%2C%20ROA%29%20Blessd%3BAnuel%20AA%3BYan%20Block%3BLuar%20La%20L%3BKris%20R.%3BROA" },
+{ titulo:"FANTASÍA", artista:"ROA", url:"https://music.apple.com/es/search?term=FANTAS%C3%8DA%20ROA" },
+{ titulo:"TOA", artista:"Mora;Young Miko", url:"https://music.apple.com/es/search?term=TOA%20Mora%3BYoung%20Miko" },
+{ titulo:"Resentia", artista:"Pablo Chill-E", url:"https://music.apple.com/es/search?term=Resentia%20Pablo%20Chill-E" },
+{ titulo:"DONDE TE ESCONDES? 2.0", artista:"Yapi;JC Reyes", url:"https://music.apple.com/es/search?term=DONDE%20TE%20ESCONDES%3F%202.0%20Yapi%3BJC%20Reyes" },
+{ titulo:"Forni", artista:"Los Ballers;Clarent;Rauw Alejandro", url:"https://music.apple.com/es/search?term=Forni%20Los%20Ballers%3BClarent%3BRauw%20Alejandro" },
+{ titulo:"Mastercard", artista:"Yan Block", url:"https://music.apple.com/es/search?term=Mastercard%20Yan%20Block" },
+{ titulo:"D3M0N", artista:"Yan Block", url:"https://music.apple.com/es/search?term=D3M0N%20Yan%20Block" },
+{ titulo:"WYA REMIX RED", artista:"J Abdiel;De La Rose;Yan Block;iZaak;Jay Wheeler", url:"https://music.apple.com/es/search?term=WYA%20REMIX%20RED%20J%20Abdiel%3BDe%20La%20Rose%3BYan%20Block%3BiZaak%3BJay%20Wheeler" },
+{ titulo:"Ruina", artista:"Xiyo;Fernandezz;Yung Beef;Quevedo", url:"https://music.apple.com/es/search?term=Ruina%20Xiyo%3BFernandezz%3BYung%20Beef%3BQuevedo" },
+{ titulo:"Do You Remember", artista:"Xiyo;Fernandezz;Eix", url:"https://music.apple.com/es/search?term=Do%20You%20Remember%20Xiyo%3BFernandezz%3BEix" },
+{ titulo:"BAJO LA LUNA", artista:"Xiyo;Fernandezz;dn.aire", url:"https://music.apple.com/es/search?term=BAJO%20LA%20LUNA%20Xiyo%3BFernandezz%3Bdn.aire" },
+{ titulo:"Da Me", artista:"Bad Gyal", url:"https://music.apple.com/es/search?term=Da%20Me%20Bad%20Gyal" },
+{ titulo:"Yo sé", artista:"Yan Block;TORRRES", url:"https://music.apple.com/es/search?term=Yo%20s%C3%A9%20Yan%20Block%3BTORRRES" },
+{ titulo:"Juguete", artista:"Yan Block;NTG;SAIKO", url:"https://music.apple.com/es/search?term=Juguete%20Yan%20Block%3BNTG%3BSAIKO" },
+{ titulo:"Garchin", artista:"Bryant Myers;Omar Courtz", url:"https://music.apple.com/es/search?term=Garchin%20Bryant%20Myers%3BOmar%20Courtz" },
+{ titulo:"Sin Frenos", artista:"Eladio Carrion;Bizarrap;Duki", url:"https://music.apple.com/es/search?term=Sin%20Frenos%20Eladio%20Carrion%3BBizarrap%3BDuki" },
+{ titulo:"Ahora y Siempre", artista:"Quevedo;Linton", url:"https://music.apple.com/es/search?term=Ahora%20y%20Siempre%20Quevedo%3BLinton" },
+{ titulo:"ME FALTA ALGO", artista:"Quevedo", url:"https://music.apple.com/es/search?term=ME%20FALTA%20ALGO%20Quevedo" },
+{ titulo:"DAME", artista:"Quevedo;Omar Montes", url:"https://music.apple.com/es/search?term=DAME%20Quevedo%3BOmar%20Montes" },
+{ titulo:"PUNTO G", artista:"Quevedo", url:"https://music.apple.com/es/search?term=PUNTO%20G%20Quevedo" },
+{ titulo:"QUE HABILIDAD", artista:"Mora", url:"https://music.apple.com/es/search?term=QUE%20HABILIDAD%20Mora" },
+{ titulo:"APA", artista:"Mora;Quevedo", url:"https://music.apple.com/es/search?term=APA%20Mora%3BQuevedo" },
+{ titulo:"Polaris", artista:"SAIKO;Came Beats", url:"https://music.apple.com/es/search?term=Polaris%20SAIKO%3BCame%20Beats" }
         ];
 
         /* ═══════════════════════════════════════════════════════════════════
@@ -1968,6 +2480,113 @@
         }
 
         /* ═══════════════════════════════════════════════════════════════════
+                    SISTEMA DE NOTIFICACIONES
+        ═══════════════════════════════════════════════════════════════════ */
+        let notificationsEnabled = false;
+        let initialLoadComplete = { status: false, sentimientos: false };
+
+        function requestNotificationPermission() {
+            if (!('Notification' in window)) return;
+            if (Notification.permission === 'granted') {
+                notificationsEnabled = true;
+                return;
+            }
+            if (Notification.permission !== 'denied') {
+                Notification.requestPermission().then(perm => {
+                    notificationsEnabled = perm === 'granted';
+                });
+            }
+        }
+
+        function showNotification(title, body, icon = '💕') {
+            if (!notificationsEnabled || document.hasFocus()) return;
+            try {
+                const notif = new Notification(title, {
+                    body: body,
+                    icon: 'icon-192.png',
+                    badge: 'icon-192.png',
+                    tag: 'nosotros-' + Date.now(),
+                    vibrate: [200, 100, 200]
+                });
+                notif.onclick = () => {
+                    window.focus();
+                    notif.close();
+                };
+                setTimeout(() => notif.close(), 8000);
+            } catch(e) { console.log('Notification error:', e); }
+        }
+
+        function setupNotificationListeners() {
+            if (!firebaseEnabled || !database) return;
+            const partner = currentUser === 'sergio' ? 'alba' : 'sergio';
+            const partnerName = partner.charAt(0).toUpperCase() + partner.slice(1);
+
+            // Listen for partner status changes
+            database.ref('status/' + partner).on('value', snap => {
+                if (!initialLoadComplete.status) {
+                    initialLoadComplete.status = true;
+                    return; // Skip the initial load
+                }
+                const data = snap.val();
+                if (data && data.text) {
+                    showNotification(
+                        `${partnerName} cambió su estado`,
+                        `${data.emoji || '💫'} ${data.text}`,
+                    );
+                }
+            });
+
+            // Listen for new sentimientos
+            database.ref('sentimientos').on('child_added', snap => {
+                if (!initialLoadComplete.sentimientos) return;
+                const data = snap.val();
+                if (data && data.author && data.author !== currentUser) {
+                    const authorName = data.author.charAt(0).toUpperCase() + data.author.slice(1);
+                    showNotification(
+                        `${authorName} añadió un sentimiento`,
+                        `${data.emoji || '🫶'} "${data.text?.substring(0, 60) || 'Nuevo sentimiento'}"`,
+                    );
+                }
+            });
+
+            // Mark sentimientos initial load as complete after a delay
+            setTimeout(() => { initialLoadComplete.sentimientos = true; }, 3000);
+        }
+
+        // Init notifications
+        requestNotificationPermission();
+        if (firebaseEnabled) {
+            setTimeout(setupNotificationListeners, 1500);
+        }
+
+        // In-app toast notifications (works when app is focused)
+        function showToast(icon, title, subtitle) {
+            // Remove existing toast
+            document.querySelectorAll('.toast-notification').forEach(t => t.remove());
+            
+            const toast = document.createElement('div');
+            toast.className = 'toast-notification';
+            toast.innerHTML = `<span class="toast-icon">${icon}</span><div><div class="toast-text">${title}</div>${subtitle ? `<div class="toast-sub">${subtitle}</div>` : ''}</div>`;
+            document.body.appendChild(toast);
+            
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => toast.classList.add('show'));
+            });
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 500);
+            }, 4000);
+        }
+
+        // Override notification to also show in-app toasts
+        const _origShowNotif = showNotification;
+        showNotification = function(title, body, icon) {
+            showToast(icon || '💕', title, body);
+            _origShowNotif(title, body, icon);
+        };
+
+        /* ═══════════════════════════════════════════════════════════════════
                     WHATSAPP CHAT ANALYZER
         ═══════════════════════════════════════════════════════════════════ */
         let waMessages = [];
@@ -2160,18 +2779,24 @@
         }
 
         function showTopWords(query) {
-            const stopWords = new Set(['de','la','el','en','que','y','a','los','las','un','una','es','por','con','no','se','del','lo','al','me','mi','te','tu','le','su','mas','pero','ya','o','para','como','todo','esta','hay','muy','fue','son','esta','era','ser','sin','sobre','tiene','hasta','cuando','entre','donde','despues','antes','tambien','puede','todos','asi','nos','uno','otro','otra','este','ese','ella','eso','esto','estas','estos','esas','esos','aqui','ahi','alli','cual','quien','cuyo','tanto','tan','poco','mucho','bien','mal','mejor','peor','hoy','ayer','sido','si','da','va','voy','vas','van','estoy','has','he','ha','hacer','puedo','quiero','jaja','jajaja','jajajaja','xd','https','http','media','omitted']);
+            const stopWords = new Set(['de','la','el','en','que','y','a','los','las','un','una','es','por','con','no','se','del','lo','al','me','mi','te','tu','le','su','mas','pero','ya','o','para','como','todo','esta','hay','muy','fue','son','esta','era','ser','sin','sobre','tiene','hasta','cuando','entre','donde','despues','antes','tambien','puede','todos','asi','nos','uno','otro','otra','este','ese','ella','eso','esto','estas','estos','esas','esos','aqui','ahi','alli','cual','quien','cuyo','tanto','tan','poco','mucho','bien','mal','mejor','peor','hoy','ayer','sido','si','da','va','voy','vas','van','estoy','has','he','ha','hacer','puedo','quiero','jaja','jajaja','jajajaja','xd','https','http','media','omitted','imagen','omitido','audio','sticker','video','gif','documento','contacto','ubicacion','adjunto','archivo','pdf','vcard','nota','voz','www','com','imagen_omitida','video_omitido','audio_omitido','sticker_omitido','gif_omitido','documento_omitido','mensaje','eliminaste','elimino','borrado']);
             const wordCount = {};
+            const mediaPatterns = /^(<multimedia|\u200e?imagen|audio|sticker|gif|vcard|documento|video|\u200e)/i;
             waMessages.forEach(m => {
+                if (mediaPatterns.test(m.text.trim())) return;
                 m.text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^\w\s]/g, '').split(/\s+/).forEach(w => {
                     if (w.length > 2 && !stopWords.has(w)) wordCount[w] = (wordCount[w] || 0) + 1;
                 });
             });
             const sorted = Object.entries(wordCount).sort((a, b) => b[1] - a[1]).slice(0, 15);
+            if (!sorted.length) {
+                document.getElementById('wa-results').innerHTML = '<div class="wa-result-card"><div class="result-text">No se encontraron palabras relevantes.</div></div>';
+                return;
+            }
             const results = document.getElementById('wa-results');
             results.innerHTML = `
                 <div class="wa-result-card">
-                    <div class="result-title">Top 15 palabras</div>
+                    <div class="result-title">🏆 Top 15 palabras</div>
                     <div class="result-text">La más usada: "<strong>${sorted[0][0]}</strong>" con ${sorted[0][1].toLocaleString()} apariciones</div>
                     <div class="wa-chart-container"><canvas id="chart-words"></canvas></div>
                 </div>`;
@@ -2211,18 +2836,32 @@
         }
 
         function showMostActiveDay(query) {
-            const daily = {};
-            waMessages.forEach(m => { daily[m.date.toLocaleDateString('es-ES')] = (daily[m.date.toLocaleDateString('es-ES')] || 0) + 1; });
-            const sorted = Object.entries(daily).sort((a, b) => b[1] - a[1]).slice(0, 10);
-            document.getElementById('wa-results').innerHTML = `
-                <div class="wa-result-card">
-                    <div class="result-title">Días más activos</div>
-                    <div class="result-text">
-                        El día con más mensajes: <strong>${sorted[0][0]}</strong> con <strong>${sorted[0][1]}</strong> mensajes.<br><br>
-                        <strong>Top 10:</strong><br>
-                        ${sorted.map((d, i) => `${i+1}. ${d[0]} → ${d[1]} msgs`).join('<br>')}
-                    </div>
-                </div>`;
+            try {
+                const daily = {};
+                waMessages.forEach(m => {
+                    try {
+                        const key = m.date.toLocaleDateString('es-ES');
+                        daily[key] = (daily[key] || 0) + 1;
+                    } catch(e) { /* skip invalid dates */ }
+                });
+                const sorted = Object.entries(daily).sort((a, b) => b[1] - a[1]).slice(0, 10);
+                if (!sorted.length) {
+                    document.getElementById('wa-results').innerHTML = '<div class="wa-result-card"><div class="result-text">No se pudieron analizar las fechas de los mensajes.</div></div>';
+                    return;
+                }
+                document.getElementById('wa-results').innerHTML = `
+                    <div class="wa-result-card">
+                        <div class="result-title">📅 Días más activos</div>
+                        <div class="result-text">
+                            El día con más mensajes: <strong>${sorted[0][0]}</strong> con <strong>${sorted[0][1]}</strong> mensajes.<br><br>
+                            <strong>Top 10:</strong><br>
+                            ${sorted.map((d, i) => `${i+1}. ${d[0]} → ${d[1]} msgs`).join('<br>')}
+                        </div>
+                    </div>`;
+            } catch(err) {
+                console.error('Error en showMostActiveDay:', err);
+                document.getElementById('wa-results').innerHTML = `<div class="wa-result-card"><div class="result-title">Error</div><div class="result-text">${err.message}</div></div>`;
+            }
         }
 
         function showFirstMessages() {
@@ -2314,30 +2953,128 @@
         async function askGemini(query) {
             const results = document.getElementById('wa-results');
             results.innerHTML = '<div class="wa-loading"><span class="spinner"></span>Preguntando a la IA...</div>';
-            const terms = query.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[¿?¡!]/g,'').split(/\s+/).filter(w => w.length > 2);
-            const relevant = waMessages.filter(m => {
-                const norm = m.text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
-                return terms.some(t => norm.includes(t));
-            }).slice(0, 60);
-            const sample = relevant.length > 5 ? relevant : waMessages.slice(0, 40);
-            const counts = {}; waMessages.forEach(m => counts[m.author] = (counts[m.author] || 0) + 1);
-            const context = `Eres un asistente cariñoso que analiza el chat de WhatsApp de una pareja. Responde en español.\n\nDATOS:\n- Total: ${waMessages.length} mensajes\n- Usuarios: ${waUsers.join(', ')}\n- Por usuario: ${JSON.stringify(counts)}\n- Primer mensaje: ${waMessages[0].date.toLocaleDateString('es-ES')}\n- Último: ${waMessages[waMessages.length-1].date.toLocaleDateString('es-ES')}\n- Días: ${Math.ceil((waMessages[waMessages.length-1].date - waMessages[0].date) / (1000*60*60*24))}\n\nMENSAJES:\n${sample.map(m => `[${m.date.toLocaleDateString('es-ES')} ${String(m.hour).padStart(2,'0')}:${String(m.date.getMinutes()).padStart(2,'0')}] ${m.author}: ${m.text.substring(0, 150)}`).join('\n')}\n\nPREGUNTA: ${query}`;
-
+            
             try {
+                const terms = query.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[¿?¡!]/g,'').split(/\s+/).filter(w => w.length > 2);
+                const relevant = waMessages.filter(m => {
+                    const norm = m.text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+                    return terms.some(t => norm.includes(t));
+                }).slice(0, 80);
+                
+                // Build diverse sample: relevant msgs + random spread + recent msgs
+                let sample = [];
+                if (relevant.length > 10) {
+                    sample = relevant.slice(0, 50);
+                } else {
+                    // Take msgs spread across conversation
+                    const step = Math.max(1, Math.floor(waMessages.length / 60));
+                    for (let i = 0; i < waMessages.length && sample.length < 40; i += step) {
+                        sample.push(waMessages[i]);
+                    }
+                    // Add last 20 msgs for recency
+                    sample = sample.concat(waMessages.slice(-20));
+                }
+                
+                // Filter out media placeholder messages
+                sample = sample.filter(m => !m.text.match(/^(<multimedia|imagen omitida|audio omitido|sticker omitido|gif omitido|video omitido|documento omitido|\u200e)/i));
+                
+                const counts = {}; 
+                const charCounts = {};
+                waMessages.forEach(m => {
+                    counts[m.author] = (counts[m.author] || 0) + 1;
+                    charCounts[m.author] = (charCounts[m.author] || 0) + m.text.length;
+                });
+                
+                // Calculate hourly distribution
+                const hours = Array(24).fill(0);
+                waMessages.forEach(m => hours[m.hour]++);
+                const peakHour = hours.indexOf(Math.max(...hours));
+                
+                // Calculate monthly stats
+                const monthly = {};
+                waMessages.forEach(m => {
+                    const key = `${m.year}-${String(m.month+1).padStart(2,'0')}`;
+                    monthly[key] = (monthly[key] || 0) + 1;
+                });
+                const monthlyArr = Object.entries(monthly).sort((a,b) => b[1]-a[1]);
+                
+                const totalDays = Math.ceil((waMessages[waMessages.length-1].date - waMessages[0].date) / (1000*60*60*24)) || 1;
+                
+                const systemPrompt = `Eres un asistente experto y cariñoso que analiza conversaciones de WhatsApp de parejas. Tu personalidad es cálida, perspicaz y un poco romántica. Responde SIEMPRE en español. 
+
+REGLAS:
+- Sé específico con datos y fechas cuando sea posible
+- Usa emojis con moderación para dar calidez
+- Si detectas patrones interesantes, menciónalos
+- No inventes información que no esté en los datos
+- Las líneas que dicen "imagen omitida", "audio omitido", "sticker omitido" etc. son archivos multimedia, NO texto real
+- Responde de forma concisa pero completa (máximo 300 palabras)`;
+
+                const userPrompt = `ESTADÍSTICAS DEL CHAT:
+- Total mensajes: ${waMessages.length.toLocaleString()}
+- Periodo: ${waMessages[0].date.toLocaleDateString('es-ES')} → ${waMessages[waMessages.length-1].date.toLocaleDateString('es-ES')} (${totalDays} días)
+- Media diaria: ${Math.round(waMessages.length / totalDays)} msgs/día
+- Usuarios: ${waUsers.join(' y ')}
+- Mensajes por usuario: ${Object.entries(counts).map(([k,v]) => `${k}: ${v.toLocaleString()} (${Math.round(v/waMessages.length*100)}%)`).join(', ')}
+- Media caracteres/msg: ${Object.entries(charCounts).map(([k,v]) => `${k}: ${Math.round(v/counts[k])}`).join(', ')}
+- Hora pico: ${peakHour}:00
+- Mes más activo: ${monthlyArr[0]?.[0] || 'N/A'} (${monthlyArr[0]?.[1]?.toLocaleString() || 0} msgs)
+
+MUESTRA DE MENSAJES:
+${sample.map(m => `[${m.date.toLocaleDateString('es-ES')} ${String(m.hour).padStart(2,'0')}:${String(m.date.getMinutes()).padStart(2,'0')}] ${m.author}: ${m.text.substring(0, 200)}`).join('\n')}
+
+PREGUNTA DEL USUARIO: ${query}`;
+
                 const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: context }] }] })
+                    body: JSON.stringify({
+                        system_instruction: { parts: [{ text: systemPrompt }] },
+                        contents: [{ role: 'user', parts: [{ text: userPrompt }] }],
+                        generationConfig: { temperature: 0.7, maxOutputTokens: 1024 }
+                    })
                 });
+                
+                if (!res.ok) {
+                    const errText = await res.text();
+                    console.error('Gemini API error:', res.status, errText);
+                    // Try fallback model if primary fails
+                    const fallbackRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{ parts: [{ text: systemPrompt + '\n\n' + userPrompt }] }],
+                            generationConfig: { temperature: 0.7, maxOutputTokens: 1024 }
+                        })
+                    });
+                    if (!fallbackRes.ok) {
+                        throw new Error(`API error ${res.status}: ${errText.substring(0, 200)}`);
+                    }
+                    const fallbackData = await fallbackRes.json();
+                    const fallbackAnswer = fallbackData.candidates?.[0]?.content?.parts?.[0]?.text;
+                    if (fallbackAnswer) {
+                        results.innerHTML = `<div class="wa-result-card"><div class="result-title">✨ Respuesta IA <span class="wa-ai-badge">Gemini</span></div><div class="result-text">${fallbackAnswer.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>')}</div></div>`;
+                        return;
+                    }
+                    throw new Error('No se pudo obtener respuesta del modelo');
+                }
+                
                 const data = await res.json();
+                
+                if (data.error) {
+                    throw new Error(data.error.message || 'Error de la API');
+                }
+                
                 const answer = data.candidates?.[0]?.content?.parts?.[0]?.text;
                 if (answer) {
-                    results.innerHTML = `<div class="wa-result-card"><div class="result-title">Respuesta IA <span class="wa-ai-badge">Gemini</span></div><div class="result-text">${answer.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>')}</div></div>`;
+                    results.innerHTML = `<div class="wa-result-card"><div class="result-title">✨ Respuesta IA <span class="wa-ai-badge">Gemini</span></div><div class="result-text">${answer.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>').replace(/\n/g, '<br>')}</div></div>`;
                 } else {
-                    results.innerHTML = `<div class="wa-result-card"><div class="result-text">No se pudo obtener respuesta.</div></div>`;
+                    const blockReason = data.candidates?.[0]?.finishReason;
+                    results.innerHTML = `<div class="wa-result-card"><div class="result-text">No se pudo obtener respuesta${blockReason ? ` (${blockReason})` : ''}. Intenta reformular la pregunta.</div></div>`;
                 }
             } catch(e) {
-                results.innerHTML = `<div class="wa-result-card"><div class="result-text">Error: ${e.message}</div></div>`;
+                console.error('askGemini error:', e);
+                results.innerHTML = `<div class="wa-result-card"><div class="result-title">⚠️ Error</div><div class="result-text">${e.message}<br><br><small>Si el error persiste, intenta con otra pregunta o recarga la página.</small></div></div>`;
             }
         }
 
