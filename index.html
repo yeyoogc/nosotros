@@ -1126,7 +1126,7 @@
 
         /* Selection prevention */
         * { -webkit-user-select: none; user-select: none; }
-        .text-input, .wa-search-input, .song-filter-input { -webkit-user-select: text; user-select: text; }
+        .text-input, .wa-search-input, .song-filter-input, .movie-search-input { -webkit-user-select: text; user-select: text; }
 
         /* ═══════════════════════════════════════════════════════════════
            DESIGN ENHANCEMENTS v2.1 - Warmth & Polish
@@ -1763,6 +1763,289 @@
             100% { transform: rotate(360deg) scale(1); }
         }
         .dice-rolling .btn-icon { animation: diceRoll 0.4s ease; }
+
+        /* ═══════════════════════════════════════════════════════════════
+           MOVIE ENHANCEMENTS v4.0
+        ═══════════════════════════════════════════════════════════════ */
+
+        /* Movie filter tabs */
+        .movie-tabs {
+            display: flex;
+            gap: 6px;
+            width: 100%;
+            max-width: 380px;
+            margin-bottom: 12px;
+        }
+        .movie-tab {
+            flex: 1;
+            padding: 8px 12px;
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: transparent;
+            color: var(--text-light-secondary);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        .movie-tab.active {
+            background: linear-gradient(135deg, #6C9BD2, #4A7FB5);
+            border-color: #6C9BD2;
+            color: white;
+            box-shadow: 0 4px 12px rgba(108, 155, 210, 0.3);
+        }
+        .movie-tab .tab-count {
+            font-size: 0.58rem;
+            opacity: 0.7;
+            margin-left: 3px;
+        }
+
+        /* Movie search row */
+        .movie-search-row {
+            display: flex;
+            gap: 8px;
+            width: 100%;
+            max-width: 380px;
+            margin-bottom: 10px;
+        }
+        .movie-search-input {
+            flex: 1;
+            padding: 11px 16px;
+            border: none;
+            border-radius: var(--radius-md);
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-light);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.8rem;
+            outline: none;
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
+            -webkit-user-select: text;
+            user-select: text;
+        }
+        .movie-search-input::placeholder { color: var(--text-light-secondary); }
+        .movie-search-input:focus {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: var(--glass-dark-border);
+        }
+        .random-movie-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, #6C9BD2, #4A7FB5);
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(108, 155, 210, 0.3);
+        }
+        .random-movie-btn:active {
+            transform: scale(0.88) rotate(180deg);
+        }
+
+        /* Custom confirmation modal */
+        .confirm-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 5000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+        .confirm-modal-overlay.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .confirm-modal {
+            background: linear-gradient(145deg, #1A1025, #2D1B3D);
+            border: 1px solid rgba(232, 160, 191, 0.15);
+            border-radius: var(--radius-lg);
+            padding: 28px 24px;
+            max-width: 300px;
+            width: 85%;
+            text-align: center;
+            transform: scale(0.9) translateY(20px);
+            transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+        }
+        .confirm-modal-overlay.show .confirm-modal {
+            transform: scale(1) translateY(0);
+        }
+        .confirm-modal-icon {
+            font-size: 2rem;
+            margin-bottom: 12px;
+        }
+        .confirm-modal-text {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.88rem;
+            color: var(--text-light);
+            font-weight: 500;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        .confirm-modal-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .confirm-modal-btn {
+            flex: 1;
+            padding: 12px 16px;
+            border-radius: 50px;
+            border: none;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .confirm-modal-btn.cancel {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-light-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+        .confirm-modal-btn.cancel:active {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        .confirm-modal-btn.danger {
+            background: linear-gradient(135deg, var(--danger), #a41e2d);
+            color: white;
+            box-shadow: 0 4px 12px rgba(224, 92, 107, 0.3);
+        }
+        .confirm-modal-btn.danger:active {
+            transform: scale(0.95);
+        }
+
+        /* Movie item animation */
+        .movie-item {
+            animation: movieItemIn 0.35s cubic-bezier(0.32, 0.72, 0, 1) both;
+        }
+        .movie-item.removing {
+            animation: itemRemove 0.4s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+        }
+        @keyframes movieItemIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes itemRemove {
+            to { opacity: 0; transform: translateX(60px) scale(0.9); max-height: 0; padding-top: 0; padding-bottom: 0; margin-bottom: 0; overflow: hidden; }
+        }
+
+        /* Random movie highlight */
+        .shared-item.movie-highlight {
+            background: rgba(108, 155, 210, 0.15) !important;
+            border-color: rgba(108, 155, 210, 0.3) !important;
+            animation: moviePick 0.6s ease;
+            box-shadow: 0 0 20px rgba(108, 155, 210, 0.15);
+        }
+        @keyframes moviePick {
+            0% { transform: scale(0.95); opacity: 0.5; }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Movie stats mini */
+        .movie-stats-row {
+            display: flex;
+            gap: 8px;
+            width: 100%;
+            max-width: 380px;
+            margin-bottom: 12px;
+        }
+        .movie-stat-mini {
+            flex: 1;
+            background: var(--glass-dark);
+            border: 1px solid var(--glass-dark-border);
+            border-radius: var(--radius-sm);
+            padding: 10px;
+            text-align: center;
+        }
+        .movie-stat-mini .stat-value {
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--text-light);
+        }
+        .movie-stat-mini .stat-label {
+            font-size: 0.55rem;
+            color: var(--text-light-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Date night suggestion card */
+        .date-night-card {
+            width: 100%;
+            max-width: 380px;
+            background: linear-gradient(135deg, rgba(108, 155, 210, 0.1), rgba(232, 160, 191, 0.08));
+            border: 1px solid rgba(108, 155, 210, 0.15);
+            border-radius: var(--radius-lg);
+            padding: 18px;
+            margin-bottom: 14px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: none;
+        }
+        .date-night-card.show { display: block; }
+        .date-night-card:active { transform: scale(0.98); }
+        .date-night-title {
+            font-size: 0.72rem;
+            color: var(--text-light-secondary);
+            font-weight: 600;
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .date-night-movie {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.05rem;
+            color: var(--text-light);
+            font-weight: 600;
+        }
+        .date-night-sub {
+            font-size: 0.65rem;
+            color: var(--text-light-secondary);
+            margin-top: 4px;
+        }
+        .date-night-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            justify-content: center;
+        }
+        .date-night-btn {
+            padding: 8px 18px;
+            border-radius: 50px;
+            border: none;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .date-night-btn.accept {
+            background: linear-gradient(135deg, var(--success), #2E8B57);
+            color: white;
+        }
+        .date-night-btn.skip {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-light-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .date-night-btn:active { transform: scale(0.95); }
+
     </style>
 </head>
 <body>
@@ -1963,7 +2246,31 @@
             </header>
             <div class="user-switch"><button class="user-switch-btn active" onclick="setUser('sergio')">Sergio</button><button class="user-switch-btn" onclick="setUser('alba')">Alba</button></div>
             <div class="input-area"><div class="input-group"><input type="text" class="text-input" id="pelicula-input" placeholder="A&ntilde;adir pel&iacute;cula..."><button class="send-button" onclick="addPelicula()">&#127916;</button></div></div>
+            <div class="movie-search-row">
+                <input type="text" class="movie-search-input" id="movie-search" placeholder="Buscar pel&iacute;cula..." oninput="filterMovies()">
+                <button class="random-movie-btn" onclick="randomMoviePick()" title="Pel&iacute;cula aleatoria">&#127922;</button>
+            </div>
+            <div class="movie-tabs" id="movie-tabs">
+                <button class="movie-tab active" onclick="setMovieFilter('all')">Todas <span class="tab-count" id="tab-count-all"></span></button>
+                <button class="movie-tab" onclick="setMovieFilter('pending')">Pendientes <span class="tab-count" id="tab-count-pending"></span></button>
+                <button class="movie-tab" onclick="setMovieFilter('watched')">Vistas <span class="tab-count" id="tab-count-watched"></span></button>
+            </div>
+            <div class="movie-stats-row" id="movie-stats-row" style="display:none;">
+                <div class="movie-stat-mini"><div class="stat-value" id="ms-total">0</div><div class="stat-label">Total</div></div>
+                <div class="movie-stat-mini"><div class="stat-value" id="ms-watched">0</div><div class="stat-label">Vistas</div></div>
+                <div class="movie-stat-mini"><div class="stat-value" id="ms-pending">0</div><div class="stat-label">Pendientes</div></div>
+                <div class="movie-stat-mini"><div class="stat-value" id="ms-pct">0%</div><div class="stat-label">Progreso</div></div>
+            </div>
             <div class="movie-progress-bar" id="movie-progress"><div class="progress-header"><span class="progress-label">Progreso</span><span class="progress-count" id="movie-progress-count">0/0</span></div><div class="progress-track"><div class="progress-fill" id="movie-progress-fill" style="width:0%"></div></div></div>
+            <div class="date-night-card" id="date-night-card">
+                <div class="date-night-title">&#127775; Sugerencia para esta noche</div>
+                <div class="date-night-movie" id="date-night-movie"></div>
+                <div class="date-night-sub" id="date-night-sub"></div>
+                <div class="date-night-actions">
+                    <button class="date-night-btn skip" onclick="randomMoviePick()">&#128260; Otra</button>
+                    <button class="date-night-btn accept" onclick="markDateNightWatched()">&#9989; Vista</button>
+                </div>
+            </div>
             <div class="shared-list" id="peliculas-list"></div>
         </section>
         
@@ -2153,7 +2460,7 @@
         } catch(e) { console.log("Firebase no disponible:", e); }
 
         /* ═══════════════════════════════════════════════════════════════════
-           GROQ AI CONFIG
+            GROQ AI CONFIG
         ═══════════════════════════════════════════════════════════════════ */
         const GROQ_API_KEY = "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";
 
@@ -2808,9 +3115,15 @@
 
         function loadSentimientos() {
             if (firebaseEnabled) {
-                database.ref('sentimientos').orderByChild('id').on('value', snap => {
+                database.ref('sentimientos').on('value', snap => {
                     const d = snap.val();
-                    renderSentimientos(d ? Object.values(d).reverse() : []);
+                    if (d) {
+                        const items = Object.entries(d).map(([key, val]) => ({...val, _key: key}));
+                        items.sort((a, b) => (b.id || 0) - (a.id || 0));
+                        renderSentimientos(items);
+                    } else {
+                        renderSentimientos([]);
+                    }
                 });
             } else {
                 renderSentimientos(localSentimientos);
@@ -2825,9 +3138,10 @@
                 return;
             }
             items.forEach(i => {
+                const key = i._key || i.id;
                 const d = document.createElement('div');
                 d.className = 'shared-item';
-                d.innerHTML = `<div class="shared-item-header"><span class="shared-item-author ${i.author==='alba'?'partner':''}">${i.author==='sergio'?'Sergio':'Alba'}</span><div style="display:flex;align-items:center;gap:8px;"><span class="shared-item-date">${i.date}</span>${i.author===currentUser?`<button class="delete-item-btn" onclick="deleteSentimiento(${i.id})">✕</button>`:''}</div></div><p class="shared-item-text">${i.text}</p>`;
+                d.innerHTML = `<div class="shared-item-header"><span class="shared-item-author ${i.author==='alba'?'partner':''}">${i.author==='sergio'?'Sergio':'Alba'}</span><div style="display:flex;align-items:center;gap:8px;"><span class="shared-item-date">${i.date}</span>${i.author===currentUser?`<button class="delete-item-btn" onclick="event.stopPropagation();deleteSentimiento('${key}')">✕</button>`:''}</div></div><p class="shared-item-text">${i.text}</p>`;
                 c.appendChild(d);
             });
         }
@@ -2838,6 +3152,9 @@
                           PELÍCULAS (SHARED)
         ═══════════════════════════════════════════════════════════════════ */
         let localPeliculas = JSON.parse(localStorage.getItem('nosotros-peliculas') || '[]');
+        let allPeliculasData = [];
+        let currentMovieFilter = 'all';
+        let dateNightMovieKey = null;
 
         function addPelicula() {
             const input = document.getElementById('pelicula-input');
@@ -2855,26 +3172,39 @@
             if (navigator.vibrate) navigator.vibrate(30);
         }
 
-        function togglePelicula(id) {
+        function togglePelicula(key) {
             if (firebaseEnabled) {
-                database.ref('peliculas').orderByChild('id').equalTo(id).once('value', snap => {
-                    snap.forEach(c => { c.ref.update({ watched: !c.val().watched }); });
+                const ref = database.ref('peliculas/' + key);
+                ref.once('value', snap => {
+                    const data = snap.val();
+                    if (data) {
+                        ref.update({ watched: !data.watched });
+                        if (navigator.vibrate) navigator.vibrate(20);
+                    }
                 });
             } else {
+                const id = Number(key);
                 const i = localPeliculas.findIndex(p => p.id === id);
                 if (i !== -1) {
                     localPeliculas[i].watched = !localPeliculas[i].watched;
                     localStorage.setItem('nosotros-peliculas', JSON.stringify(localPeliculas));
                     renderPeliculas(localPeliculas);
+                    if (navigator.vibrate) navigator.vibrate(20);
                 }
             }
         }
 
         function loadPeliculas() {
             if (firebaseEnabled) {
-                database.ref('peliculas').orderByChild('id').on('value', snap => {
+                database.ref('peliculas').on('value', snap => {
                     const d = snap.val();
-                    renderPeliculas(d ? Object.values(d).reverse() : []);
+                    if (d) {
+                        const items = Object.entries(d).map(([key, val]) => ({...val, _key: key}));
+                        items.sort((a, b) => (b.id || 0) - (a.id || 0));
+                        renderPeliculas(items);
+                    } else {
+                        renderPeliculas([]);
+                    }
                 });
             } else {
                 renderPeliculas(localPeliculas);
@@ -2882,24 +3212,66 @@
         }
 
         function renderPeliculas(items) {
+            allPeliculasData = items;
             const c = document.getElementById('peliculas-list');
             c.innerHTML = '';
             // Update progress bar
             const total = items.length;
             const watched = items.filter(i => i.watched).length;
+            const pending = total - watched;
             const pct = total > 0 ? Math.round((watched / total) * 100) : 0;
             document.getElementById('movie-progress-count').textContent = `${watched}/${total} vistas`;
             document.getElementById('movie-progress-fill').style.width = pct + '%';
             document.getElementById('movie-progress').style.display = total > 0 ? 'block' : 'none';
 
+            // Update stats
+            const statsRow = document.getElementById('movie-stats-row');
+            if (statsRow) statsRow.style.display = total > 0 ? 'flex' : 'none';
+            const msTotal = document.getElementById('ms-total');
+            const msWatched = document.getElementById('ms-watched');
+            const msPending = document.getElementById('ms-pending');
+            const msPct = document.getElementById('ms-pct');
+            if (msTotal) msTotal.textContent = total;
+            if (msWatched) msWatched.textContent = watched;
+            if (msPending) msPending.textContent = pending;
+            if (msPct) msPct.textContent = pct + '%';
+
+            // Update tab counts
+            const tcAll = document.getElementById('tab-count-all');
+            const tcPending = document.getElementById('tab-count-pending');
+            const tcWatched = document.getElementById('tab-count-watched');
+            if (tcAll) tcAll.textContent = `(${total})`;
+            if (tcPending) tcPending.textContent = `(${pending})`;
+            if (tcWatched) tcWatched.textContent = `(${watched})`;
+
             if (!items.length) {
                 c.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🎬</div><p class="empty-state-text">Añade películas para ver juntos</p></div>';
                 return;
             }
-            items.forEach(i => {
+
+            // Apply filter
+            let filtered = items;
+            if (currentMovieFilter === 'pending') filtered = items.filter(i => !i.watched);
+            else if (currentMovieFilter === 'watched') filtered = items.filter(i => i.watched);
+
+            // Apply search
+            const searchVal = document.getElementById('movie-search')?.value?.toLowerCase()?.trim();
+            if (searchVal) filtered = filtered.filter(i => i.title.toLowerCase().includes(searchVal));
+
+            if (!filtered.length) {
+                const msg = currentMovieFilter === 'watched' ? 'No hay películas vistas aún' :
+                            currentMovieFilter === 'pending' ? '¡Todas las películas vistas! 🎉' :
+                            searchVal ? 'No se encontraron películas' : 'Añade películas para ver juntos';
+                c.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🎬</div><p class="empty-state-text">${msg}</p></div>`;
+                return;
+            }
+            filtered.forEach((i, idx) => {
+                const key = i._key || i.id;
                 const d = document.createElement('div');
-                d.className = 'shared-item';
-                d.innerHTML = `<div class="shared-item-header"><span class="shared-item-author ${i.author==='alba'?'partner':''}">${i.author==='sergio'?'Sergio':'Alba'}</span><div style="display:flex;align-items:center;gap:8px;">${i.author===currentUser?`<button class="delete-item-btn" onclick="deletePelicula(${i.id})">✕</button>`:''}</div></div><div class="shared-item-checkbox"><div class="checkbox-custom ${i.watched?'checked':''}" onclick="togglePelicula(${i.id})"></div><span class="movie-title ${i.watched?'watched':''}">${i.title}</span></div>`;
+                d.className = 'shared-item movie-item';
+                d.style.animationDelay = (idx * 0.03) + 's';
+                d.setAttribute('data-key', key);
+                d.innerHTML = `<div class="shared-item-header"><span class="shared-item-author ${i.author==='alba'?'partner':''}">${i.author==='sergio'?'Sergio':'Alba'}</span><div style="display:flex;align-items:center;gap:8px;">${i.author===currentUser?`<button class="delete-item-btn" onclick="event.stopPropagation();deletePelicula('${key}')">✕</button>`:''}</div></div><div class="shared-item-checkbox"><div class="checkbox-custom ${i.watched?'checked':''}" onclick="event.stopPropagation();togglePelicula('${key}')"></div><span class="movie-title ${i.watched?'watched':''}">${i.title}</span></div>`;
                 c.appendChild(d);
             });
         }
@@ -3990,29 +4362,141 @@ PREGUNTA DEL USUARIO: ${query}`;
                     DELETE SENTIMIENTOS & PELÍCULAS
         ═══════════════════════════════════════════════════════════════════ */
         function deleteSentimiento(key) {
-            if (!confirm('¿Eliminar este sentimiento?')) return;
-            if (firebaseEnabled) {
-                database.ref('sentimientos').orderByChild('id').equalTo(key).once('value', snap => {
-                    snap.forEach(c => c.ref.remove());
-                });
-            } else {
-                localSentimientos = localSentimientos.filter(s => s.id !== key);
-                localStorage.setItem('nosotros-sentimientos', JSON.stringify(localSentimientos));
-                renderSentimientos(localSentimientos);
-            }
+            showConfirmModal('¿Eliminar este sentimiento?', () => {
+                if (firebaseEnabled) {
+                    database.ref('sentimientos/' + key).remove();
+                } else {
+                    const id = Number(key);
+                    localSentimientos = localSentimientos.filter(s => s.id !== id);
+                    localStorage.setItem('nosotros-sentimientos', JSON.stringify(localSentimientos));
+                    renderSentimientos(localSentimientos);
+                }
+                showToast('🗑️', 'Eliminado', '');
+            });
         }
 
-        function deletePelicula(id) {
-            if (!confirm('¿Eliminar esta película?')) return;
-            if (firebaseEnabled) {
-                database.ref('peliculas').orderByChild('id').equalTo(id).once('value', snap => {
-                    snap.forEach(c => c.ref.remove());
-                });
-            } else {
-                localPeliculas = localPeliculas.filter(p => p.id !== id);
-                localStorage.setItem('nosotros-peliculas', JSON.stringify(localPeliculas));
-                renderPeliculas(localPeliculas);
+        function deletePelicula(key) {
+            showConfirmModal('¿Eliminar esta película?', () => {
+                // Animate removal
+                const el = document.querySelector(`.movie-item[data-key="${key}"]`);
+                if (el) el.classList.add('removing');
+                setTimeout(() => {
+                    if (firebaseEnabled) {
+                        database.ref('peliculas/' + key).remove();
+                    } else {
+                        const id = Number(key);
+                        localPeliculas = localPeliculas.filter(p => p.id !== id);
+                        localStorage.setItem('nosotros-peliculas', JSON.stringify(localPeliculas));
+                        renderPeliculas(localPeliculas);
+                    }
+                    showToast('🗑️', 'Película eliminada', '');
+                }, 300);
+            });
+        }
+
+        /* ═══════════════════════════════════════════════════════════════════
+                    CUSTOM CONFIRMATION MODAL
+        ═══════════════════════════════════════════════════════════════════ */
+        function showConfirmModal(message, onConfirm) {
+            // Remove any existing modal
+            document.querySelectorAll('.confirm-modal-overlay').forEach(m => m.remove());
+
+            const overlay = document.createElement('div');
+            overlay.className = 'confirm-modal-overlay';
+            overlay.innerHTML = `
+                <div class="confirm-modal">
+                    <div class="confirm-modal-icon">⚠️</div>
+                    <div class="confirm-modal-text">${message}</div>
+                    <div class="confirm-modal-buttons">
+                        <button class="confirm-modal-btn cancel" id="modal-cancel">Cancelar</button>
+                        <button class="confirm-modal-btn danger" id="modal-confirm">Eliminar</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => overlay.classList.add('show'));
+            });
+
+            const closeModal = () => {
+                overlay.classList.remove('show');
+                setTimeout(() => overlay.remove(), 300);
+            };
+
+            overlay.querySelector('#modal-cancel').onclick = () => {
+                closeModal();
+                if (navigator.vibrate) navigator.vibrate(10);
+            };
+            overlay.querySelector('#modal-confirm').onclick = () => {
+                closeModal();
+                if (navigator.vibrate) navigator.vibrate(30);
+                onConfirm();
+            };
+            overlay.onclick = (e) => {
+                if (e.target === overlay) closeModal();
+            };
+        }
+
+        /* ═══════════════════════════════════════════════════════════════════
+                    MOVIE FILTER, SEARCH & RANDOM PICKER
+        ═══════════════════════════════════════════════════════════════════ */
+        function setMovieFilter(filter) {
+            currentMovieFilter = filter;
+            document.querySelectorAll('.movie-tab').forEach(tab => tab.classList.remove('active'));
+            const tabs = document.querySelectorAll('.movie-tab');
+            if (filter === 'all' && tabs[0]) tabs[0].classList.add('active');
+            if (filter === 'pending' && tabs[1]) tabs[1].classList.add('active');
+            if (filter === 'watched' && tabs[2]) tabs[2].classList.add('active');
+            renderPeliculas(allPeliculasData);
+            if (navigator.vibrate) navigator.vibrate(15);
+        }
+
+        function filterMovies() {
+            renderPeliculas(allPeliculasData);
+        }
+
+        function randomMoviePick() {
+            const unwatched = allPeliculasData.filter(i => !i.watched);
+            if (!unwatched.length) {
+                showToast('🎬', 'No hay películas pendientes', '¡Las habéis visto todas!');
+                return;
             }
+            const pick = unwatched[Math.floor(Math.random() * unwatched.length)];
+            dateNightMovieKey = pick._key || pick.id;
+
+            // Show date night card
+            const card = document.getElementById('date-night-card');
+            const movieEl = document.getElementById('date-night-movie');
+            const subEl = document.getElementById('date-night-sub');
+            if (card && movieEl) {
+                movieEl.textContent = pick.title;
+                subEl.textContent = `Añadida por ${pick.author === 'sergio' ? 'Sergio' : 'Alba'}`;
+                card.classList.add('show');
+                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+
+            // Also highlight in list
+            const key = pick._key || pick.id;
+            document.querySelectorAll('.movie-item').forEach(el => el.classList.remove('movie-highlight'));
+            const listItem = document.querySelector(`.movie-item[data-key="${key}"]`);
+            if (listItem) {
+                listItem.classList.add('movie-highlight');
+                setTimeout(() => listItem.classList.remove('movie-highlight'), 3000);
+            }
+
+            if (navigator.vibrate) navigator.vibrate([20, 30, 20]);
+            showToast('🎲', '¡Película seleccionada!', pick.title);
+        }
+
+        function markDateNightWatched() {
+            if (!dateNightMovieKey) return;
+            togglePelicula(String(dateNightMovieKey));
+            const card = document.getElementById('date-night-card');
+            if (card) card.classList.remove('show');
+            showToast('✅', '¡Marcada como vista!', 'Disfrutad de la peli');
+            launchConfetti();
+            dateNightMovieKey = null;
         }
 
         /* ═══════════════════════════════════════════════════════════════════
