@@ -766,7 +766,7 @@
             width: 100%; max-width: 380px;
             display: flex; flex-direction: column;
             gap: 8px;
-            flex: 1; min-height: 0;
+            max-height: 45vh;
             overflow-y: auto; padding-right: 4px;
             padding-bottom: 24px;
         }
@@ -4383,28 +4383,18 @@ PREGUNTA DEL USUARIO: ${query}`;
         }
 
         function deletePelicula(key) {
-            console.log('deletePelicula called with key:', key, 'firebaseEnabled:', firebaseEnabled);
-            showConfirmModal('¿Eliminar esta película?', function() {
-                console.log('Confirm delete película, key:', key);
-                if (firebaseEnabled) {
-                    const ref = database.ref('peliculas/' + key);
-                    ref.remove(function(error) {
-                        if (error) {
-                            console.error('Error al eliminar película:', error);
-                            showToast('❌', 'Error', 'No se pudo eliminar');
-                        } else {
-                            console.log('Película eliminada de Firebase OK');
-                            showToast('🗑️', 'Película eliminada', '');
-                        }
-                    });
-                } else {
-                    const id = Number(key);
-                    localPeliculas = localPeliculas.filter(p => p.id !== id);
-                    localStorage.setItem('nosotros-peliculas', JSON.stringify(localPeliculas));
-                    renderPeliculas(localPeliculas);
-                    showToast('🗑️', 'Película eliminada', '');
-                }
-            });
+            if (!confirm('¿Eliminar esta película?')) return;
+            if (firebaseEnabled) {
+                database.ref('peliculas/' + key).remove()
+                    .then(function() { showToast('🗑️', 'Película eliminada', ''); })
+                    .catch(function(err) { showToast('❌', 'Error', 'No se pudo eliminar'); });
+            } else {
+                var id = Number(key);
+                localPeliculas = localPeliculas.filter(function(p) { return p.id !== id; });
+                localStorage.setItem('nosotros-peliculas', JSON.stringify(localPeliculas));
+                renderPeliculas(localPeliculas);
+                showToast('🗑️', 'Película eliminada', '');
+            }
         }
 
         /* ═══════════════════════════════════════════════════════════════════
