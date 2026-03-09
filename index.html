@@ -765,8 +765,10 @@
         .shared-list {
             width: 100%; max-width: 380px;
             display: flex; flex-direction: column;
-            gap: 8px; max-height: 45vh;
+            gap: 8px;
+            flex: 1; min-height: 0;
             overflow-y: auto; padding-right: 4px;
+            padding-bottom: 24px;
         }
         .shared-item {
             background: var(--glass-dark);
@@ -2947,6 +2949,9 @@
                 btn.classList.remove('active');
                 if (btn.textContent.toLowerCase() === user) btn.classList.add('active');
             });
+            // Re-render current section to update delete buttons
+            if (currentScreen === 'peliculas' && allPeliculasData.length) renderPeliculas(allPeliculasData);
+            if (currentScreen === 'sentimientos') loadSentimientos();
         }
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -3272,7 +3277,8 @@
                 d.className = 'shared-item movie-item';
                 d.style.animationDelay = (idx * 0.03) + 's';
                 d.setAttribute('data-key', key);
-                d.innerHTML = `<div class="shared-item-header"><span class="shared-item-author ${i.author==='alba'?'partner':''}">${i.author==='sergio'?'Sergio':'Alba'}</span><div style="display:flex;align-items:center;gap:8px;">${i.author===currentUser?`<button class="delete-item-btn" onclick="event.stopPropagation();deletePelicula('${key}')">✕</button>`:''}</div></div><div class="shared-item-checkbox"><div class="checkbox-custom ${i.watched?'checked':''}" onclick="event.stopPropagation();togglePelicula('${key}')"></div><span class="movie-title ${i.watched?'watched':''}">${i.title}</span></div>`;
+                const deleteBtn = i.author === currentUser ? `<button class="delete-item-btn" onclick="event.stopPropagation();deletePelicula('${key}')">✕</button>` : '';
+                d.innerHTML = `<div class="shared-item-header"><span class="shared-item-author ${i.author==='alba'?'partner':''}">${i.author==='sergio'?'Sergio':'Alba'}</span><div style="display:flex;align-items:center;gap:8px;">${deleteBtn}</div></div><div class="shared-item-checkbox"><div class="checkbox-custom ${i.watched?'checked':''}" onclick="event.stopPropagation();togglePelicula('${key}')"></div><span class="movie-title ${i.watched?'watched':''}">${i.title}</span></div>`;
                 c.appendChild(d);
             });
         }
@@ -4377,13 +4383,19 @@ PREGUNTA DEL USUARIO: ${query}`;
         }
 
         function deletePelicula(key) {
-            showConfirmModal('¿Eliminar esta película?', () => {
+            console.log('deletePelicula called with key:', key, 'firebaseEnabled:', firebaseEnabled);
+            showConfirmModal('¿Eliminar esta película?', function() {
+                console.log('Confirm delete película, key:', key);
                 if (firebaseEnabled) {
-                    database.ref('peliculas/' + key).remove().then(() => {
-                        showToast('🗑️', 'Película eliminada', '');
-                    }).catch(err => {
-                        console.error('Error al eliminar película:', err);
-                        showToast('❌', 'Error', 'No se pudo eliminar');
+                    const ref = database.ref('peliculas/' + key);
+                    ref.remove(function(error) {
+                        if (error) {
+                            console.error('Error al eliminar película:', error);
+                            showToast('❌', 'Error', 'No se pudo eliminar');
+                        } else {
+                            console.log('Película eliminada de Firebase OK');
+                            showToast('🗑️', 'Película eliminada', '');
+                        }
                     });
                 } else {
                     const id = Number(key);
@@ -4420,23 +4432,31 @@ PREGUNTA DEL USUARIO: ${query}`;
                 requestAnimationFrame(() => overlay.classList.add('show'));
             });
 
+            let modalClosed = false;
             const closeModal = () => {
+                if (modalClosed) return;
+                modalClosed = true;
                 overlay.classList.remove('show');
                 setTimeout(() => overlay.remove(), 300);
             };
 
-            overlay.querySelector('#modal-cancel').onclick = () => {
+            const cancelBtn = overlay.querySelector('#modal-cancel');
+            const confirmBtn = overlay.querySelector('#modal-confirm');
+
+            cancelBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
                 closeModal();
                 if (navigator.vibrate) navigator.vibrate(10);
-            };
-            overlay.querySelector('#modal-confirm').onclick = () => {
+            });
+            confirmBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
                 closeModal();
                 if (navigator.vibrate) navigator.vibrate(30);
                 onConfirm();
-            };
-            overlay.onclick = (e) => {
+            });
+            overlay.addEventListener('click', (e) => {
                 if (e.target === overlay) closeModal();
-            };
+            });
         }
 
         /* ═══════════════════════════════════════════════════════════════════
