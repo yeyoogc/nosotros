@@ -1689,7 +1689,7 @@
         /* ═══════════════════════════════════════════════════════════════════
            GEMINI AI CONFIG
         ═══════════════════════════════════════════════════════════════════ */
-        const GEMINI_API_KEY = "AIzaSyDS2fVAcwB3gPhzVcmwg9gFB_wuqO_R0nM";
+        const GEMINI_API_KEY = "AIzaSyABHsIk9DvF2Hc6B81KAHX9IYgywROsEwI";
 
         /* ═══════════════════════════════════════════════════════════════════
                           DATA ARRAYS
@@ -2818,9 +2818,9 @@
         }
 
         function showTopWords(query) {
-            const stopWords = new Set(['de','la','el','en','que','y','a','los','las','un','una','es','por','con','no','se','del','lo','al','me','mi','te','tu','le','su','mas','pero','ya','o','para','como','todo','esta','hay','muy','fue','son','esta','era','ser','sin','sobre','tiene','hasta','cuando','entre','donde','despues','antes','tambien','puede','todos','asi','nos','uno','otro','otra','este','ese','ella','eso','esto','estas','estos','esas','esos','aqui','ahi','alli','cual','quien','cuyo','tanto','tan','poco','mucho','bien','mal','mejor','peor','hoy','ayer','sido','si','da','va','voy','vas','van','estoy','has','he','ha','hacer','puedo','quiero','jaja','jajaja','jajajaja','xd','https','http','media','omitted','imagen','omitido','audio','sticker','video','gif','documento','contacto','ubicacion','adjunto','archivo','pdf','vcard','nota','voz','www','com','imagen_omitida','video_omitido','audio_omitido','sticker_omitido','gif_omitido','documento_omitido','mensaje','eliminaste','elimino','borrado']);
+            const stopWords = new Set(['de','la','el','en','que','y','a','los','las','un','una','es','por','con','no','se','del','lo','al','me','mi','te','tu','le','su','mas','pero','ya','o','para','como','todo','esta','hay','muy','fue','son','esta','era','ser','sin','sobre','tiene','hasta','cuando','entre','donde','despues','antes','tambien','puede','todos','asi','nos','uno','otro','otra','este','ese','ella','eso','esto','estas','estos','esas','esos','aqui','ahi','alli','cual','quien','cuyo','tanto','tan','poco','mucho','bien','mal','mejor','peor','hoy','ayer','sido','si','da','va','voy','vas','van','estoy','has','he','ha','hacer','puedo','quiero','jaja','jajaja','jajajaja','jajajajaja','xd','xdd','xddd','https','http','media','omitted','imagen','omitido','omitida','omitidos','omitidas','audio','sticker','video','gif','documento','contacto','ubicacion','adjunto','archivo','pdf','vcard','nota','voz','www','com','imagen_omitida','video_omitido','audio_omitido','sticker_omitido','gif_omitido','documento_omitido','mensaje','eliminaste','elimino','eliminado','eliminada','borrado','borrada','editado','editada','multimedia','archivo','llamada','perdida','grupo','cambio','cambiar','seguridad','cifrado','codigo','numero','anadio','salio','unio']);
             const wordCount = {};
-            const mediaPatterns = /^(<multimedia|\u200e?imagen|audio|sticker|gif|vcard|documento|video|\u200e)/i;
+            const mediaPatterns = /^(<multimedia|\u200e?imagen|\u200e?audio|\u200e?sticker|\u200e?gif|\u200e?vcard|\u200e?documento|\u200e?video|\u200e|.*omitid[ao]s?$|.*omitted$)/i;
             waMessages.forEach(m => {
                 if (mediaPatterns.test(m.text.trim())) return;
                 m.text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^\w\s]/g, '').split(/\s+/).forEach(w => {
