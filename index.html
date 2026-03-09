@@ -2151,7 +2151,7 @@
                                 DAYS COUNTER
         ═══════════════════════════════════════════════════════════════════ */
         // *** CAMBIA ESTA FECHA A CUANDO EMPEZASTEIS ***
-        const ANNIVERSARY_DATE = new Date('2024-07-15');
+        const ANNIVERSARY_DATE = new Date('2024-05-14');
         
         function updateDaysCounter() {
             const now = new Date();
@@ -2489,12 +2489,43 @@
             if (!('Notification' in window)) return;
             if (Notification.permission === 'granted') {
                 notificationsEnabled = true;
+                hideNotifBanner();
                 return;
             }
             if (Notification.permission !== 'denied') {
                 Notification.requestPermission().then(perm => {
                     notificationsEnabled = perm === 'granted';
+                    hideNotifBanner();
                 });
+            }
+        }
+
+        function showNotifBanner() {
+            if (!('Notification' in window)) return;
+            if (Notification.permission === 'granted') { notificationsEnabled = true; return; }
+            if (Notification.permission === 'denied') return;
+            const existing = document.getElementById('notif-permission-banner');
+            if (existing) { existing.classList.add('show'); return; }
+            const banner = document.createElement('div');
+            banner.className = 'notif-banner';
+            banner.id = 'notif-permission-banner';
+            banner.innerHTML = `
+                <span style="font-size:1.3rem;">🔔</span>
+                <span class="notif-text">Activa las notificaciones para saber cuando tu pareja actualice su estado o añada sentimientos</span>
+                <button class="notif-btn" id="notif-allow-btn">Permitir</button>
+            `;
+            document.body.appendChild(banner);
+            setTimeout(() => banner.classList.add('show'), 100);
+            document.getElementById('notif-allow-btn').addEventListener('click', () => {
+                requestNotificationPermission();
+            });
+        }
+
+        function hideNotifBanner() {
+            const banner = document.getElementById('notif-permission-banner');
+            if (banner) {
+                banner.classList.remove('show');
+                setTimeout(() => banner.remove(), 600);
             }
         }
 
@@ -2553,8 +2584,12 @@
             setTimeout(() => { initialLoadComplete.sentimientos = true; }, 3000);
         }
 
-        // Init notifications
-        requestNotificationPermission();
+        // Init notifications - show banner after short delay for user gesture
+        if ('Notification' in window && Notification.permission === 'granted') {
+            notificationsEnabled = true;
+        } else {
+            setTimeout(showNotifBanner, 2500);
+        }
         if (firebaseEnabled) {
             setTimeout(setupNotificationListeners, 1500);
         }
@@ -2697,8 +2732,8 @@
                 return;
             }
             
-            results.innerHTML = '<div class="wa-loading"><span class="spinner"></span>Analizando...</div>';
             destroyCharts();
+            results.innerHTML = '<div class="wa-loading"><span class="spinner"></span>Analizando...</div>';
             await new Promise(r => setTimeout(r, 300));
 
             const q = query.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -2844,41 +2879,60 @@
                 const daily = {};
                 const dayOfWeekCount = [0,0,0,0,0,0,0];
                 const dayNames = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
-                waMessages.forEach(m => {
+                const monthNames = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+
+                for (let i = 0; i < waMessages.length; i++) {
+                    const m = waMessages[i];
                     try {
-                        if (!m.date || isNaN(m.date.getTime())) return;
-                        const key = m.date.toLocaleDateString('es-ES');
+                        if (!m.date || typeof m.date.getTime !== 'function' || isNaN(m.date.getTime())) continue;
+                        const d = m.date;
+                        const key = d.getDate() + '/' + (d.getMonth() + 1) + '/' + d.getFullYear();
                         daily[key] = (daily[key] || 0) + 1;
-                        dayOfWeekCount[m.date.getDay()]++;
+                        dayOfWeekCount[d.getDay()]++;
                     } catch(e) { /* skip invalid dates */ }
-                });
-                const sorted = Object.entries(daily).sort((a, b) => b[1] - a[1]).slice(0, 10);
-                if (!sorted.length) {
+                }
+
+                const entries = Object.entries(daily);
+                if (!entries.length) {
                     document.getElementById('wa-results').innerHTML = '<div class="wa-result-card"><div class="result-text">No se pudieron analizar las fechas de los mensajes.</div></div>';
                     return;
                 }
+                const sorted = entries.sort((a, b) => b[1] - a[1]).slice(0, 10);
                 const peakDayOfWeek = dayOfWeekCount.indexOf(Math.max(...dayOfWeekCount));
-                document.getElementById('wa-results').innerHTML = `
+
+                // Format top dates nicely
+                const formatDayKey = (key) => {
+                    const parts = key.split('/');
+                    return parts[0] + ' ' + monthNames[parseInt(parts[1]) - 1] + ' ' + parts[2];
+                };
+
+                const resultsEl = document.getElementById('wa-results');
+                if (!resultsEl) return;
+                resultsEl.innerHTML = `
                     <div class="wa-result-card">
                         <div class="result-title">📅 Días más activos</div>
                         <div class="result-text">
-                            El día con más mensajes: <strong>${sorted[0][0]}</strong> con <strong>${sorted[0][1].toLocaleString()}</strong> mensajes.<br>
+                            El día con más mensajes: <strong>${formatDayKey(sorted[0][0])}</strong> con <strong>${sorted[0][1].toLocaleString()}</strong> mensajes.<br>
                             El día de la semana más activo: <strong>${dayNames[peakDayOfWeek]}</strong> con <strong>${dayOfWeekCount[peakDayOfWeek].toLocaleString()}</strong> mensajes totales.<br><br>
                             <strong>Top 10:</strong><br>
-                            ${sorted.map((d, i) => `${i+1}. ${d[0]} → ${d[1].toLocaleString()} msgs`).join('<br>')}
+                            ${sorted.map((d, i) => `${i+1}. ${formatDayKey(d[0])} → ${d[1].toLocaleString()} msgs`).join('<br>')}
                         </div>
                         <div class="wa-chart-container"><canvas id="chart-days"></canvas></div>
                     </div>`;
-                const ctx = document.getElementById('chart-days').getContext('2d');
+                const canvasEl = document.getElementById('chart-days');
+                if (!canvasEl) return;
+                const ctx = canvasEl.getContext('2d');
                 const chart = new Chart(ctx, {
                     type: 'bar',
                     data: { labels: dayNames, datasets: [{ label:'Mensajes', data: dayOfWeekCount, backgroundColor:'rgba(232,160,191,0.5)', borderColor:'#E8A0BF', borderWidth:1, borderRadius:6 }] },
-                    options: { responsive:true, maintainAspectRatio:false, scales:{ x:{ticks:{color:'rgba(255,255,255,0.6)',font:{size:10}}}, y:{ticks:{color:'rgba(255,255,255,0.5)'}}}, plugins:{legend:{display:false}}}
+                    options: { responsive:true, maintainAspectRatio:false, animation:{ duration: 500 }, scales:{ x:{ticks:{color:'rgba(255,255,255,0.6)',font:{size:10}}}, y:{ticks:{color:'rgba(255,255,255,0.5)'}}}, plugins:{legend:{display:false}}}
                 });
                 activeCharts.push(chart);
             } catch(err) {
                 console.error('Error en showMostActiveDay:', err);
-                document.getElementById('wa-results').innerHTML = `<div class="wa-result-card"><div class="result-title">Error</div><div class="result-text">${err.message}</div></div>`;
+                try {
+                    document.getElementById('wa-results').innerHTML = `<div class="wa-result-card"><div class="result-title">Error</div><div class="result-text">${err.message || 'Error desconocido'}</div></div>`;
+                } catch(e) {}
             }
         }
 
