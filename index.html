@@ -2615,10 +2615,13 @@
         function parseWhatsApp(text) {
             const messages = [];
             const lines = text.split('\n');
+            const systemPatterns = /^(\u200e?los mensajes|\u200e?las llamadas|\u200e?tu seguridad|\u200e?se añadió|\u200e?cambió el|\u200e?creó el grupo|\u200e?salió|\u200e?añadió a)/i;
             const patterns = [
                 /^\[(\d{1,2}\/\d{1,2}\/\d{2,4}),?\s*(\d{1,2}:\d{2}(?::\d{2})?)\]\s*([^:]+):\s*(.+)/,
                 /^(\d{1,2}\/\d{1,2}\/\d{2,4}),?\s*(\d{1,2}:\d{2}(?::\d{2})?)\s*[-–]\s*([^:]+):\s*(.+)/,
-                /^(\d{1,2}\/\d{1,2}\/\d{2,4}),?\s*(\d{1,2}:\d{2}(?::\d{2})?(?:\s*[ap]\.?\s*m\.?)?)\s*[-–]\s*([^:]+):\s*(.+)/i
+                /^(\d{1,2}\/\d{1,2}\/\d{2,4}),?\s*(\d{1,2}:\d{2}(?::\d{2})?(?:\s*[ap]\.?\s*m\.?)?)\s*[-–]\s*([^:]+):\s*(.+)/i,
+                /^\[(\d{1,2}\/\d{1,2}\/\d{2,4}),?\s*(\d{1,2}:\d{2}(?::\d{2})?\s*[ap]\.?\s*m\.?)\]\s*([^:]+):\s*(.+)/i,
+                /^(\d{1,2}\.\d{1,2}\.\d{2,4}),?\s*(\d{1,2}:\d{2}(?::\d{2})?)\s*[-–]\s*([^:]+):\s*(.+)/
             ];
             let lastMsg = null;
 
@@ -2629,7 +2632,8 @@
                     if (match) {
                         const [, dateStr, timeStr, author, text] = match;
                         const cleanAuthor = author.trim();
-                        const dateParts = dateStr.split('/');
+                        if (systemPatterns.test(text.trim())) { matched = true; break; }
+                        const dateParts = dateStr.split(/[\/.]/);
                         let day = parseInt(dateParts[0]);
                         let month = parseInt(dateParts[1]) - 1;
                         let year = parseInt(dateParts[2]);
@@ -2838,10 +2842,14 @@
         function showMostActiveDay(query) {
             try {
                 const daily = {};
+                const dayOfWeekCount = [0,0,0,0,0,0,0];
+                const dayNames = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
                 waMessages.forEach(m => {
                     try {
+                        if (!m.date || isNaN(m.date.getTime())) return;
                         const key = m.date.toLocaleDateString('es-ES');
                         daily[key] = (daily[key] || 0) + 1;
+                        dayOfWeekCount[m.date.getDay()]++;
                     } catch(e) { /* skip invalid dates */ }
                 });
                 const sorted = Object.entries(daily).sort((a, b) => b[1] - a[1]).slice(0, 10);
@@ -2849,15 +2857,25 @@
                     document.getElementById('wa-results').innerHTML = '<div class="wa-result-card"><div class="result-text">No se pudieron analizar las fechas de los mensajes.</div></div>';
                     return;
                 }
+                const peakDayOfWeek = dayOfWeekCount.indexOf(Math.max(...dayOfWeekCount));
                 document.getElementById('wa-results').innerHTML = `
                     <div class="wa-result-card">
                         <div class="result-title">📅 Días más activos</div>
                         <div class="result-text">
-                            El día con más mensajes: <strong>${sorted[0][0]}</strong> con <strong>${sorted[0][1]}</strong> mensajes.<br><br>
+                            El día con más mensajes: <strong>${sorted[0][0]}</strong> con <strong>${sorted[0][1].toLocaleString()}</strong> mensajes.<br>
+                            El día de la semana más activo: <strong>${dayNames[peakDayOfWeek]}</strong> con <strong>${dayOfWeekCount[peakDayOfWeek].toLocaleString()}</strong> mensajes totales.<br><br>
                             <strong>Top 10:</strong><br>
-                            ${sorted.map((d, i) => `${i+1}. ${d[0]} → ${d[1]} msgs`).join('<br>')}
+                            ${sorted.map((d, i) => `${i+1}. ${d[0]} → ${d[1].toLocaleString()} msgs`).join('<br>')}
                         </div>
+                        <div class="wa-chart-container"><canvas id="chart-days"></canvas></div>
                     </div>`;
+                const ctx = document.getElementById('chart-days').getContext('2d');
+                const chart = new Chart(ctx, {
+                    type: 'bar',
+                    data: { labels: dayNames, datasets: [{ label:'Mensajes', data: dayOfWeekCount, backgroundColor:'rgba(232,160,191,0.5)', borderColor:'#E8A0BF', borderWidth:1, borderRadius:6 }] },
+                    options: { responsive:true, maintainAspectRatio:false, scales:{ x:{ticks:{color:'rgba(255,255,255,0.6)',font:{size:10}}}, y:{ticks:{color:'rgba(255,255,255,0.5)'}}}, plugins:{legend:{display:false}}}
+                });
+                activeCharts.push(chart);
             } catch(err) {
                 console.error('Error en showMostActiveDay:', err);
                 document.getElementById('wa-results').innerHTML = `<div class="wa-result-card"><div class="result-title">Error</div><div class="result-text">${err.message}</div></div>`;
@@ -3098,8 +3116,10 @@ PREGUNTA DEL USUARIO: ${query}`;
 
         document.addEventListener('dblclick', e => { e.preventDefault(); }, { passive: false });
 
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js').then(() => console.log('SW registered')).catch(() => {});
+        document.getElementById('status-input')?.addEventListener('keypress', e => { if (e.key === 'Enter') { const v = e.target.value; if (v.trim()) setStatus(v); } });
+
+        if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+            navigator.serviceWorker.register('./sw.js').then(() => console.log('SW registered')).catch(() => {});
         }
     </script>
 </body>
