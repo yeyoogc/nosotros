@@ -4383,18 +4383,17 @@ PREGUNTA DEL USUARIO: ${query}`;
         }
 
         function deletePelicula(key) {
-            if (!confirm('¿Eliminar esta película?')) return;
-            if (firebaseEnabled) {
-                database.ref('peliculas/' + key).remove()
-                    .then(function() { showToast('🗑️', 'Película eliminada', ''); })
-                    .catch(function(err) { showToast('❌', 'Error', 'No se pudo eliminar'); });
-            } else {
-                var id = Number(key);
-                localPeliculas = localPeliculas.filter(function(p) { return p.id !== id; });
-                localStorage.setItem('nosotros-peliculas', JSON.stringify(localPeliculas));
-                renderPeliculas(localPeliculas);
+            showConfirmModal('¿Eliminar esta película?', () => {
+                if (firebaseEnabled) {
+                    database.ref('peliculas/' + key).remove();
+                } else {
+                    const id = Number(key);
+                    localPeliculas = localPeliculas.filter(p => p.id !== id);
+                    localStorage.setItem('nosotros-peliculas', JSON.stringify(localPeliculas));
+                    renderPeliculas(localPeliculas);
+                }
                 showToast('🗑️', 'Película eliminada', '');
-            }
+            });
         }
 
         /* ═══════════════════════════════════════════════════════════════════
