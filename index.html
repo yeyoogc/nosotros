@@ -1,0 +1,2369 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <!-- META TAGS PARA iOS - PWA A PANTALLA COMPLETA -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Nosotros">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#1a1025">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="manifest" href="manifest.json">
+    
+    <title>Nosotros</title>
+    
+    <!-- Google Fonts - Premium Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
+    <style>
+        /* ═══════════════════════════════════════════════════════════════
+           DESIGN SYSTEM - NOSOTROS APP v2.0
+           Premium couples app with glassmorphism & warm aesthetics
+        ═══════════════════════════════════════════════════════════════ */
+        :root {
+            /* Primary palette */
+            --rose: #E8A0BF;
+            --rose-light: #F5D5E0;
+            --rose-deep: #C27095;
+            --rose-glow: rgba(232, 160, 191, 0.35);
+            
+            /* Accent */
+            --gold: #D4A574;
+            --gold-light: #E8C9A0;
+            --gold-glow: rgba(212, 165, 116, 0.3);
+            
+            /* Backgrounds */
+            --cream: #FDF6F0;
+            --cream-dark: #F5EDE4;
+            --warm-white: #FFFAF7;
+            
+            /* Dark palette */
+            --night: #0F0A1A;
+            --plum: #1A1025;
+            --plum-light: #2D1B3D;
+            --berry: #4A1942;
+            
+            /* Text */
+            --text-primary: #2B2024;
+            --text-secondary: #6B5E63;
+            --text-muted: #A89A9E;
+            --text-light: rgba(255, 255, 255, 0.92);
+            --text-light-secondary: rgba(255, 255, 255, 0.6);
+            
+            /* Functional */
+            --success: #4CAF82;
+            --danger: #E05C6B;
+            --info: #6C9BD2;
+            --spotify-green: #1DB954;
+            --whatsapp: #25D366;
+            --apple-red: #fc3c44;
+            
+            /* Glass */
+            --glass-light: rgba(255, 255, 255, 0.72);
+            --glass-light-border: rgba(255, 255, 255, 0.45);
+            --glass-dark: rgba(255, 255, 255, 0.08);
+            --glass-dark-border: rgba(255, 255, 255, 0.12);
+            
+            /* Shadows */
+            --shadow-sm: 0 2px 8px rgba(43, 32, 36, 0.06);
+            --shadow-md: 0 8px 24px rgba(43, 32, 36, 0.08), 0 2px 8px rgba(43, 32, 36, 0.04);
+            --shadow-lg: 0 16px 48px rgba(43, 32, 36, 0.12), 0 4px 16px rgba(43, 32, 36, 0.06);
+            --shadow-glow: 0 8px 32px var(--rose-glow);
+            --shadow-gold: 0 8px 32px var(--gold-glow);
+            
+            /* Layout */
+            --radius-sm: 12px;
+            --radius-md: 18px;
+            --radius-lg: 24px;
+            --radius-xl: 32px;
+            --safe-top: env(safe-area-inset-top);
+            --safe-bottom: env(safe-area-inset-bottom);
+        }
+
+        /* ═══ RESET & BASE ═══ */
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html, body { height: 100%; overflow: hidden; }
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--plum);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .app-container { width: 100%; height: 100%; overflow: hidden; position: relative; }
+
+        /* ═══ SCREENS ═══ */
+        .screen {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            padding: calc(24px + var(--safe-top)) 24px calc(24px + var(--safe-bottom));
+            overflow-y: auto; overflow-x: hidden;
+            transform: translateX(100%); opacity: 0;
+            transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.4s ease;
+            display: flex; flex-direction: column;
+        }
+        .screen.active { transform: translateX(0); opacity: 1; }
+        .screen.exit-left { transform: translateX(-20%); opacity: 0; }
+
+        /* Smooth scrollbar */
+        .screen::-webkit-scrollbar { width: 0; }
+        .shared-list::-webkit-scrollbar { width: 0; }
+
+        /* ═══════════════════════════════════════════════════════════════
+           HOME SCREEN - Hero Design
+        ═══════════════════════════════════════════════════════════════ */
+        #home {
+            background: var(--cream);
+            align-items: center;
+            justify-content: flex-start;
+            padding-top: calc(40px + var(--safe-top));
+            position: relative;
+        }
+
+        /* Animated gradient orbs */
+        #home::before {
+            content: '';
+            position: absolute;
+            top: -20%;
+            right: -30%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, var(--rose-light) 0%, transparent 70%);
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: orbFloat 8s ease-in-out infinite;
+            pointer-events: none;
+        }
+        #home::after {
+            content: '';
+            position: absolute;
+            bottom: -10%;
+            left: -20%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(212, 165, 116, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+            opacity: 0.5;
+            animation: orbFloat 10s ease-in-out infinite reverse;
+            pointer-events: none;
+        }
+        @keyframes orbFloat {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(15px, -20px) scale(1.05); }
+            66% { transform: translate(-10px, 10px) scale(0.95); }
+        }
+
+        /* Background photo collage */
+        .background-collage {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(4, 1fr);
+            gap: 4px; opacity: 0.08; filter: blur(2px) saturate(0.7);
+            z-index: 0;
+        }
+        .background-collage img { width: 100%; height: 100%; object-fit: cover; }
+
+        .home-content {
+            position: relative; z-index: 1; width: 100%;
+            text-align: center; max-width: 400px; margin: 0 auto;
+        }
+
+        /* Title */
+        .main-title {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 3rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+            margin-bottom: 0;
+            line-height: 1.1;
+        }
+        .subtitle {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        /* Days counter */
+        .days-counter {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: var(--glass-light);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-light-border);
+            border-radius: 50px;
+            padding: 8px 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow-sm);
+        }
+        .days-counter .heart-icon {
+            font-size: 0.85rem;
+            animation: heartbeat 2s ease-in-out infinite;
+        }
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            15% { transform: scale(1.15); }
+            30% { transform: scale(1); }
+            45% { transform: scale(1.1); }
+        }
+        .days-counter .days-text {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        .days-counter .days-number {
+            color: var(--rose-deep);
+            font-weight: 800;
+        }
+
+        /* Status banner */
+        .status-banner {
+            width: 100%; margin: 0 auto 18px;
+            background: var(--glass-light);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-light-border);
+            border-radius: var(--radius-md);
+            padding: 14px 18px;
+            display: flex; align-items: center; gap: 12px;
+            box-shadow: var(--shadow-md);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+        }
+        .status-banner:active { transform: scale(0.97); }
+        .status-dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: var(--success);
+            box-shadow: 0 0 8px rgba(76, 175, 130, 0.5);
+            animation: statusPulse 2s infinite;
+            flex-shrink: 0;
+        }
+        @keyframes statusPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+        .status-banner-text {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            flex: 1;
+            text-align: left;
+        }
+        .status-banner-name { font-weight: 700; color: var(--text-primary); }
+        .status-banner .arrow {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            transition: transform 0.3s ease;
+        }
+        .status-banner:hover .arrow { transform: translateX(3px); }
+
+        /* ═══ MENU GRID ═══ */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .menu-card {
+            background: var(--warm-white);
+            border-radius: var(--radius-lg);
+            padding: 20px 14px;
+            text-align: center;
+            box-shadow: var(--shadow-md);
+            cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+            border: 1px solid rgba(43, 32, 36, 0.04);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+        .menu-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--rose), var(--gold));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .menu-card:hover::before,
+        .menu-card:active::before { opacity: 1; }
+        .menu-card:active {
+            transform: translateY(-2px) scale(1.01);
+            box-shadow: var(--shadow-lg);
+        }
+        .menu-card .icon {
+            font-size: 1.6rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            background: var(--cream);
+            border-radius: var(--radius-sm);
+        }
+        .menu-card .label {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            line-height: 1.3;
+            letter-spacing: -0.1px;
+        }
+
+        /* Themed cards */
+        .menu-card.vip {
+            background: linear-gradient(145deg, #1A1025 0%, #2D1B3D 100%);
+            border: 1px solid rgba(212, 165, 116, 0.2);
+        }
+        .menu-card.vip::before { background: linear-gradient(90deg, var(--gold), var(--gold-light)); }
+        .menu-card.vip .icon { background: rgba(212, 165, 116, 0.15); }
+        .menu-card.vip .label { color: var(--gold-light); }
+        .menu-card.vip:active { box-shadow: var(--shadow-gold); }
+
+        .menu-card.music {
+            background: linear-gradient(145deg, #1a1a2e 0%, #2a1530 100%);
+            border: 1px solid rgba(252, 60, 68, 0.15);
+        }
+        .menu-card.music::before { background: linear-gradient(90deg, #fc3c44, #ff6b81); }
+        .menu-card.music .icon { background: rgba(252, 60, 68, 0.15); }
+        .menu-card.music .label { color: rgba(255, 255, 255, 0.9); }
+
+        .menu-card.shared {
+            background: linear-gradient(145deg, #1E1535 0%, #2D1B45 100%);
+            border: 1px solid rgba(155, 89, 182, 0.15);
+        }
+        .menu-card.shared::before { background: linear-gradient(90deg, #9b59b6, #c39bd3); }
+        .menu-card.shared .icon { background: rgba(155, 89, 182, 0.15); }
+        .menu-card.shared .label { color: rgba(255, 255, 255, 0.9); }
+
+        .menu-card.movies {
+            background: linear-gradient(145deg, #0D1B2A 0%, #1B2838 100%);
+            border: 1px solid rgba(108, 155, 210, 0.15);
+        }
+        .menu-card.movies::before { background: linear-gradient(90deg, #6C9BD2, #a0c4e8); }
+        .menu-card.movies .icon { background: rgba(108, 155, 210, 0.15); }
+        .menu-card.movies .label { color: rgba(255, 255, 255, 0.9); }
+
+        .menu-card.status-card {
+            background: linear-gradient(145deg, #0A2E1A 0%, #153D25 100%);
+            border: 1px solid rgba(76, 175, 130, 0.15);
+        }
+        .menu-card.status-card::before { background: linear-gradient(90deg, var(--success), #7dcea0); }
+        .menu-card.status-card .icon { background: rgba(76, 175, 130, 0.15); }
+        .menu-card.status-card .label { color: rgba(255, 255, 255, 0.9); }
+
+        .menu-card.whatsapp-card {
+            background: linear-gradient(145deg, #0A2E20 0%, #0F3D2A 100%);
+            border: 1px solid rgba(37, 211, 102, 0.15);
+        }
+        .menu-card.whatsapp-card::before { background: linear-gradient(90deg, var(--whatsapp), #5ddb8e); }
+        .menu-card.whatsapp-card .icon { background: rgba(37, 211, 102, 0.15); }
+        .menu-card.whatsapp-card .label { color: rgba(255, 255, 255, 0.9); }
+
+        /* ═══════════════════════════════════════════════════════════════
+           SECTION SCREENS
+        ═══════════════════════════════════════════════════════════════ */
+        .section-screen {
+            background: linear-gradient(180deg, var(--cream) 0%, var(--cream-dark) 100%);
+        }
+
+        /* Back button */
+        .back-button {
+            align-self: flex-start;
+            background: var(--glass-light);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-light-border);
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            cursor: pointer;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 20px;
+            transition: all 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .back-button:active { transform: scale(0.95); }
+        .back-button .back-arrow {
+            font-size: 0.9rem;
+            transition: transform 0.3s ease;
+        }
+        .back-button:hover .back-arrow { transform: translateX(-3px); }
+
+        /* Section header */
+        .section-header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+        .section-icon {
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+            display: block;
+        }
+        .section-title {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: -0.3px;
+        }
+        .section-subtitle {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+            font-weight: 400;
+        }
+
+        /* Content area */
+        .content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 0;
+        }
+
+        /* Action button */
+        .action-button {
+            width: 140px; height: 140px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(145deg, var(--rose), var(--rose-deep));
+            color: white;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: var(--shadow-glow), inset 0 -4px 16px rgba(0, 0, 0, 0.1);
+            transition: all 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            position: relative;
+        }
+        .action-button::after {
+            content: '';
+            position: absolute;
+            inset: -6px;
+            border-radius: 50%;
+            border: 2px solid var(--rose-light);
+            opacity: 0.3;
+            animation: actionRing 3s ease-in-out infinite;
+        }
+        @keyframes actionRing {
+            0%, 100% { transform: scale(1); opacity: 0.3; }
+            50% { transform: scale(1.06); opacity: 0.1; }
+        }
+        .action-button:active {
+            transform: scale(0.93);
+            box-shadow: 0 4px 16px var(--rose-glow);
+        }
+        .action-button .btn-icon { font-size: 2rem; }
+        .action-button .btn-text {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 2.5px;
+            font-weight: 700;
+        }
+
+        /* Result card */
+        .result-area {
+            margin-top: 28px;
+            min-height: 100px;
+            width: 100%;
+            max-width: 340px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .result-card {
+            background: var(--glass-light);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-light-border);
+            border-radius: var(--radius-lg);
+            padding: 24px 20px;
+            text-align: center;
+            box-shadow: var(--shadow-md);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s cubic-bezier(0.32, 0.72, 0, 1);
+            width: 100%;
+        }
+        .result-card.visible { opacity: 1; transform: translateY(0); }
+        .result-card p {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1rem;
+            line-height: 1.7;
+            color: var(--text-primary);
+            font-style: italic;
+        }
+        .result-card .quote-mark {
+            font-size: 1.1rem;
+            color: var(--rose);
+            opacity: 0.6;
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           VIP / ZONA SEGURA
+        ═══════════════════════════════════════════════════════════════ */
+        #vip-section {
+            background: linear-gradient(180deg, var(--night) 0%, #1C0F25 50%, var(--berry) 100%);
+        }
+        #vip-section .back-button {
+            background: var(--glass-dark);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            color: var(--text-light);
+            border: 1px solid var(--glass-dark-border);
+        }
+        #vip-section .section-title {
+            font-family: 'Playfair Display', Georgia, serif;
+            color: var(--gold-light);
+        }
+        #vip-section .action-button {
+            background: linear-gradient(145deg, var(--danger), #a41e2d);
+            box-shadow: 0 10px 40px rgba(224, 92, 107, 0.35), inset 0 -4px 16px rgba(0, 0, 0, 0.2);
+        }
+        #vip-section .action-button::after { border-color: rgba(224, 92, 107, 0.3); }
+        #vip-section .action-button:active { box-shadow: 0 4px 20px rgba(224, 92, 107, 0.4); }
+        #vip-section .result-card {
+            background: var(--glass-dark);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-dark-border);
+        }
+        #vip-section .result-card p { color: var(--text-light); }
+        #vip-section .result-card .quote-mark { color: var(--danger); }
+
+        /* VIP Particles */
+        .vip-particles {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            overflow: hidden; pointer-events: none; z-index: 0;
+        }
+        .particle {
+            position: absolute;
+            width: 3px; height: 3px;
+            background: var(--gold);
+            border-radius: 50%;
+            opacity: 0.2;
+            animation: float 8s infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.15; }
+            50% { transform: translateY(-25px) rotate(180deg); opacity: 0.4; }
+        }
+
+        /* ═══ PIN OVERLAY ═══ */
+        .pin-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 100;
+            background: linear-gradient(180deg, var(--night) 0%, #1C0F25 60%, var(--berry) 100%);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.32, 0.72, 0, 1);
+        }
+        .pin-overlay.unlocked { opacity: 0; transform: scale(1.03); pointer-events: none; }
+        .pin-title {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.4rem; font-weight: 600;
+            color: var(--gold-light);
+            margin-bottom: 6px;
+        }
+        .pin-subtitle {
+            font-size: 0.8rem; color: var(--text-light-secondary);
+            margin-bottom: 32px; font-weight: 400;
+        }
+        .pin-icon { font-size: 2.5rem; margin-bottom: 16px; }
+        .pin-dots { display: flex; gap: 16px; margin-bottom: 36px; }
+        .pin-dot {
+            width: 14px; height: 14px; border-radius: 50%;
+            border: 2px solid rgba(212, 165, 116, 0.4);
+            background: transparent;
+            transition: all 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+        }
+        .pin-dot.filled {
+            background: var(--gold);
+            border-color: var(--gold);
+            transform: scale(1.15);
+            box-shadow: 0 0 12px var(--gold-glow);
+        }
+        .pin-dot.error {
+            border-color: var(--danger);
+            background: var(--danger);
+            animation: shake 0.5s ease;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+        .pin-keypad {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 14px; max-width: 270px;
+        }
+        .pin-key {
+            width: 68px; height: 68px;
+            border-radius: 50%;
+            border: 1px solid rgba(212, 165, 116, 0.2);
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--gold-light);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 1.4rem; font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .pin-key:active {
+            background: rgba(212, 165, 116, 0.15);
+            transform: scale(0.92);
+            border-color: rgba(212, 165, 116, 0.4);
+        }
+        .pin-key.empty { border: none; background: transparent; cursor: default; }
+        .pin-key.delete { font-size: 1.1rem; }
+        .pin-back-btn {
+            position: absolute;
+            top: calc(24px + var(--safe-top));
+            left: 24px;
+            background: var(--glass-dark);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-dark-border);
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.8rem; font-weight: 600;
+            color: var(--text-light);
+            cursor: pointer; z-index: 101;
+            display: flex; align-items: center; gap: 6px;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           CANCIONES
+        ═══════════════════════════════════════════════════════════════ */
+        #canciones-section {
+            background: linear-gradient(180deg, #0F0A1A 0%, #1A1025 40%, #2D1B3D 100%);
+        }
+        #canciones-section .back-button {
+            background: var(--glass-dark);
+            color: var(--text-light);
+            border: 1px solid var(--glass-dark-border);
+        }
+        #canciones-section .section-title { color: var(--text-light); }
+        .songs-list {
+            width: 100%; max-width: 380px;
+            display: flex; flex-direction: column;
+            gap: 8px; margin-top: 15px;
+        }
+        .song-card {
+            background: var(--glass-dark);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: var(--radius-md);
+            padding: 14px 16px;
+            display: flex; align-items: center; gap: 14px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+            border: 1px solid var(--glass-dark-border);
+            text-decoration: none;
+        }
+        .song-card:active {
+            transform: scale(0.98);
+            background: rgba(255, 255, 255, 0.12);
+        }
+        .song-icon {
+            font-size: 1.5rem;
+            width: 42px; height: 42px;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(252, 60, 68, 0.12);
+            border-radius: var(--radius-sm);
+        }
+        .song-info { flex: 1; }
+        .song-title {
+            font-size: 0.85rem; font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 2px;
+        }
+        .song-artist { font-size: 0.7rem; color: var(--text-light-secondary); }
+        .song-play { font-size: 1.1rem; color: var(--apple-red); }
+
+        /* ═══════════════════════════════════════════════════════════════
+           SHARED SECTIONS (Sentimientos & Películas)
+        ═══════════════════════════════════════════════════════════════ */
+        #sentimientos-section { background: linear-gradient(180deg, #1A1025 0%, #0F0A1A 100%); }
+        #sentimientos-section .back-button,
+        #peliculas-section .back-button {
+            background: var(--glass-dark);
+            color: var(--text-light);
+            border: 1px solid var(--glass-dark-border);
+        }
+        #sentimientos-section .section-title { color: var(--text-light); }
+        #peliculas-section { background: linear-gradient(180deg, #0D1B2A 0%, #0F0A1A 100%); }
+        #peliculas-section .section-title { color: var(--text-light); }
+
+        /* Input area */
+        .input-area { width: 100%; max-width: 380px; margin-bottom: 16px; }
+        .input-group { display: flex; gap: 10px; margin-bottom: 10px; }
+        .text-input {
+            flex: 1;
+            padding: 14px 18px;
+            border: none;
+            border-radius: var(--radius-md);
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-light);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.85rem;
+            outline: none;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+        .text-input::placeholder { color: var(--text-light-secondary); }
+        .text-input:focus {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: var(--glass-dark-border);
+        }
+        .send-button {
+            width: 48px; height: 48px;
+            border-radius: 50%; border: none;
+            background: linear-gradient(135deg, var(--rose), var(--rose-deep));
+            color: white;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px var(--rose-glow);
+        }
+        .send-button:active { transform: scale(0.88); }
+
+        /* Shared list */
+        .shared-list {
+            width: 100%; max-width: 380px;
+            display: flex; flex-direction: column;
+            gap: 8px; max-height: 45vh;
+            overflow-y: auto; padding-right: 4px;
+        }
+        .shared-item {
+            background: var(--glass-dark);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: var(--radius-md);
+            padding: 14px 16px;
+            border: 1px solid var(--glass-dark-border);
+        }
+        .shared-item-header {
+            display: flex; justify-content: space-between;
+            align-items: center; margin-bottom: 8px;
+        }
+        .shared-item-author {
+            font-size: 0.68rem; font-weight: 700;
+            color: var(--rose);
+            background: rgba(232, 160, 191, 0.15);
+            padding: 4px 10px;
+            border-radius: 20px;
+            letter-spacing: 0.3px;
+        }
+        .shared-item-author.partner {
+            color: var(--info);
+            background: rgba(108, 155, 210, 0.15);
+        }
+        .shared-item-date {
+            font-size: 0.62rem;
+            color: var(--text-light-secondary);
+        }
+        .shared-item-text {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        /* Checkbox */
+        .shared-item-checkbox { display: flex; align-items: center; gap: 12px; }
+        .checkbox-custom {
+            width: 22px; height: 22px; border-radius: 7px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            background: transparent;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+        .checkbox-custom.checked {
+            background: var(--success);
+            border-color: var(--success);
+            box-shadow: 0 0 8px rgba(76, 175, 130, 0.3);
+        }
+        .checkbox-custom.checked::after { content: "✓"; color: white; font-size: 0.75rem; font-weight: bold; }
+        .movie-title { font-size: 0.85rem; color: var(--text-light); }
+        .movie-title.watched { text-decoration: line-through; opacity: 0.4; }
+
+        /* User switch */
+        .user-switch { display: flex; justify-content: center; gap: 8px; margin-bottom: 16px; }
+        .user-switch-btn {
+            padding: 9px 22px;
+            border-radius: 50px;
+            border: 1.5px solid rgba(255, 255, 255, 0.15);
+            background: transparent;
+            color: var(--text-light-secondary);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.78rem; font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .user-switch-btn.active {
+            background: var(--rose);
+            border-color: var(--rose);
+            color: white;
+            box-shadow: 0 4px 12px var(--rose-glow);
+        }
+        .user-switch-btn:last-child.active {
+            background: var(--info);
+            border-color: var(--info);
+            box-shadow: 0 4px 12px rgba(108, 155, 210, 0.3);
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center; padding: 36px 24px;
+            color: var(--text-light-secondary);
+        }
+        .empty-state-icon { font-size: 2.2rem; margin-bottom: 12px; opacity: 0.4; }
+        .empty-state-text { font-size: 0.82rem; font-weight: 400; }
+
+        /* ═══════════════════════════════════════════════════════════════
+           ESTADO EN VIVO
+        ═══════════════════════════════════════════════════════════════ */
+        #estado-section { background: linear-gradient(180deg, #0A2E1A 0%, #0F0A1A 100%); }
+        #estado-section .back-button {
+            background: var(--glass-dark);
+            color: var(--text-light);
+            border: 1px solid var(--glass-dark-border);
+        }
+        #estado-section .section-title { color: var(--text-light); }
+        .status-current { width: 100%; max-width: 380px; margin-bottom: 20px; }
+        .status-card-big {
+            background: var(--glass-dark);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: var(--radius-lg);
+            padding: 18px 20px;
+            border: 1px solid var(--glass-dark-border);
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+        .status-card-big .status-name {
+            font-size: 0.78rem; font-weight: 700;
+            color: var(--text-light);
+            margin-bottom: 4px;
+            letter-spacing: 0.3px;
+        }
+        .status-card-big .status-text {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.05rem;
+            color: var(--text-light);
+        }
+        .status-card-big .status-time {
+            font-size: 0.62rem;
+            color: var(--text-light-secondary);
+            margin-top: 6px;
+        }
+        .status-card-big .status-emoji {
+            font-size: 1.8rem;
+            float: right;
+            margin-top: -5px;
+        }
+
+        /* Status presets */
+        .status-presets {
+            display: flex; flex-wrap: wrap;
+            gap: 7px; justify-content: center;
+            margin-bottom: 16px;
+        }
+        .status-preset {
+            padding: 8px 14px; border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-light);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.72rem; font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .status-preset:active {
+            background: rgba(255, 255, 255, 0.12);
+            transform: scale(0.95);
+            border-color: var(--success);
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           WHATSAPP ANALYZER
+        ═══════════════════════════════════════════════════════════════ */
+        #whatsapp-section { background: linear-gradient(180deg, #0A2E20 0%, #0F0A1A 100%); }
+        #whatsapp-section .back-button {
+            background: var(--glass-dark);
+            color: var(--text-light);
+            border: 1px solid var(--glass-dark-border);
+        }
+        #whatsapp-section .section-title { color: var(--text-light); }
+
+        .wa-upload-area {
+            width: 100%; max-width: 380px;
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 16px;
+            background: rgba(255, 255, 255, 0.03);
+        }
+        .wa-upload-area:active {
+            border-color: var(--whatsapp);
+            background: rgba(37, 211, 102, 0.05);
+        }
+        .wa-upload-area .upload-icon { font-size: 2.2rem; margin-bottom: 10px; }
+        .wa-upload-area .upload-text {
+            font-size: 0.82rem; color: var(--text-light);
+            font-weight: 500;
+        }
+        .wa-upload-area .upload-sub {
+            font-size: 0.68rem; color: var(--text-light-secondary);
+            margin-top: 6px;
+        }
+
+        /* Stats bar */
+        .wa-stats-bar {
+            width: 100%; max-width: 380px;
+            display: flex; gap: 8px;
+            margin-bottom: 16px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+        .wa-stat-chip {
+            background: var(--glass-dark);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: var(--radius-sm);
+            padding: 10px 14px;
+            border: 1px solid var(--glass-dark-border);
+            flex-shrink: 0;
+            text-align: center;
+        }
+        .wa-stat-chip .stat-num {
+            font-size: 1rem; font-weight: 800;
+            color: var(--text-light);
+        }
+        .wa-stat-chip .stat-label {
+            font-size: 0.58rem;
+            color: var(--text-light-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Search */
+        .wa-search-box {
+            width: 100%; max-width: 380px;
+            display: flex; gap: 10px; margin-bottom: 16px;
+        }
+        .wa-search-input {
+            flex: 1;
+            padding: 14px 18px;
+            border: none;
+            border-radius: var(--radius-md);
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-light);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.85rem;
+            outline: none;
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .wa-search-input::placeholder { color: var(--text-light-secondary); }
+        .wa-search-input:focus {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: var(--glass-dark-border);
+        }
+        .wa-search-btn {
+            width: 48px; height: 48px;
+            border-radius: 50%; border: none;
+            background: linear-gradient(135deg, var(--whatsapp), #128C7E);
+            color: white; font-size: 1.1rem;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+        }
+        .wa-search-btn:active { transform: scale(0.88); }
+
+        /* Results */
+        .wa-results { width: 100%; max-width: 380px; padding-bottom: 40px; }
+        .wa-result-card {
+            background: var(--glass-dark);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: var(--radius-md);
+            padding: 18px;
+            border: 1px solid var(--glass-dark-border);
+            margin-bottom: 10px;
+        }
+        .wa-result-card .result-title {
+            font-size: 0.82rem; font-weight: 700;
+            color: var(--whatsapp);
+            margin-bottom: 10px;
+            letter-spacing: 0.2px;
+        }
+        .wa-result-card .result-text {
+            font-size: 0.82rem;
+            color: var(--text-light);
+            line-height: 1.7;
+        }
+        .wa-chart-container {
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            margin-top: 12px;
+            max-height: 280px;
+        }
+        .wa-chart-container canvas { max-height: 220px; }
+
+        /* Loading */
+        .wa-loading {
+            text-align: center; padding: 24px;
+            color: var(--text-light-secondary);
+            font-size: 0.82rem;
+        }
+        .wa-loading .spinner {
+            display: inline-block;
+            width: 18px; height: 18px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-top-color: var(--whatsapp);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .wa-ai-badge {
+            display: inline-block;
+            font-size: 0.58rem; font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 10px;
+            background: rgba(37, 211, 102, 0.15);
+            color: var(--whatsapp);
+            margin-left: 6px;
+            letter-spacing: 0.3px;
+        }
+
+        /* Example queries */
+        .wa-example-queries { width: 100%; max-width: 380px; margin-bottom: 12px; }
+        .wa-example-queries .example-label {
+            font-size: 0.68rem;
+            color: var(--text-light-secondary);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        .wa-example-list { display: flex; flex-wrap: wrap; gap: 6px; }
+        .wa-example-chip {
+            padding: 6px 12px;
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-light-secondary);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.66rem; font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .wa-example-chip:active {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           RESPONSIVE
+        ═══════════════════════════════════════════════════════════════ */
+        @media (max-height: 700px) {
+            .main-title { font-size: 2.4rem; }
+            .menu-card { padding: 14px 10px; }
+            .menu-card .icon { font-size: 1.3rem; width: 40px; height: 40px; }
+            .menu-card .label { font-size: 0.65rem; }
+            .action-button { width: 115px; height: 115px; }
+            .action-button .btn-icon { font-size: 1.6rem; }
+            .days-counter { margin-bottom: 10px; }
+        }
+
+        @media (min-width: 420px) {
+            .menu-grid { gap: 14px; }
+            .menu-card { padding: 22px 16px; }
+        }
+
+        /* Selection prevention */
+        * { -webkit-user-select: none; user-select: none; }
+        .text-input, .wa-search-input { -webkit-user-select: text; user-select: text; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        
+        <!-- ═══════════════════════════════════════════════════════════════
+             HOME
+        ═══════════════════════════════════════════════════════════════ -->
+        <section id="home" class="screen active">
+            
+            <div class="background-collage">
+                <img src="https://i.postimg.cc/4dNBg5xS/1C5FA923-70BC-4061-8720-45E8FD07725F.jpg" alt="">
+                <img src="https://i.postimg.cc/xCTt2R1F/5D33CF1F-77D7-4FF9-A570-3424B899AA3E.jpg" alt="">
+                <img src="https://i.postimg.cc/Cx0F4B1q/Archivo-007-(1).png" alt="">
+                <img src="https://i.postimg.cc/Cx0F4B1q/Archivo-007-(1).png" alt="">
+                <img src="https://i.postimg.cc/BLfRYPfg/IMG-6127-(1).avif" alt="">
+                <img src="https://i.postimg.cc/BLfRYPfg/IMG-6127-(1).avif" alt="">
+                <img src="https://i.postimg.cc/FzQ9n7Zq/IMG-0146.jpg" alt="">
+                <img src="https://i.postimg.cc/SNfK37HY/IMG-7674.jpg" alt="">
+                <img src="https://i.postimg.cc/XYvnhMfY/IMG-8758.jpg" alt="">
+                <img src="https://i.postimg.cc/XYvnhMfY/IMG-8758.jpg" alt="">
+                <img src="https://i.postimg.cc/jdwXh21B/IMG-6117.jpg" alt="">
+                <img src="https://i.postimg.cc/L8VNJ7wz/IMG-3914.jpg" alt="">
+            </div>
+            
+            <div class="home-content">
+                <p class="subtitle">nuestra historia</p>
+                <h1 class="main-title">Nosotros</h1>
+                
+                <div class="days-counter">
+                    <span class="heart-icon">&#10084;&#65039;</span>
+                    <span class="days-text"><span class="days-number" id="days-together">---</span> d&iacute;as juntos</span>
+                </div>
+                
+                <!-- Status banner -->
+                <div class="status-banner" id="home-status-banner" onclick="navigateTo('estado')">
+                    <div class="status-dot"></div>
+                    <div class="status-banner-text">
+                        <span class="status-banner-name" id="partner-status-name">Alba</span>: <span id="partner-status-text">Sin estado</span>
+                    </div>
+                    <span class="arrow">&#10095;</span>
+                </div>
+                
+                <nav class="menu-grid">
+                    <button class="menu-card" onclick="navigateTo('razones')">
+                        <span class="icon">&#128140;</span>
+                        <span class="label">Razones por las que te quiero</span>
+                    </button>
+                    <button class="menu-card" onclick="navigateTo('planes')">
+                        <span class="icon">&#9992;&#65039;</span>
+                        <span class="label">Planes a tu lado</span>
+                    </button>
+                    <button class="menu-card" onclick="navigateTo('recuerdos')">
+                        <span class="icon">&#128247;</span>
+                        <span class="label">Recuerdos a tu lado</span>
+                    </button>
+                    <button class="menu-card music" onclick="navigateTo('canciones')">
+                        <span class="icon">&#127925;</span>
+                        <span class="label">Nuestras canciones</span>
+                    </button>
+                    <button class="menu-card shared" onclick="navigateTo('sentimientos')">
+                        <span class="icon">&#128173;</span>
+                        <span class="label">Nuestros sentimientos</span>
+                    </button>
+                    <button class="menu-card movies" onclick="navigateTo('peliculas')">
+                        <span class="icon">&#127916;</span>
+                        <span class="label">Pelis para ver juntos</span>
+                    </button>
+                    <button class="menu-card status-card" onclick="navigateTo('estado')">
+                        <span class="icon">&#128225;</span>
+                        <span class="label">Mi estado en vivo</span>
+                    </button>
+                    <button class="menu-card whatsapp-card" onclick="navigateTo('whatsapp')">
+                        <span class="icon">&#128269;</span>
+                        <span class="label">Explorar nuestro chat</span>
+                    </button>
+                    <button class="menu-card vip" onclick="navigateTo('vip')" style="grid-column: span 2;">
+                        <span class="icon">&#128274;</span>
+                        <span class="label">Zona secreta</span>
+                    </button>
+                </nav>
+            </div>
+        </section>
+        
+        <!-- ═══ RAZONES ═══ -->
+        <section id="razones-section" class="screen section-screen">
+            <button class="back-button" onclick="navigateTo('home')"><span class="back-arrow">&#8592;</span> Volver</button>
+            <header class="section-header">
+                <span class="section-icon">&#128140;</span>
+                <h2 class="section-title">Razones por las que te quiero</h2>
+                <p class="section-subtitle">Pulsa para descubrir una nueva</p>
+            </header>
+            <div class="content-area">
+                <button class="action-button" onclick="showRandom('razones')"><span class="btn-icon">&#128157;</span><span class="btn-text">Descubrir</span></button>
+                <div class="result-area"><div class="result-card" id="razones-result"><span class="quote-mark">&#10077;</span><p id="razones-text"></p><span class="quote-mark">&#10078;</span></div></div>
+            </div>
+        </section>
+        
+        <!-- ═══ PLANES ═══ -->
+        <section id="planes-section" class="screen section-screen">
+            <button class="back-button" onclick="navigateTo('home')"><span class="back-arrow">&#8592;</span> Volver</button>
+            <header class="section-header">
+                <span class="section-icon">&#9992;&#65039;</span>
+                <h2 class="section-title">Planes a tu lado</h2>
+                <p class="section-subtitle">Sue&ntilde;os que haremos realidad</p>
+            </header>
+            <div class="content-area">
+                <button class="action-button" onclick="showRandom('planes')"><span class="btn-icon">&#127757;</span><span class="btn-text">So&ntilde;ar</span></button>
+                <div class="result-area"><div class="result-card" id="planes-result"><span class="quote-mark">&#10077;</span><p id="planes-text"></p><span class="quote-mark">&#10078;</span></div></div>
+            </div>
+        </section>
+        
+        <!-- ═══ RECUERDOS ═══ -->
+        <section id="recuerdos-section" class="screen section-screen">
+            <button class="back-button" onclick="navigateTo('home')"><span class="back-arrow">&#8592;</span> Volver</button>
+            <header class="section-header">
+                <span class="section-icon">&#128247;</span>
+                <h2 class="section-title">Recuerdos a tu lado</h2>
+                <p class="section-subtitle">Momentos que guardamos para siempre</p>
+            </header>
+            <div class="content-area">
+                <button class="action-button" onclick="showRandom('recuerdos')"><span class="btn-icon">&#10024;</span><span class="btn-text">Recordar</span></button>
+                <div class="result-area"><div class="result-card" id="recuerdos-result"><span class="quote-mark">&#10077;</span><p id="recuerdos-text"></p><span class="quote-mark">&#10078;</span></div></div>
+            </div>
+        </section>
+        
+        <!-- ═══ CANCIONES ═══ -->
+        <section id="canciones-section" class="screen section-screen">
+            <button class="back-button" onclick="navigateTo('home')"><span class="back-arrow">&#8592;</span> Volver</button>
+            <header class="section-header">
+                <span class="section-icon">&#127925;</span>
+                <h2 class="section-title">Nuestras canciones</h2>
+                <p class="section-subtitle" style="color: var(--text-light-secondary);">La banda sonora de lo nuestro</p>
+            </header>
+            <div class="songs-list" id="songs-list"></div>
+        </section>
+        
+        <!-- ═══ SENTIMIENTOS ═══ -->
+        <section id="sentimientos-section" class="screen section-screen">
+            <button class="back-button" onclick="navigateTo('home')"><span class="back-arrow">&#8592;</span> Volver</button>
+            <header class="section-header">
+                <span class="section-icon">&#128173;</span>
+                <h2 class="section-title">Nuestros sentimientos</h2>
+                <p class="section-subtitle" style="color: var(--text-light-secondary);">Un espacio solo para nosotros</p>
+            </header>
+            <div class="user-switch"><button class="user-switch-btn active" onclick="setUser('sergio')">Sergio</button><button class="user-switch-btn" onclick="setUser('alba')">Alba</button></div>
+            <div class="input-area"><div class="input-group"><input type="text" class="text-input" id="sentimiento-input" placeholder="Escribe c&oacute;mo te sientes..."><button class="send-button" onclick="addSentimiento()">&#128140;</button></div></div>
+            <div class="shared-list" id="sentimientos-list"></div>
+        </section>
+        
+        <!-- ═══ PELÍCULAS ═══ -->
+        <section id="peliculas-section" class="screen section-screen">
+            <button class="back-button" onclick="navigateTo('home')"><span class="back-arrow">&#8592;</span> Volver</button>
+            <header class="section-header">
+                <span class="section-icon">&#127916;</span>
+                <h2 class="section-title">Pelis para ver juntos</h2>
+                <p class="section-subtitle" style="color: var(--text-light-secondary);">Nuestra lista compartida</p>
+            </header>
+            <div class="user-switch"><button class="user-switch-btn active" onclick="setUser('sergio')">Sergio</button><button class="user-switch-btn" onclick="setUser('alba')">Alba</button></div>
+            <div class="input-area"><div class="input-group"><input type="text" class="text-input" id="pelicula-input" placeholder="A&ntilde;adir pel&iacute;cula..."><button class="send-button" onclick="addPelicula()">&#127916;</button></div></div>
+            <div class="shared-list" id="peliculas-list"></div>
+        </section>
+        
+        <!-- ═══ ESTADO EN VIVO ═══ -->
+        <section id="estado-section" class="screen section-screen">
+            <button class="back-button" onclick="navigateTo('home')"><span class="back-arrow">&#8592;</span> Volver</button>
+            <header class="section-header">
+                <span class="section-icon">&#128225;</span>
+                <h2 class="section-title">Estado en vivo</h2>
+                <p class="section-subtitle" style="color: var(--text-light-secondary);">Siempre conectados</p>
+            </header>
+            
+            <div class="user-switch">
+                <button class="user-switch-btn active" onclick="setUser('sergio')">Sergio</button>
+                <button class="user-switch-btn" onclick="setUser('alba')">Alba</button>
+            </div>
+            
+            <div class="status-current">
+                <div class="status-card-big" id="sergio-status-card">
+                    <div class="status-name">Sergio</div>
+                    <span class="status-emoji" id="sergio-status-emoji">&#128522;</span>
+                    <div class="status-text" id="sergio-status-display">Sin estado</div>
+                    <div class="status-time" id="sergio-status-time"></div>
+                </div>
+                <div class="status-card-big" id="alba-status-card">
+                    <div class="status-name">Alba</div>
+                    <span class="status-emoji" id="alba-status-emoji">&#128522;</span>
+                    <div class="status-text" id="alba-status-display">Sin estado</div>
+                    <div class="status-time" id="alba-status-time"></div>
+                </div>
+            </div>
+            
+            <p style="font-size:0.72rem; color:var(--text-light-secondary); text-align:center; margin-bottom:12px; font-weight:400;">Toca un estado r&aacute;pido o escribe el tuyo:</p>
+            
+            <div class="status-presets">
+                <button class="status-preset" onclick="setStatus('&#128218; Estudiando')">&#128218; Estudiando</button>
+                <button class="status-preset" onclick="setStatus('&#127916; Viendo una peli')">&#127916; Viendo peli</button>
+                <button class="status-preset" onclick="setStatus('&#128164; Durmiendo')">&#128164; Durmiendo</button>
+                <button class="status-preset" onclick="setStatus('&#128188; Trabajando')">&#128188; Trabajando</button>
+                <button class="status-preset" onclick="setStatus('&#127947;&#65039; En el gym')">&#127947;&#65039; En el gym</button>
+                <button class="status-preset" onclick="setStatus('&#127869;&#65039; Comiendo')">&#127869;&#65039; Comiendo</button>
+                <button class="status-preset" onclick="setStatus('&#128663; Conduciendo')">&#128663; Conduciendo</button>
+                <button class="status-preset" onclick="setStatus('&#128705; En la ducha')">&#128705; En la ducha</button>
+                <button class="status-preset" onclick="setStatus('&#128173; Pensando en ti')">&#128173; Pensando en ti</button>
+                <button class="status-preset" onclick="setStatus('&#127918; Jugando')">&#127918; Jugando</button>
+                <button class="status-preset" onclick="setStatus('&#128722; De compras')">&#128722; De compras</button>
+                <button class="status-preset" onclick="setStatus('&#128107; Con amigos')">&#128107; Con amigos</button>
+            </div>
+            
+            <div class="input-area">
+                <div class="input-group">
+                    <input type="text" class="text-input" id="status-input" placeholder="Escribe un estado personalizado...">
+                    <button class="send-button" onclick="setStatus(document.getElementById('status-input').value)" style="background:linear-gradient(135deg, var(--success), #2E8B57);">&#128225;</button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- ═══ WHATSAPP ANALYZER ═══ -->
+        <section id="whatsapp-section" class="screen section-screen">
+            <button class="back-button" onclick="navigateTo('home')"><span class="back-arrow">&#8592;</span> Volver</button>
+            <header class="section-header">
+                <span class="section-icon">&#128269;</span>
+                <h2 class="section-title">Explorar nuestro chat</h2>
+                <p class="section-subtitle" style="color: var(--text-light-secondary);">Descubre datos de vuestras conversaciones</p>
+            </header>
+            
+            <div class="wa-upload-area" id="wa-upload" onclick="document.getElementById('wa-file-input').click()">
+                <div class="upload-icon">&#128172;</div>
+                <div class="upload-text" id="wa-upload-text">Toca para cargar el chat de WhatsApp</div>
+                <div class="upload-sub">Exporta el chat desde WhatsApp &rarr; Sin archivos &rarr; .txt</div>
+                <input type="file" id="wa-file-input" accept=".txt" style="display:none" onchange="handleWhatsAppFile(event)">
+            </div>
+            
+            <div class="wa-stats-bar" id="wa-stats" style="display:none;">
+                <div class="wa-stat-chip"><div class="stat-num" id="wa-total-msgs">0</div><div class="stat-label">mensajes</div></div>
+                <div class="wa-stat-chip"><div class="stat-num" id="wa-total-days">0</div><div class="stat-label">d&iacute;as</div></div>
+                <div class="wa-stat-chip"><div class="stat-num" id="wa-msg-user1">0</div><div class="stat-label" id="wa-label-user1">Usuario 1</div></div>
+                <div class="wa-stat-chip"><div class="stat-num" id="wa-msg-user2">0</div><div class="stat-label" id="wa-label-user2">Usuario 2</div></div>
+            </div>
+            
+            <div class="wa-example-queries" id="wa-examples" style="display:none;">
+                <div class="example-label">Pregunta lo que quieras sobre vuestro chat:</div>
+                <div class="wa-example-list">
+                    <button class="wa-example-chip" onclick="waSearch('&iquest;Qui&eacute;n ha hablado m&aacute;s?')">&#191;Qui&eacute;n habl&oacute; m&aacute;s?</button>
+                    <button class="wa-example-chip" onclick="waSearch('&iquest;A qu&eacute; hora hablamos m&aacute;s?')">&#191;Hora m&aacute;s habitual?</button>
+                    <button class="wa-example-chip" onclick="waSearch('&iquest;Cu&aacute;l fue el primer te quiero?')">Primer te quiero</button>
+                    <button class="wa-example-chip" onclick="waSearch('Resumen de febrero 2024')">Resumen de un mes</button>
+                    <button class="wa-example-chip" onclick="waSearch('&iquest;Cu&aacute;l es la palabra m&aacute;s usada?')">Palabra m&aacute;s usada</button>
+                    <button class="wa-example-chip" onclick="waSearch('&iquest;Cu&aacute;ntos mensajes por mes?')">Mensajes por mes</button>
+                    <button class="wa-example-chip" onclick="waSearch('&iquest;Cu&aacute;l fue el d&iacute;a con m&aacute;s mensajes?')">D&iacute;a m&aacute;s activo</button>
+                </div>
+            </div>
+            
+            <div class="wa-search-box" id="wa-search-box" style="display:none;">
+                <input type="text" class="wa-search-input" id="wa-search-input" placeholder="Pregunta sobre vuestro chat...">
+                <button class="wa-search-btn" onclick="waSearch()">&#128269;</button>
+            </div>
+            
+            <div class="wa-results" id="wa-results"></div>
+        </section>
+        
+        <!-- ═══ ZONA SEGURA ═══ -->
+        <section id="vip-section" class="screen section-screen">
+            <div class="vip-particles" id="particles"></div>
+            
+            <div class="pin-overlay" id="pin-overlay">
+                <button class="pin-back-btn" onclick="navigateTo('home'); lockVip();"><span class="back-arrow">&#8592;</span> Volver</button>
+                <div class="pin-icon">&#128274;</div>
+                <div class="pin-title">Zona secreta</div>
+                <div class="pin-subtitle">Introduce el PIN</div>
+                <div class="pin-dots">
+                    <div class="pin-dot" id="dot-0"></div>
+                    <div class="pin-dot" id="dot-1"></div>
+                    <div class="pin-dot" id="dot-2"></div>
+                    <div class="pin-dot" id="dot-3"></div>
+                </div>
+                <div class="pin-keypad">
+                    <button class="pin-key" onclick="pinPress('1')">1</button>
+                    <button class="pin-key" onclick="pinPress('2')">2</button>
+                    <button class="pin-key" onclick="pinPress('3')">3</button>
+                    <button class="pin-key" onclick="pinPress('4')">4</button>
+                    <button class="pin-key" onclick="pinPress('5')">5</button>
+                    <button class="pin-key" onclick="pinPress('6')">6</button>
+                    <button class="pin-key" onclick="pinPress('7')">7</button>
+                    <button class="pin-key" onclick="pinPress('8')">8</button>
+                    <button class="pin-key" onclick="pinPress('9')">9</button>
+                    <button class="pin-key empty"></button>
+                    <button class="pin-key" onclick="pinPress('0')">0</button>
+                    <button class="pin-key delete" onclick="pinDelete()">&#9003;</button>
+                </div>
+            </div>
+            
+            <div id="vip-content" style="display:none;flex-direction:column;flex:1;">
+                <button class="back-button" onclick="navigateTo('home'); lockVip();" style="background:var(--glass-dark);color:var(--text-light);border:1px solid var(--glass-dark-border);"><span class="back-arrow">&#8592;</span> Volver</button>
+                <header class="section-header"><span class="section-icon">&#128274;</span><h2 class="section-title">Zona secreta</h2></header>
+                <div class="content-area" style="position:relative;z-index:1;">
+                    <button class="action-button" onclick="showRandom('vip')"><span class="btn-icon">&#127922;</span><span class="btn-text">Atreverte</span></button>
+                    <div class="result-area"><div class="result-card" id="vip-result"><span class="quote-mark">&#10077;</span><p id="vip-text"></p><span class="quote-mark">&#10078;</span></div></div>
+                </div>
+            </div>
+        </section>
+        
+    </div>
+
+    <script>
+        /* ═══════════════════════════════════════════════════════════════════
+                     FIREBASE CONFIG
+        ═══════════════════════════════════════════════════════════════════ */
+        const firebaseConfig = {
+            apiKey: "AIzaSyCFQ7Q80MJct7RvrlKFgGu6b-NpZPissjM",
+            authDomain: "nosotrosapp-1377b.firebaseapp.com",
+            databaseURL: "https://nosotrosapp-1377b-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "nosotrosapp-1377b",
+            storageBucket: "nosotrosapp-1377b.firebasestorage.app",
+            messagingSenderId: "690177789878",
+            appId: "1:690177789878:web:7c5b5572192318a6327b17"
+        };
+
+        let database = null;
+        let firebaseEnabled = false;
+        try {
+            firebase.initializeApp(firebaseConfig);
+            database = firebase.database();
+            firebaseEnabled = true;
+            console.log("Firebase conectado");
+        } catch(e) { console.log("Firebase no disponible:", e); }
+
+        /* ═══════════════════════════════════════════════════════════════════
+           GEMINI AI CONFIG
+        ═══════════════════════════════════════════════════════════════════ */
+        const GEMINI_API_KEY = "AIzaSyDS2fVAcwB3gPhzVcmwg9gFB_wuqO_R0nM";
+
+        /* ═══════════════════════════════════════════════════════════════════
+                          DATA ARRAYS
+        ═══════════════════════════════════════════════════════════════════ */
+        
+        const razonesList = [
+            "Porque tu sonrisa ilumina hasta mis días más grises",
+            "Porque me haces querer ser mejor persona cada día",
+            "Por cómo te ríes cuando algo te hace mucha gracia",
+            "Porque contigo el silencio también es cómodo",
+            "Por la forma en que me miras cuando crees que no te veo",
+            "Porque eres mi persona favorita del mundo",
+            "Por cada mensaje de buenos días que me alegra la mañana",
+            "Porque me enseñaste lo que significa amar de verdad",
+            "Por ser mi compañera de aventuras y de sofá",
+            "Porque simplemente, contigo todo es mejor",
+            "Porque me haces sentir amado incluso en los momentos dificiles",
+            "Por tu apoyo incondicional en cada uno de mis proyectos",
+            "Porque me inspiras a ser la mejor versión de mí mismo",
+            "Por cada pequeño detalle que tienes conmigo sin que te lo pida",
+            "Porque me haces reír hasta que me duela el estómago",
+            "Por la forma en que me abrazas cuando más lo necesito",
+            "Porque contigo aprendí lo que es el amor verdadero",
+            "Por cada aventura que hemos vivido juntos y las que nos quedan por vivir",
+            "Porque me haces sentir seguro y protegido a tu lado",
+            "Por ser mi mejor amiga, mi confidente y mi amor",
+            "Por aquellas veces que has aguantado mis malos días en la universidad sin quejarte",
+            "Por besarme recién despertados y hacer que el día empiece perfecto",
+            "Porque me has enseñado a amar sin miedo y sin condiciones",
+            "Por cada vez que has estado a mi lado sin importar las circunstancias",
+            "Porque te desmayaras en el hospital pero aún asi viniste a verme",
+            "Porque me has demostrado que el amor es paciencia, comprension y apoyo incondicional",
+            "Por cada vez que me has hecho sentir especial sin necesidad de palabras",
+            "Porque contigo he aprendido que el amor no es perfecto, pero sí real",
+            "Por cada momento de felicidad que hemos compartido y los que nos quedan por compartir",
+            "Porque cuando estás de exámenes buscas un hueco para mandarme un mensaje y alegrarme el día",
+            "Por cada vez que me has sorprendido con un detalle que demuestra lo mucho que me conoces",
+            "Por hacerme esas roscas tan ricas que me vuelven loco y que solo tú sabes hacer",
+            "Por enseñarme la receta de la ensalada suprema",
+            "Por ayudarme a superar mis inseguridades y a creer en mí mismo",
+            "Por arrinconarte en la cama cuando yo la ocupo toda y aún así no quejarte",
+        ];
+
+        const planesList = [
+            "Quiero ver el atardecer contigo en Cadiz mientras merendamos un helado",
+            "Algún día tendremos nuestra propia casa con un perrete pequeño",
+            "Vamos a recorrer la costa amalfitana en vespa (si no te caes)",
+            "Quiero despertar contigo en mil hoteles diferentes alrededor del mundo",
+            "Prometo llevarte a ver las auroras boreales",
+            "Construiremos nuestra propia tradición de Navidad",
+            "Un día te pediré que seas mi compañera para siempre",
+            "Quiero que envejezcamos juntos, llenos de historias que contar a nuestros nietos",
+            "Vamos a aprender a cocinar pasta en Italia",
+            "Soñemos con un viaje a Granada en primavera",
+            "Quiero cenar en la azotea y comer kebab",
+            "Quiero aprender a cocinar muchas cosas contigo",
+            "Vamos a echar una manta en la W y a jugar a las cartas",
+            "Vamos a pasarnos el overcooked juntos y a reírnos de lo mal que se nos da",
+            "Quiero perderme contigo por Granada y descubrir rincones nuevos",
+            "Te quiero fotografíar por distintos lugares de España",
+            "Quiero bajar el Sella contigo en canoa",
+            "Quiero recorrer el pantano del Tranco en barca contigo",
+            "Haremos una ruta de tapas por el centro de Jaén",
+            "Quiero ayudarte con mates y a cambio tú me enseñas a cocinar tus platos favoritos",
+            "Quiero perrear hasta el suelo contigo en la 32",
+            "Quiero recorrer todas las calas de la costa de Granada en coche contigo",
+            "Podemos hacer un picnic en el parque de las ciencias y luego visitar el museo de la ciencia",
+            "Tenemos que ir al cine en el Jaén Plaza a ver la peli que elijas tú",
+            "Iremos a la cruz en coche y cenaremos allí",
+            "Iremos a la fábrica de chocolate de Lindt en Suiza (y tú callada)",
+            "Quiero ir contigo al gym solos y luego darnos un homenaje con una hamburguesa gigante",
+        ];
+
+        const recuerdosList = [
+            "¿Te acuerdas de nuestra primera cita? Yo estaba tan nervioso...",
+            "Aquella noche de verano bajo las estrellas fue mágica",
+            "Nunca olvidaré cómo me miraste el día que nos conocimos (aunque tu no te acuerdes)",
+            "Nuestro primer viaje juntos cambió todo",
+            "El día que me dijiste que me querías por primera vez",
+            "Esa cena casera que preparamos juntos viendo Toy Boy",
+            "Cuando bailamos en la cocina sin música",
+            "El primer 'te quiero' susurrado en la oscuridad",
+            "Aquella noche en Granada",
+            "Todas las veces que me has hecho reír hasta llorar",
+            "EL paseo por el Gran Eje cuando me diste un beso",
+            "Cuando me agarraste la mano y la metiste en mi chaquetón porque tenías frío",
+            "Cuando comimos Ventuccio tras 10 años de espera",
+            "Cuando me enseñaste a hacer la ensalada suprema en Torrenueva",
+            "Cuando me diste un beso de buenas noches por teléfono y me quedé dormido sonriendo",
+            "Cuando probé por primera vez tus roscas y supe que estabas hecha para mí",
+            "Cuando robamos en el sushi y nos reímos como niños pequeños",
+            "Cuando te montaste en el columpio en Motril y te atascaste y nos reímos un montón",
+            "Cuando nos fuimos a Torredelcampo en bici y comimos tostadas",
+            "Cuando jugamos al billar y me ganaste por primera vez",
+            "Cuando en mi cumple me llevaste a casa dando tumbos",
+            "Cuando pintamos la sudadera y se te ibba cayendo la pintura JAJAJAJ",
+            "Cuando nos bebimos ese mojito en unas sillas que se hundían en la arena",
+            "Cuando me gradué y te miraba desde el escenario",
+            "Cuando cenamos macarrones con nata en la azotea hace un año",
+            "Cuando aguantaste el frío para echarle fotos a la luna con lo pesao que era yo",
+            "Cuando nos subimos a la noria y daba cague",
+            "Cuando nos fuimos con las bicis por Cadiz y te pedí que si querías ser mi novia y me dijiste que sí",
+            "Cuando fuimos al tempo y te pediste una puta ensalada",
+            "Cuando nos montamos en el barquito catamaran en Cadiz",
+        ];
+
+        const vipList = [
+            "Hazme lo que quieras tapandome los ojos",
+            "Reto: Tienes que besarme ahora mismo este haciendo lo que sea ",
+            "Hoy toca masaje de cuerpo completo, a piedra papel tijera",
+            "Reto: Susúrrame al oído algo que me ponga mucho",
+            "Esta noche dormimos sin pijama",
+            "Reto: Tienes 30 segundos para convencermede lo que sea con un beso",
+            "Vamos a jugar un verdad o reto",
+            "Reto: Desayuno en la cama mañana, pero primero...",
+            "Hoy toca spa casero: baño de espuma para dos",
+            "Quítame una prenda solo con la boca",
+            "Hazme un streaptease sin música",
+            "Te reto al próximo día comprar Halls negros",
+            "Átame las manos con una bufanda y hazme lo que quieras durante 5 minutos",
+            "Hazte un video de 30 segundos haciendo algo que me ponga caliente",
+            "Mira juguetes por Internet y elige uno para probar juntos",
+            "Hazme algo debajo de la mesa mientras hago algo",
+        ];
+
+        const cancionesList = [
+           { titulo:"Me Fije", artista:"Alex Rose;Rauw Alejandro", url:"https://music.apple.com/es/search?term=Me%20Fije%20Alex%20Rose%3BRauw%20Alejandro" },
+{ titulo:"Persia - Remix", artista:"Jossef;Jamby El Favo;Eix", url:"https://music.apple.com/es/search?term=Persia%20-%20Remix%20Jossef%3BJamby%20El%20Favo%3BEix" },
+{ titulo:"No Fue - Remix", artista:"Leebrian;Cauty;Rauw Alejandro;Brray;Feid", url:"https://music.apple.com/es/search?term=No%20Fue%20-%20Remix%20Leebrian%3BCauty%3BRauw%20Alejandro%3BBrray%3BFeid" },
+{ titulo:"Velitas", artista:"Darell;Brytiago", url:"https://music.apple.com/es/search?term=Velitas%20Darell%3BBrytiago" },
+{ titulo:"105 F Remix", artista:"KEVVO;Farruko;Chencho Corleone;Arcángel;Darell;Ñengo Flow;Brytiago;Myke Towers", url:"https://music.apple.com/es/search?term=105%20F%20Remix" },
+{ titulo:"Mi Error - Remix", artista:"Eladio Carrion;Zion & Lennox;Wisin & Yandel;Lunay", url:"https://music.apple.com/es/search?term=Mi%20Error%20-%20Remix%20Eladio%20Carrion" },
+{ titulo:"T.T.I.", artista:"Rauw Alejandro", url:"https://music.apple.com/es/search?term=T.T.I.%20Rauw%20Alejandro" },
+{ titulo:"Inocente", artista:"Myke Towers", url:"https://music.apple.com/es/search?term=Inocente%20Myke%20Towers" },
+{ titulo:"Reloj", artista:"Rauw Alejandro;Anuel AA", url:"https://music.apple.com/es/search?term=Reloj%20Rauw%20Alejandro%3BAnuel%20AA" },
+{ titulo:"911 (Remix)", artista:"Sech;JHAYCO", url:"https://music.apple.com/es/search?term=911%20Remix%20Sech%3BJHAYCO" },
+{ titulo:"LOKITA", artista:"Mora", url:"https://music.apple.com/es/search?term=LOKITA%20Mora" },
+{ titulo:"Hey Lil Mama", artista:"Eladio Carrion;Rauw Alejandro", url:"https://music.apple.com/es/search?term=Hey%20Lil%20Mama%20Eladio%20Carrion" },
+{ titulo:"CÓMO SE SIENTE - Remix", artista:"JHAYCO;Bad Bunny", url:"https://music.apple.com/es/search?term=COMO%20SE%20SIENTE%20Remix%20JHAYCO" },
+{ titulo:"Ley Seca", artista:"JHAYCO;Anuel AA", url:"https://music.apple.com/es/search?term=Ley%20Seca%20JHAYCO%3BAnuel%20AA" },
+{ titulo:"512", artista:"Mora;JHAYCO", url:"https://music.apple.com/es/search?term=512%20Mora%3BJHAYCO" },
+{ titulo:"Enchule", artista:"Rauw Alejandro", url:"https://music.apple.com/es/search?term=Enchule%20Rauw%20Alejandro" },
+{ titulo:"La Zona", artista:"Bad Bunny", url:"https://music.apple.com/es/search?term=La%20Zona%20Bad%20Bunny" },
+{ titulo:"120", artista:"Bad Bunny", url:"https://music.apple.com/es/search?term=120%20Bad%20Bunny" },
+{ titulo:"PERRO NEGRO", artista:"Bad Bunny;Feid", url:"https://music.apple.com/es/search?term=PERRO%20NEGRO%20Bad%20Bunny%3BFeid" },
+{ titulo:"Tattoo", artista:"Rauw Alejandro", url:"https://music.apple.com/es/search?term=Tattoo%20Rauw%20Alejandro" },
+{ titulo:"Jordan I", artista:"SAIKO;Quevedo;La mano de oro", url:"https://music.apple.com/es/search?term=Jordan%20I%20SAIKO%3BQuevedo" },
+{ titulo:"REINA", artista:"Mora;SAIKO", url:"https://music.apple.com/es/search?term=REINA%20Mora%3BSAIKO" },
+{ titulo:"Algo Mágico", artista:"Rauw Alejandro", url:"https://music.apple.com/es/search?term=Algo%20Magico%20Rauw%20Alejandro" },
+{ titulo:"Dos Mil 16", artista:"Bad Bunny", url:"https://music.apple.com/es/search?term=Dos%20Mil%2016%20Bad%20Bunny" },
+{ titulo:"Si Estuviésemos Juntos", artista:"Bad Bunny", url:"https://music.apple.com/es/search?term=Si%20Estuviesemos%20Juntos%20Bad%20Bunny" },
+{ titulo:"BAILE INoLVIDABLE", artista:"Bad Bunny", url:"https://music.apple.com/es/search?term=BAILE%20INoLVIDABLE%20Bad%20Bunny" },
+{ titulo:"BESO", artista:"ROSALÍA;Rauw Alejandro", url:"https://music.apple.com/es/search?term=BESO%20ROSALIA%3BRauw%20Alejandro" },
+{ titulo:"LA FAMA", artista:"ROSALÍA;The Weeknd", url:"https://music.apple.com/es/search?term=LA%20FAMA%20ROSALIA%3BThe%20Weeknd" },
+{ titulo:"BAGDAD - Cap.7: Liturgia", artista:"ROSALÍA", url:"https://music.apple.com/es/search?term=BAGDAD%20ROSALIA" },
+{ titulo:"MALAMENTE - Cap.1: Augurio", artista:"ROSALÍA", url:"https://music.apple.com/es/search?term=MALAMENTE%20ROSALIA" },
+{ titulo:"Contando Lunares", artista:"Don Patricio;Cruz Cafuné", url:"https://music.apple.com/es/search?term=Contando%20Lunares%20Don%20Patricio" },
+{ titulo:"Rosas", artista:"La Oreja de Van Gogh", url:"https://music.apple.com/es/search?term=Rosas%20La%20Oreja%20de%20Van%20Gogh" },
+{ titulo:"La flaca", artista:"Jarabe De Palo", url:"https://music.apple.com/es/search?term=La%20flaca%20Jarabe%20De%20Palo" },
+{ titulo:"Flaca", artista:"Andrés Calamaro", url:"https://music.apple.com/es/search?term=Flaca%20Andres%20Calamaro" },
+{ titulo:"Limón y Sal", artista:"Julieta Venegas", url:"https://music.apple.com/es/search?term=Limon%20y%20Sal%20Julieta%20Venegas" },
+{ titulo:"Me Rehúso", artista:"Danny Ocean", url:"https://music.apple.com/es/search?term=Me%20Rehuso%20Danny%20Ocean" },
+{ titulo:"ESCALOFRÍOS", artista:"Mora", url:"https://music.apple.com/es/search?term=ESCALOFRIOS%20Mora" },
+{ titulo:"DROGA", artista:"Mora;C. Tangana", url:"https://music.apple.com/es/search?term=DROGA%20Mora%20C%20Tangana" },
+{ titulo:"DETRÁS DE TU ALMA", artista:"Mora", url:"https://music.apple.com/es/search?term=DETRAS%20DE%20TU%20ALMA%20Mora" },
+{ titulo:"Universitaria", artista:"Quevedo", url:"https://music.apple.com/es/search?term=Universitaria%20Quevedo" },
+{ titulo:"BUENAS NOCHES", artista:"Quevedo", url:"https://music.apple.com/es/search?term=BUENAS%20NOCHES%20Quevedo" },
+{ titulo:"Guerrera", artista:"DELLAFUENTE;C. Tangana", url:"https://music.apple.com/es/search?term=Guerrera%20DELLAFUENTE%20C%20Tangana" },
+{ titulo:"Mala Mujer", artista:"C. Tangana", url:"https://music.apple.com/es/search?term=Mala%20Mujer%20C%20Tangana" },
+{ titulo:"LUCES DE TECNO", artista:"Feid", url:"https://music.apple.com/es/search?term=LUCES%20DE%20TECNO%20Feid" },
+{ titulo:"HIBIKI", artista:"Bad Bunny;Mora", url:"https://music.apple.com/es/search?term=HIBIKI%20Bad%20Bunny%20Mora" },
+{ titulo:"Qué Pasaría...", artista:"Rauw Alejandro;Bad Bunny", url:"https://music.apple.com/es/search?term=Que%20Pasaria%20Rauw%20Alejandro%20Bad%20Bunny" },
+{ titulo:"AURORA", artista:"Mora;De La Rose", url:"https://music.apple.com/es/search?term=AURORA%20Mora%20De%20La%20Rose" },
+{ titulo:"Polaris", artista:"SAIKO;Came Beats", url:"https://music.apple.com/es/search?term=Polaris%20SAIKO" },
+{ titulo:"APA", artista:"Mora;Quevedo", url:"https://music.apple.com/es/search?term=APA%20Mora%20Quevedo" },
+        ];
+
+        /* ═══════════════════════════════════════════════════════════════════
+                                DAYS COUNTER
+        ═══════════════════════════════════════════════════════════════════ */
+        // *** CAMBIA ESTA FECHA A CUANDO EMPEZASTEIS ***
+        const ANNIVERSARY_DATE = new Date('2024-07-15');
+        
+        function updateDaysCounter() {
+            const now = new Date();
+            const diff = Math.floor((now - ANNIVERSARY_DATE) / (1000 * 60 * 60 * 24));
+            const el = document.getElementById('days-together');
+            if (el) el.textContent = diff;
+        }
+        updateDaysCounter();
+        setInterval(updateDaysCounter, 60000);
+
+        /* ═══════════════════════════════════════════════════════════════════
+                                USER MANAGEMENT
+        ═══════════════════════════════════════════════════════════════════ */
+        let currentUser = localStorage.getItem('nosotros-user') || 'sergio';
+
+        function setUser(user) {
+            currentUser = user;
+            localStorage.setItem('nosotros-user', user);
+            document.querySelectorAll('.user-switch-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent.toLowerCase() === user) btn.classList.add('active');
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setUser(currentUser);
+            loadPartnerStatus();
+        });
+
+        /* ═══════════════════════════════════════════════════════════════════
+                                NAVIGATION
+        ═══════════════════════════════════════════════════════════════════ */
+        const screens = {
+            home: document.getElementById('home'),
+            razones: document.getElementById('razones-section'),
+            planes: document.getElementById('planes-section'),
+            recuerdos: document.getElementById('recuerdos-section'),
+            canciones: document.getElementById('canciones-section'),
+            sentimientos: document.getElementById('sentimientos-section'),
+            peliculas: document.getElementById('peliculas-section'),
+            estado: document.getElementById('estado-section'),
+            whatsapp: document.getElementById('whatsapp-section'),
+            vip: document.getElementById('vip-section')
+        };
+
+        let currentScreen = 'home';
+
+        function navigateTo(screenId) {
+            const current = screens[currentScreen];
+            current.classList.remove('active');
+            current.classList.add('exit-left');
+            setTimeout(() => {
+                current.classList.remove('exit-left');
+                screens[screenId].classList.add('active');
+                currentScreen = screenId;
+                resetResult(screenId);
+                if (screenId === 'sentimientos') loadSentimientos();
+                if (screenId === 'peliculas') loadPeliculas();
+                if (screenId === 'canciones') renderSongs();
+                if (screenId === 'estado') loadStatuses();
+                if (screenId === 'home') loadPartnerStatus();
+            }, 100);
+        }
+
+        function resetResult(screenId) {
+            const r = document.getElementById(`${screenId}-result`);
+            if (r) r.classList.remove('visible');
+        }
+
+        /* ═══════════════════════════════════════════════════════════════════
+                              RANDOM CONTENT
+        ═══════════════════════════════════════════════════════════════════ */
+        const dataLists = { razones:razonesList, planes:planesList, recuerdos:recuerdosList, vip:vipList };
+        const lastShown = { razones:-1, planes:-1, recuerdos:-1, vip:-1 };
+
+        function showRandom(section) {
+            const list = dataLists[section];
+            const text = document.getElementById(`${section}-text`);
+            const card = document.getElementById(`${section}-result`);
+            let idx;
+            do { idx = Math.floor(Math.random()*list.length); } while(idx === lastShown[section] && list.length > 1);
+            lastShown[section] = idx;
+            card.classList.remove('visible');
+            setTimeout(() => { text.textContent = list[idx]; card.classList.add('visible'); }, 200);
+            if (navigator.vibrate) navigator.vibrate(30);
+        }
+
+        /* ═══════════════════════════════════════════════════════════════════
+                        PIN - ZONA SEGURA (PIN: 1405)
+        ═══════════════════════════════════════════════════════════════════ */
+        const SECRET_PIN = "1405";
+        let pinInput = "";
+
+        function pinPress(num) {
+            if (pinInput.length >= 4) return;
+            pinInput += num;
+            updatePinDots();
+            if (navigator.vibrate) navigator.vibrate(20);
+            if (pinInput.length === 4) {
+                setTimeout(() => {
+                    if (pinInput === SECRET_PIN) unlockVip();
+                    else pinError();
+                }, 250);
+            }
+        }
+
+        function pinDelete() {
+            pinInput = pinInput.slice(0, -1);
+            updatePinDots();
+            if (navigator.vibrate) navigator.vibrate(10);
+        }
+
+        function updatePinDots() {
+            for (let i = 0; i < 4; i++) {
+                const dot = document.getElementById(`dot-${i}`);
+                dot.classList.remove('filled', 'error');
+                if (i < pinInput.length) dot.classList.add('filled');
+            }
+        }
+
+        function pinError() {
+            for (let i = 0; i < 4; i++) {
+                document.getElementById(`dot-${i}`).classList.add('error');
+            }
+            if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+            setTimeout(() => { pinInput = ""; updatePinDots(); }, 700);
+        }
+
+        function unlockVip() {
+            const overlay = document.getElementById('pin-overlay');
+            overlay.classList.add('unlocked');
+            document.getElementById('vip-content').style.display = 'flex';
+            if (navigator.vibrate) navigator.vibrate([30, 50, 30]);
+        }
+
+        function lockVip() {
+            pinInput = "";
+            updatePinDots();
+            document.getElementById('pin-overlay').classList.remove('unlocked');
+            document.getElementById('vip-content').style.display = 'none';
+        }
+
+        /* ═══════════════════════════════════════════════════════════════════
+                                SONGS
+        ═══════════════════════════════════════════════════════════════════ */
+        function renderSongs() {
+            const c = document.getElementById('songs-list');
+            c.innerHTML = '';
+            if (!cancionesList.length) {
+                c.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🎵</div><p class="empty-state-text">Añade canciones en el código</p></div>';
+                return;
+            }
+            cancionesList.forEach(s => {
+                const div = document.createElement('div');
+                div.className = 'song-card';
+                const firstArtist = s.artista.split(';')[0].trim();
+                div.onclick = () => {
+                    const q = encodeURIComponent(s.titulo + ' ' + firstArtist + ' apple music');
+                    window.open('https://www.google.com/search?q=' + q, '_blank');
+                };
+                div.innerHTML = `<span class="song-icon">🎵</span><div class="song-info"><div class="song-title">${s.titulo}</div><div class="song-artist">${s.artista.replace(/;/g, ', ')}</div></div><span class="song-play">▶</span>`;
+                c.appendChild(div);
+            });
+        }
+
+        /* ═══════════════════════════════════════════════════════════════════
+                          SENTIMIENTOS (SHARED)
+        ═══════════════════════════════════════════════════════════════════ */
+        let localSentimientos = JSON.parse(localStorage.getItem('nosotros-sentimientos') || '[]');
+
+        function addSentimiento() {
+            const input = document.getElementById('sentimiento-input');
+            const t = input.value.trim();
+            if (!t) return;
+            const s = { id: Date.now(), text: t, author: currentUser, date: new Date().toLocaleDateString('es-ES', { day:'numeric', month:'short' }) };
+            if (firebaseEnabled) {
+                database.ref('sentimientos').push(s);
+            } else {
+                localSentimientos.unshift(s);
+                localStorage.setItem('nosotros-sentimientos', JSON.stringify(localSentimientos));
+                renderSentimientos(localSentimientos);
+            }
+            input.value = '';
+            if (navigator.vibrate) navigator.vibrate(30);
+        }
+
+        function loadSentimientos() {
+            if (firebaseEnabled) {
+                database.ref('sentimientos').orderByChild('id').on('value', snap => {
+                    const d = snap.val();
+                    renderSentimientos(d ? Object.values(d).reverse() : []);
+                });
+            } else {
+                renderSentimientos(localSentimientos);
+            }
+        }
+
+        function renderSentimientos(items) {
+            const c = document.getElementById('sentimientos-list');
+            c.innerHTML = '';
+            if (!items.length) {
+                c.innerHTML = '<div class="empty-state"><div class="empty-state-icon">💭</div><p class="empty-state-text">Aún no hay sentimientos compartidos</p></div>';
+                return;
+            }
+            items.forEach(i => {
+                const d = document.createElement('div');
+                d.className = 'shared-item';
+                d.innerHTML = `<div class="shared-item-header"><span class="shared-item-author ${i.author==='alba'?'partner':''}">${i.author==='sergio'?'Sergio':'Alba'}</span><span class="shared-item-date">${i.date}</span></div><p class="shared-item-text">${i.text}</p>`;
+                c.appendChild(d);
+            });
+        }
+
+        document.getElementById('sentimiento-input')?.addEventListener('keypress', e => { if (e.key === 'Enter') addSentimiento(); });
+
+        /* ═══════════════════════════════════════════════════════════════════
+                          PELÍCULAS (SHARED)
+        ═══════════════════════════════════════════════════════════════════ */
+        let localPeliculas = JSON.parse(localStorage.getItem('nosotros-peliculas') || '[]');
+
+        function addPelicula() {
+            const input = document.getElementById('pelicula-input');
+            const t = input.value.trim();
+            if (!t) return;
+            const p = { id: Date.now(), title: t, author: currentUser, watched: false };
+            if (firebaseEnabled) {
+                database.ref('peliculas').push(p);
+            } else {
+                localPeliculas.unshift(p);
+                localStorage.setItem('nosotros-peliculas', JSON.stringify(localPeliculas));
+                renderPeliculas(localPeliculas);
+            }
+            input.value = '';
+            if (navigator.vibrate) navigator.vibrate(30);
+        }
+
+        function togglePelicula(id) {
+            if (firebaseEnabled) {
+                database.ref('peliculas').orderByChild('id').equalTo(id).once('value', snap => {
+                    snap.forEach(c => { c.ref.update({ watched: !c.val().watched }); });
+                });
+            } else {
+                const i = localPeliculas.findIndex(p => p.id === id);
+                if (i !== -1) {
+                    localPeliculas[i].watched = !localPeliculas[i].watched;
+                    localStorage.setItem('nosotros-peliculas', JSON.stringify(localPeliculas));
+                    renderPeliculas(localPeliculas);
+                }
+            }
+        }
+
+        function loadPeliculas() {
+            if (firebaseEnabled) {
+                database.ref('peliculas').orderByChild('id').on('value', snap => {
+                    const d = snap.val();
+                    renderPeliculas(d ? Object.values(d).reverse() : []);
+                });
+            } else {
+                renderPeliculas(localPeliculas);
+            }
+        }
+
+        function renderPeliculas(items) {
+            const c = document.getElementById('peliculas-list');
+            c.innerHTML = '';
+            if (!items.length) {
+                c.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🎬</div><p class="empty-state-text">Añade películas para ver juntos</p></div>';
+                return;
+            }
+            items.forEach(i => {
+                const d = document.createElement('div');
+                d.className = 'shared-item';
+                d.innerHTML = `<div class="shared-item-header"><span class="shared-item-author ${i.author==='alba'?'partner':''}">${i.author==='sergio'?'Sergio':'Alba'}</span></div><div class="shared-item-checkbox"><div class="checkbox-custom ${i.watched?'checked':''}" onclick="togglePelicula(${i.id})"></div><span class="movie-title ${i.watched?'watched':''}">${i.title}</span></div>`;
+                c.appendChild(d);
+            });
+        }
+
+        document.getElementById('pelicula-input')?.addEventListener('keypress', e => { if (e.key === 'Enter') addPelicula(); });
+
+        /* ═══════════════════════════════════════════════════════════════════
+                    ESTADO EN VIVO (Live Activities)
+        ═══════════════════════════════════════════════════════════════════ */
+        function setStatus(text) {
+            if (!text || !text.trim()) return;
+            text = text.trim();
+            const emojiMatch = text.match(/^(\p{Emoji_Presentation}|\p{Emoji}\uFE0F?)/u);
+            const emoji = emojiMatch ? emojiMatch[0] : '😊';
+            const statusData = {
+                text: text, emoji: emoji, time: Date.now(),
+                timeStr: new Date().toLocaleTimeString('es-ES', { hour:'2-digit', minute:'2-digit' })
+            };
+            if (firebaseEnabled) database.ref('status/' + currentUser).set(statusData);
+            const input = document.getElementById('status-input');
+            if (input) input.value = '';
+            if (navigator.vibrate) navigator.vibrate(30);
+            updateStatusDisplay(currentUser, statusData);
+        }
+
+        function loadStatuses() {
+            if (!firebaseEnabled) return;
+            ['sergio', 'alba'].forEach(user => {
+                database.ref('status/' + user).on('value', snap => {
+                    const data = snap.val();
+                    if (data) updateStatusDisplay(user, data);
+                });
+            });
+        }
+
+        function updateStatusDisplay(user, data) {
+            const display = document.getElementById(`${user}-status-display`);
+            const emoji = document.getElementById(`${user}-status-emoji`);
+            const time = document.getElementById(`${user}-status-time`);
+            if (display) display.textContent = data.text;
+            if (emoji) emoji.textContent = data.emoji;
+            if (time) time.textContent = data.timeStr ? `Actualizado a las ${data.timeStr}` : '';
+        }
+
+        function loadPartnerStatus() {
+            if (!firebaseEnabled) return;
+            const partner = currentUser === 'sergio' ? 'alba' : 'sergio';
+            const partnerName = partner.charAt(0).toUpperCase() + partner.slice(1);
+            document.getElementById('partner-status-name').textContent = partnerName;
+            database.ref('status/' + partner).on('value', snap => {
+                const data = snap.val();
+                document.getElementById('partner-status-text').textContent = data ? data.text : 'Sin estado';
+            });
+        }
+
+        /* ═══════════════════════════════════════════════════════════════════
+                    WHATSAPP CHAT ANALYZER
+        ═══════════════════════════════════════════════════════════════════ */
+        let waMessages = [];
+        let waUsers = [];
+        let activeCharts = [];
+
+        function handleWhatsAppFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            document.getElementById('wa-upload-text').textContent = 'Procesando chat...';
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const text = e.target.result;
+                waMessages = parseWhatsApp(text);
+                if (waMessages.length > 0) {
+                    waUsers = [...new Set(waMessages.map(m => m.author))];
+                    showWaUI();
+                    showGlobalStats();
+                } else {
+                    document.getElementById('wa-upload-text').textContent = 'No se pudo leer. Exporta el chat "Sin archivos" como .txt';
+                }
+            };
+            reader.readAsText(file, 'UTF-8');
+        }
+
+        function parseWhatsApp(text) {
+            const messages = [];
+            const lines = text.split('\n');
+            const patterns = [
+                /^\[(\d{1,2}\/\d{1,2}\/\d{2,4}),?\s*(\d{1,2}:\d{2}(?::\d{2})?)\]\s*([^:]+):\s*(.+)/,
+                /^(\d{1,2}\/\d{1,2}\/\d{2,4}),?\s*(\d{1,2}:\d{2}(?::\d{2})?)\s*[-–]\s*([^:]+):\s*(.+)/,
+                /^(\d{1,2}\/\d{1,2}\/\d{2,4}),?\s*(\d{1,2}:\d{2}(?::\d{2})?(?:\s*[ap]\.?\s*m\.?)?)\s*[-–]\s*([^:]+):\s*(.+)/i
+            ];
+            let lastMsg = null;
+
+            for (const line of lines) {
+                let matched = false;
+                for (const pattern of patterns) {
+                    const match = line.match(pattern);
+                    if (match) {
+                        const [, dateStr, timeStr, author, text] = match;
+                        const cleanAuthor = author.trim();
+                        const dateParts = dateStr.split('/');
+                        let day = parseInt(dateParts[0]);
+                        let month = parseInt(dateParts[1]) - 1;
+                        let year = parseInt(dateParts[2]);
+                        if (year < 100) year += 2000;
+                        const timeParts = timeStr.replace(/\s*[ap]\.?\s*m\.?/i, '').split(':');
+                        let hour = parseInt(timeParts[0]);
+                        let minute = parseInt(timeParts[1] || 0);
+                        if (/p\.?\s*m/i.test(timeStr) && hour < 12) hour += 12;
+                        if (/a\.?\s*m/i.test(timeStr) && hour === 12) hour = 0;
+
+                        const date = new Date(year, month, day, hour, minute);
+                        if (!isNaN(date.getTime())) {
+                            lastMsg = { date, author: cleanAuthor, text: text.trim(), hour, month, year, day };
+                            messages.push(lastMsg);
+                        }
+                        matched = true;
+                        break;
+                    }
+                }
+                if (!matched && lastMsg && line.trim()) {
+                    lastMsg.text += '\n' + line.trim();
+                }
+            }
+            return messages;
+        }
+
+        function showWaUI() {
+            document.getElementById('wa-upload-text').textContent = `${waMessages.length.toLocaleString()} mensajes cargados`;
+            document.getElementById('wa-stats').style.display = 'flex';
+            document.getElementById('wa-search-box').style.display = 'flex';
+            document.getElementById('wa-examples').style.display = 'block';
+        }
+
+        function showGlobalStats() {
+            document.getElementById('wa-total-msgs').textContent = waMessages.length.toLocaleString();
+            if (waMessages.length < 2) return;
+            const days = Math.max(1, Math.ceil((waMessages[waMessages.length-1].date - waMessages[0].date) / (1000*60*60*24)));
+            document.getElementById('wa-total-days').textContent = days.toLocaleString();
+            const counts = {};
+            waMessages.forEach(m => { counts[m.author] = (counts[m.author] || 0) + 1; });
+            const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+            if (sorted[0]) { document.getElementById('wa-msg-user1').textContent = sorted[0][1].toLocaleString(); document.getElementById('wa-label-user1').textContent = sorted[0][0]; }
+            if (sorted[1]) { document.getElementById('wa-msg-user2').textContent = sorted[1][1].toLocaleString(); document.getElementById('wa-label-user2').textContent = sorted[1][0]; }
+        }
+
+        function destroyCharts() {
+            activeCharts.forEach(c => { try { c.destroy(); } catch(e){} });
+            activeCharts = [];
+        }
+
+        async function waSearch(query) {
+          try {
+            if (!query) query = document.getElementById('wa-search-input').value;
+            if (!query || !query.trim()) return;
+            query = query.trim();
+            document.getElementById('wa-search-input').value = query;
+            const results = document.getElementById('wa-results');
+            
+            if (!waMessages || !waMessages.length) {
+                results.innerHTML = '<div class="wa-result-card"><div class="result-title">Sin datos</div><div class="result-text">Primero carga un chat de WhatsApp.</div></div>';
+                return;
+            }
+            
+            results.innerHTML = '<div class="wa-loading"><span class="spinner"></span>Analizando...</div>';
+            destroyCharts();
+            await new Promise(r => setTimeout(r, 300));
+
+            const q = query.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+            if (q.match(/quien.*(hablo|hablado|escrib|mensaj).*mas|quien.*mas.*(hablo|mensaj)/)) {
+                showWhoTalkedMore(query);
+            } else if (q.match(/hora.*(habitual|habla|frecuent|comun|mas)|a que hora/)) {
+                showHourlyDistribution(query);
+            } else if (q.match(/palabra.*(mas|usad|frecuent|comun)/)) {
+                showTopWords(query);
+            } else if (q.match(/mensajes? por mes|actividad por mes|cuantos mensajes/)) {
+                showMonthlyActivity(query);
+            } else if (q.match(/dia.*(mas|activ|mensaj)|dia con mas/)) {
+                showMostActiveDay(query);
+            } else if (q.match(/que paso en|resumen de|que sucedio/)) {
+                showMonthSummary(query);
+            } else if (q.match(/te quiero|te amo|i love/)) {
+                searchKeyPhrase(query, ['te quiero', 'te amo', 'i love you', 'te kiero']);
+            } else if (q.match(/primer.*(mensaje|chat|conversacion)|primera vez.*(habla|escribi)/)) {
+                showFirstMessages();
+            } else {
+                if (GEMINI_API_KEY) { await askGemini(query); }
+                else { searchGeneric(query); }
+            }
+          } catch(err) {
+              console.error('Error en waSearch:', err);
+              document.getElementById('wa-results').innerHTML = `<div class="wa-result-card"><div class="result-title">Error</div><div class="result-text">${err.message}</div></div>`;
+          }
+        }
+
+        document.getElementById('wa-search-input')?.addEventListener('keypress', e => { if (e.key === 'Enter') waSearch(); });
+
+        function showWhoTalkedMore(query) {
+            const counts = {};
+            const charCounts = {};
+            waMessages.forEach(m => {
+                counts[m.author] = (counts[m.author] || 0) + 1;
+                charCounts[m.author] = (charCounts[m.author] || 0) + m.text.length;
+            });
+            const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+            const winner = sorted[0];
+            const avgChars = {};
+            Object.keys(counts).forEach(k => { avgChars[k] = Math.round(charCounts[k] / counts[k]); });
+            const results = document.getElementById('wa-results');
+            results.innerHTML = `
+                <div class="wa-result-card">
+                    <div class="result-title">¿Quién habló más?</div>
+                    <div class="result-text">
+                        <strong>${winner[0]}</strong> ha enviado más mensajes: <strong>${winner[1].toLocaleString()}</strong> (${Math.round(winner[1]/waMessages.length*100)}%)<br><br>
+                        ${sorted.map(u => `${u[0]}: ${u[1].toLocaleString()} msgs · media de ${avgChars[u[0]]} caracteres/msg`).join('<br>')}
+                    </div>
+                    <div class="wa-chart-container"><canvas id="chart-who"></canvas></div>
+                </div>`;
+            const ctx = document.getElementById('chart-who').getContext('2d');
+            const chart = new Chart(ctx, {
+                type: 'doughnut',
+                data: { labels: sorted.map(s => s[0]), datasets: [{ data: sorted.map(s => s[1]), backgroundColor: ['#E8A0BF', '#6C9BD2', '#D4A574', '#4CAF82'] }] },
+                options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ labels:{ color:'#fff', font:{ family:'Plus Jakarta Sans', size:11 }}}}}
+            });
+            activeCharts.push(chart);
+        }
+
+        function showHourlyDistribution(query) {
+            const hours = Array(24).fill(0);
+            waMessages.forEach(m => { hours[m.hour]++; });
+            const peakHour = hours.indexOf(Math.max(...hours));
+            const results = document.getElementById('wa-results');
+            results.innerHTML = `
+                <div class="wa-result-card">
+                    <div class="result-title">Distribución horaria</div>
+                    <div class="result-text">La hora pico es a las <strong>${peakHour}:00</strong> con <strong>${hours[peakHour].toLocaleString()}</strong> mensajes.</div>
+                    <div class="wa-chart-container"><canvas id="chart-hours"></canvas></div>
+                </div>`;
+            const labels = Array.from({length: 24}, (_, i) => `${i}h`);
+            const ctx = document.getElementById('chart-hours').getContext('2d');
+            const chart = new Chart(ctx, {
+                type: 'bar',
+                data: { labels, datasets: [{ label:'Mensajes', data:hours, backgroundColor:'rgba(232,160,191,0.5)', borderColor:'#E8A0BF', borderWidth:1, borderRadius:6 }] },
+                options: { responsive:true, maintainAspectRatio:false, scales:{ x:{ticks:{color:'rgba(255,255,255,0.5)',font:{size:9}}}, y:{ticks:{color:'rgba(255,255,255,0.5)'}}}, plugins:{legend:{display:false}}}
+            });
+            activeCharts.push(chart);
+        }
+
+        function showTopWords(query) {
+            const stopWords = new Set(['de','la','el','en','que','y','a','los','las','un','una','es','por','con','no','se','del','lo','al','me','mi','te','tu','le','su','mas','pero','ya','o','para','como','todo','esta','hay','muy','fue','son','esta','era','ser','sin','sobre','tiene','hasta','cuando','entre','donde','despues','antes','tambien','puede','todos','asi','nos','uno','otro','otra','este','ese','ella','eso','esto','estas','estos','esas','esos','aqui','ahi','alli','cual','quien','cuyo','tanto','tan','poco','mucho','bien','mal','mejor','peor','hoy','ayer','sido','si','da','va','voy','vas','van','estoy','has','he','ha','hacer','puedo','quiero','jaja','jajaja','jajajaja','xd','https','http','media','omitted']);
+            const wordCount = {};
+            waMessages.forEach(m => {
+                m.text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^\w\s]/g, '').split(/\s+/).forEach(w => {
+                    if (w.length > 2 && !stopWords.has(w)) wordCount[w] = (wordCount[w] || 0) + 1;
+                });
+            });
+            const sorted = Object.entries(wordCount).sort((a, b) => b[1] - a[1]).slice(0, 15);
+            const results = document.getElementById('wa-results');
+            results.innerHTML = `
+                <div class="wa-result-card">
+                    <div class="result-title">Top 15 palabras</div>
+                    <div class="result-text">La más usada: "<strong>${sorted[0][0]}</strong>" con ${sorted[0][1].toLocaleString()} apariciones</div>
+                    <div class="wa-chart-container"><canvas id="chart-words"></canvas></div>
+                </div>`;
+            const ctx = document.getElementById('chart-words').getContext('2d');
+            const chart = new Chart(ctx, {
+                type: 'bar',
+                data: { labels: sorted.map(s => s[0]), datasets: [{ data: sorted.map(s => s[1]), backgroundColor:'rgba(76,175,130,0.5)', borderColor:'#4CAF82', borderWidth:1, borderRadius:4 }] },
+                options: { responsive:true, maintainAspectRatio:false, indexAxis:'y', scales:{ x:{ticks:{color:'rgba(255,255,255,0.5)'}}, y:{ticks:{color:'rgba(255,255,255,0.7)',font:{size:10}}}}, plugins:{legend:{display:false}}}
+            });
+            activeCharts.push(chart);
+        }
+
+        function showMonthlyActivity(query) {
+            const monthly = {};
+            waMessages.forEach(m => {
+                const key = `${m.year}-${String(m.month + 1).padStart(2, '0')}`;
+                monthly[key] = (monthly[key] || 0) + 1;
+            });
+            const sorted = Object.entries(monthly).sort((a, b) => a[0].localeCompare(b[0]));
+            const peak = sorted.reduce((a, b) => b[1] > a[1] ? b : a);
+            const monthNames = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+            const results = document.getElementById('wa-results');
+            results.innerHTML = `
+                <div class="wa-result-card">
+                    <div class="result-title">Actividad por mes</div>
+                    <div class="result-text">Mes más activo: <strong>${peak[0]}</strong> con ${peak[1].toLocaleString()} msgs<br>Media: <strong>${Math.round(waMessages.length / sorted.length).toLocaleString()}</strong> msgs/mes</div>
+                    <div class="wa-chart-container"><canvas id="chart-monthly"></canvas></div>
+                </div>`;
+            const labels = sorted.map(s => { const [y, m] = s[0].split('-'); return `${monthNames[parseInt(m)-1]} ${y.slice(2)}`; });
+            const ctx = document.getElementById('chart-monthly').getContext('2d');
+            const chart = new Chart(ctx, {
+                type: 'line',
+                data: { labels, datasets: [{ data: sorted.map(s => s[1]), borderColor:'#E8A0BF', backgroundColor:'rgba(232,160,191,0.1)', fill:true, tension:0.3, pointRadius:2, pointBackgroundColor:'#E8A0BF' }] },
+                options: { responsive:true, maintainAspectRatio:false, scales:{ x:{ticks:{color:'rgba(255,255,255,0.5)',font:{size:7},maxRotation:45}}, y:{ticks:{color:'rgba(255,255,255,0.5)'}}}, plugins:{legend:{display:false}}}
+            });
+            activeCharts.push(chart);
+        }
+
+        function showMostActiveDay(query) {
+            const daily = {};
+            waMessages.forEach(m => { daily[m.date.toLocaleDateString('es-ES')] = (daily[m.date.toLocaleDateString('es-ES')] || 0) + 1; });
+            const sorted = Object.entries(daily).sort((a, b) => b[1] - a[1]).slice(0, 10);
+            document.getElementById('wa-results').innerHTML = `
+                <div class="wa-result-card">
+                    <div class="result-title">Días más activos</div>
+                    <div class="result-text">
+                        El día con más mensajes: <strong>${sorted[0][0]}</strong> con <strong>${sorted[0][1]}</strong> mensajes.<br><br>
+                        <strong>Top 10:</strong><br>
+                        ${sorted.map((d, i) => `${i+1}. ${d[0]} → ${d[1]} msgs`).join('<br>')}
+                    </div>
+                </div>`;
+        }
+
+        function showFirstMessages() {
+            const first10 = waMessages.slice(0, 10);
+            const formatDate = d => d.date.toLocaleDateString('es-ES', { day:'numeric', month:'long', year:'numeric', hour:'2-digit', minute:'2-digit' });
+            document.getElementById('wa-results').innerHTML = `
+                <div class="wa-result-card">
+                    <div class="result-title">Vuestros primeros mensajes</div>
+                    <div class="result-text">
+                        El chat empezó el <strong>${formatDate(first10[0])}</strong><br><br>
+                        ${first10.map(m => `<strong>${m.author}</strong>: <em>"${m.text.substring(0, 100)}"</em>`).join('<br><br>')}
+                    </div>
+                </div>`;
+        }
+
+        function showMonthSummary(query) {
+            const monthNames = { enero:0, febrero:1, marzo:2, abril:3, mayo:4, junio:5, julio:6, agosto:7, septiembre:8, octubre:9, noviembre:10, diciembre:11 };
+            let targetMonth = -1, targetYear = -1;
+            const yearMatch = query.match(/20\d{2}/);
+            if (yearMatch) targetYear = parseInt(yearMatch[0]);
+            for (const [name, num] of Object.entries(monthNames)) {
+                if (query.toLowerCase().includes(name)) { targetMonth = num; break; }
+            }
+            if (targetMonth === -1 || targetYear === -1) {
+                if (GEMINI_API_KEY) { askGemini(query); return; }
+                document.getElementById('wa-results').innerHTML = `<div class="wa-result-card"><div class="result-text">Especifica mes y año, ej: "Resumen de febrero 2024"</div></div>`;
+                return;
+            }
+            const filtered = waMessages.filter(m => m.month === targetMonth && m.year === targetYear);
+            if (!filtered.length) {
+                document.getElementById('wa-results').innerHTML = `<div class="wa-result-card"><div class="result-text">No hay mensajes en ese periodo.</div></div>`;
+                return;
+            }
+            const counts = {}; filtered.forEach(m => counts[m.author] = (counts[m.author] || 0) + 1);
+            const sortedUsers = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+            const mName = Object.keys(monthNames)[targetMonth];
+            const hours = Array(24).fill(0); filtered.forEach(m => hours[m.hour]++);
+            const peakHour = hours.indexOf(Math.max(...hours));
+            const results = document.getElementById('wa-results');
+            results.innerHTML = `
+                <div class="wa-result-card">
+                    <div class="result-title">${mName.charAt(0).toUpperCase() + mName.slice(1)} ${targetYear}</div>
+                    <div class="result-text">
+                        <strong>${filtered.length.toLocaleString()}</strong> mensajes<br>
+                        ${sortedUsers.map(u => `${u[0]}: ${u[1].toLocaleString()} (${Math.round(u[1]/filtered.length*100)}%)`).join(' · ')}<br>
+                        Hora pico: <strong>${peakHour}:00</strong>
+                    </div>
+                    <div class="wa-chart-container"><canvas id="chart-month"></canvas></div>
+                </div>`;
+            const daily = {}; filtered.forEach(m => { daily[m.day] = (daily[m.day] || 0) + 1; });
+            const daysInMonth = new Date(targetYear, targetMonth + 1, 0).getDate();
+            const labels = Array.from({length: daysInMonth}, (_, i) => i + 1);
+            const ctx = document.getElementById('chart-month').getContext('2d');
+            const chart = new Chart(ctx, {
+                type: 'bar',
+                data: { labels, datasets: [{ data: labels.map(d => daily[d] || 0), backgroundColor:'rgba(108,155,210,0.5)', borderColor:'#6C9BD2', borderWidth:1, borderRadius:3 }] },
+                options: { responsive:true, maintainAspectRatio:false, scales:{ x:{ticks:{color:'rgba(255,255,255,0.5)',font:{size:8}}}, y:{ticks:{color:'rgba(255,255,255,0.5)'}}}, plugins:{legend:{display:false}}}
+            });
+            activeCharts.push(chart);
+        }
+
+        function searchKeyPhrase(query, keywords) {
+            const found = waMessages.filter(m => keywords.some(k => m.text.toLowerCase().includes(k)));
+            const results = document.getElementById('wa-results');
+            if (!found.length) { results.innerHTML = `<div class="wa-result-card"><div class="result-text">No se encontraron mensajes con esas palabras.</div></div>`; return; }
+            const first = found[0];
+            const formatDate = d => d.date.toLocaleDateString('es-ES', { day:'numeric', month:'long', year:'numeric' });
+            const perUser = {}; found.forEach(m => { perUser[m.author] = (perUser[m.author] || 0) + 1; });
+            const last5 = found.slice(-5).reverse();
+            results.innerHTML = `
+                <div class="wa-result-card"><div class="result-title">La primera vez</div><div class="result-text"><strong>${first.author}</strong> el <strong>${formatDate(first)}</strong>:<br><em>"${first.text}"</em></div></div>
+                <div class="wa-result-card"><div class="result-title">Estadísticas</div><div class="result-text">Se ha dicho <strong>${found.length}</strong> veces<br>${Object.entries(perUser).map(([k,v]) => `${k}: ${v} veces`).join(' · ')}</div></div>
+                <div class="wa-result-card"><div class="result-title">Últimas veces</div><div class="result-text">${last5.map(m => `<strong>${m.author}</strong> (${formatDate(m)}):<br><em>"${m.text.substring(0, 120)}"</em>`).join('<br><br>')}</div></div>`;
+        }
+
+        function searchGeneric(query) {
+            const terms = query.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[¿?¡!]/g, '').split(/\s+/).filter(w => w.length > 2);
+            const found = waMessages.filter(m => {
+                const normalized = m.text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+                return terms.some(t => normalized.includes(t));
+            }).slice(0, 25);
+            const results = document.getElementById('wa-results');
+            if (!found.length) { results.innerHTML = `<div class="wa-result-card"><div class="result-text">No se encontraron mensajes relevantes.</div></div>`; return; }
+            const formatDate = d => d.date.toLocaleDateString('es-ES', { day:'numeric', month:'short', year:'numeric' });
+            results.innerHTML = `<div class="wa-result-card"><div class="result-title">${found.length} resultados</div></div>` +
+                found.map(m => `<div class="wa-result-card"><div class="result-title">${m.author} · ${formatDate(m)}</div><div class="result-text">${m.text.substring(0, 200)}</div></div>`).join('');
+        }
+
+        async function askGemini(query) {
+            const results = document.getElementById('wa-results');
+            results.innerHTML = '<div class="wa-loading"><span class="spinner"></span>Preguntando a la IA...</div>';
+            const terms = query.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[¿?¡!]/g,'').split(/\s+/).filter(w => w.length > 2);
+            const relevant = waMessages.filter(m => {
+                const norm = m.text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+                return terms.some(t => norm.includes(t));
+            }).slice(0, 60);
+            const sample = relevant.length > 5 ? relevant : waMessages.slice(0, 40);
+            const counts = {}; waMessages.forEach(m => counts[m.author] = (counts[m.author] || 0) + 1);
+            const context = `Eres un asistente cariñoso que analiza el chat de WhatsApp de una pareja. Responde en español.\n\nDATOS:\n- Total: ${waMessages.length} mensajes\n- Usuarios: ${waUsers.join(', ')}\n- Por usuario: ${JSON.stringify(counts)}\n- Primer mensaje: ${waMessages[0].date.toLocaleDateString('es-ES')}\n- Último: ${waMessages[waMessages.length-1].date.toLocaleDateString('es-ES')}\n- Días: ${Math.ceil((waMessages[waMessages.length-1].date - waMessages[0].date) / (1000*60*60*24))}\n\nMENSAJES:\n${sample.map(m => `[${m.date.toLocaleDateString('es-ES')} ${String(m.hour).padStart(2,'0')}:${String(m.date.getMinutes()).padStart(2,'0')}] ${m.author}: ${m.text.substring(0, 150)}`).join('\n')}\n\nPREGUNTA: ${query}`;
+
+            try {
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: context }] }] })
+                });
+                const data = await res.json();
+                const answer = data.candidates?.[0]?.content?.parts?.[0]?.text;
+                if (answer) {
+                    results.innerHTML = `<div class="wa-result-card"><div class="result-title">Respuesta IA <span class="wa-ai-badge">Gemini</span></div><div class="result-text">${answer.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>')}</div></div>`;
+                } else {
+                    results.innerHTML = `<div class="wa-result-card"><div class="result-text">No se pudo obtener respuesta.</div></div>`;
+                }
+            } catch(e) {
+                results.innerHTML = `<div class="wa-result-card"><div class="result-text">Error: ${e.message}</div></div>`;
+            }
+        }
+
+        /* ═══════════════════════════════════════════════════════════════════
+                            VIP PARTICLES
+        ═══════════════════════════════════════════════════════════════════ */
+        function createParticles() {
+            const c = document.getElementById('particles');
+            if (!c) return;
+            for (let i = 0; i < 20; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                p.style.left = Math.random() * 100 + '%';
+                p.style.top = Math.random() * 100 + '%';
+                p.style.animationDelay = Math.random() * 8 + 's';
+                p.style.animationDuration = (5 + Math.random() * 5) + 's';
+                c.appendChild(p);
+            }
+        }
+        createParticles();
+
+        document.addEventListener('dblclick', e => { e.preventDefault(); }, { passive: false });
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').then(() => console.log('SW registered')).catch(() => {});
+        }
+    </script>
+</body>
+</html>
