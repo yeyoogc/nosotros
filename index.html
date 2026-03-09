@@ -3196,6 +3196,7 @@
 
         function loadPeliculas() {
             if (firebaseEnabled) {
+                database.ref('peliculas').off('value');
                 database.ref('peliculas').on('value', snap => {
                     const d = snap.val();
                     if (d) {
@@ -4377,20 +4378,20 @@ PREGUNTA DEL USUARIO: ${query}`;
 
         function deletePelicula(key) {
             showConfirmModal('¿Eliminar esta película?', () => {
-                // Animate removal
-                const el = document.querySelector(`.movie-item[data-key="${key}"]`);
-                if (el) el.classList.add('removing');
-                setTimeout(() => {
-                    if (firebaseEnabled) {
-                        database.ref('peliculas/' + key).remove();
-                    } else {
-                        const id = Number(key);
-                        localPeliculas = localPeliculas.filter(p => p.id !== id);
-                        localStorage.setItem('nosotros-peliculas', JSON.stringify(localPeliculas));
-                        renderPeliculas(localPeliculas);
-                    }
+                if (firebaseEnabled) {
+                    database.ref('peliculas/' + key).remove().then(() => {
+                        showToast('🗑️', 'Película eliminada', '');
+                    }).catch(err => {
+                        console.error('Error al eliminar película:', err);
+                        showToast('❌', 'Error', 'No se pudo eliminar');
+                    });
+                } else {
+                    const id = Number(key);
+                    localPeliculas = localPeliculas.filter(p => p.id !== id);
+                    localStorage.setItem('nosotros-peliculas', JSON.stringify(localPeliculas));
+                    renderPeliculas(localPeliculas);
                     showToast('🗑️', 'Película eliminada', '');
-                }, 300);
+                }
             });
         }
 
