@@ -23,6 +23,7 @@
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-messaging-compat.js"></script>
     
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -2461,6 +2462,69 @@
         } catch(e) { console.log("Firebase no disponible:", e); }
 
         /* ═══════════════════════════════════════════════════════════════════
+            FCM PUSH NOTIFICATIONS CONFIG
+        ═══════════════════════════════════════════════════════════════════ */
+        let messaging = null;
+        const VAPID_KEY = 'BAVs8zvctmZ9Ka-iI564UEmjo4IyWpiT-ShHPWsN9DCViH72ku4fsQDoByS52eZRoI0IQO86lAJdmSFphWHkhpE';
+
+        async function initFCM() {
+            if (!firebaseEnabled || !('serviceWorker' in navigator) || !('PushManager' in window)) {
+                console.log('FCM: requisitos no cumplidos (HTTPS + ServiceWorker + PushManager)');
+                return;
+            }
+            try {
+                messaging = firebase.messaging();
+                console.log('FCM inicializado');
+
+                // Foreground messages: DB listeners already show toasts, so just log
+                messaging.onMessage((payload) => {
+                    console.log('FCM mensaje en primer plano (gestionado por listeners DB):', payload);
+                });
+
+                // If notification permission already granted, save token
+                if (Notification.permission === 'granted') {
+                    await saveFCMToken();
+                }
+            } catch(e) {
+                console.log('FCM init error:', e);
+            }
+        }
+
+        async function saveFCMToken() {
+            if (!messaging || !firebaseEnabled) return;
+            try {
+                const sw = await navigator.serviceWorker.ready;
+                const token = await messaging.getToken({
+                    vapidKey: VAPID_KEY,
+                    serviceWorkerRegistration: sw
+                });
+                if (token) {
+                    const partner = currentUser === 'sergio' ? 'alba' : 'sergio';
+
+                    // Remove token from partner's list if device switched user
+                    const partnerSnap = await database.ref('fcmTokens/' + partner).once('value');
+                    const partnerTokens = partnerSnap.val() || {};
+                    for (const [key, val] of Object.entries(partnerTokens)) {
+                        if (val === token) {
+                            await database.ref('fcmTokens/' + partner + '/' + key).remove();
+                        }
+                    }
+
+                    // Save to current user if not already stored
+                    const snap = await database.ref('fcmTokens/' + currentUser).once('value');
+                    const existingTokens = snap.val() || {};
+                    const alreadySaved = Object.values(existingTokens).includes(token);
+                    if (!alreadySaved) {
+                        await database.ref('fcmTokens/' + currentUser).push(token);
+                    }
+                    console.log('FCM token guardado para', currentUser);
+                }
+            } catch(e) {
+                console.log('FCM token error:', e);
+            }
+        }
+
+        /* ═══════════════════════════════════════════════════════════════════
             GROQ AI CONFIG
         ═══════════════════════════════════════════════════════════════════ */
         const GROQ_API_KEY = "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";
@@ -2951,6 +3015,8 @@
             // Re-render current section to update delete buttons
             if (currentScreen === 'peliculas' && allPeliculasData.length) renderPeliculas(allPeliculasData);
             if (currentScreen === 'sentimientos') loadSentimientos();
+            // Re-register FCM token for new user
+            if (messaging && Notification.permission === 'granted') saveFCMToken();
         }
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -3344,12 +3410,14 @@
             if (Notification.permission === 'granted') {
                 notificationsEnabled = true;
                 hideNotifBanner();
+                saveFCMToken(); // Register push token
                 return;
             }
             if (Notification.permission !== 'denied') {
                 Notification.requestPermission().then(perm => {
                     notificationsEnabled = perm === 'granted';
                     hideNotifBanner();
+                    if (perm === 'granted') saveFCMToken(); // Register push token
                 });
             }
         }
@@ -4545,7 +4613,12 @@ PREGUNTA DEL USUARIO: ${query}`;
         setTimeout(() => { checkUnreadNotes(); updateMilestone(); }, 1000);
 
         if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
-            navigator.serviceWorker.register('./sw.js').then(() => console.log('SW registered')).catch(() => {});
+            navigator.serviceWorker.register('./sw.js')
+                .then((reg) => {
+                    console.log('SW registered');
+                    initFCM();
+                })
+                .catch(e => console.log('SW registration failed:', e));
         }
     </script>
 </body>
