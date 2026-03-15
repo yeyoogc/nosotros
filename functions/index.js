@@ -9,7 +9,9 @@
  */
 
 const { onValueWritten, onValueCreated } = require('firebase-functions/v2/database');
+const { onRequest } = require('firebase-functions/v2/https');
 const { setGlobalOptions } = require('firebase-functions/v2');
+const { defineSecret } = require('firebase-functions/params');
 const { initializeApp } = require('firebase-admin/app');
 const { getDatabase } = require('firebase-admin/database');
 const { getMessaging } = require('firebase-admin/messaging');
@@ -19,6 +21,8 @@ initializeApp();
 
 // Deploy functions in europe-west1 (same region as the database)
 setGlobalOptions({ region: 'europe-west1' });
+
+const GROQ_API_KEY = defineSecret('GROQ_API_KEY');
 
 // ═══════════════════════════════════════════════════════════════
 // HELPERS
@@ -186,6 +190,116 @@ exports.onMissYou = onValueWritten(
             'Está pensando en ti ahora mismo',
             { type: 'missyou' }
         );
+    }
+);
+
+// ═══════════════════════════════════════════════════════════════
+// 5. IA PROXY SEGURO - /askAIProxy
+// ═══════════════════════════════════════════════════════════════
+
+function applyCors(req, res) {
+    const allowedOrigins = new Set([
+        'https://yeyoogc.github.io',
+        'http://localhost:3000',
+        'http://127.0.0.1:3000',
+        'http://localhost:5000',
+        'http://127.0.0.1:5000'
+    ]);
+    const origin = req.get('origin') || '';
+    if (allowedOrigins.has(origin)) {
+        res.set('Access-Control-Allow-Origin', origin);
+        res.set('Vary', 'Origin');
+    }
+    res.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.set('Access-Control-Allow-Headers', 'Content-Type');
+}
+
+exports.askAIProxy = onRequest(
+    {
+        region: 'europe-west1',
+        secrets: [GROQ_API_KEY],
+        timeoutSeconds: 60,
+        memory: '256MiB'
+    },
+    async (req, res) => {
+        applyCors(req, res);
+
+        if (req.method === 'OPTIONS') {
+            res.status(204).send('');
+            return;
+        }
+
+        if (req.method !== 'POST') {
+            res.status(405).json({ error: 'Metodo no permitido' });
+            return;
+        }
+
+        const body = req.body || {};
+        const messages = Array.isArray(body.messages) ? body.messages : [];
+        if (messages.length === 0 || messages.length > 4) {
+            res.status(400).json({ error: 'Payload invalido: messages' });
+            return;
+        }
+
+        for (const msg of messages) {
+            if (!msg || typeof msg !== 'object') {
+                res.status(400).json({ error: 'Payload invalido: message item' });
+                return;
+            }
+            const role = String(msg.role || '');
+            const content = String(msg.content || '');
+            if (!['system', 'user', 'assistant'].includes(role)) {
+                res.status(400).json({ error: 'Payload invalido: role' });
+                return;
+            }
+            if (!content || content.length > 30000) {
+                res.status(400).json({ error: 'Payload invalido: content' });
+                return;
+            }
+        }
+
+        try {
+            const apiKey = GROQ_API_KEY.value();
+            if (!apiKey) {
+                res.status(500).json({ error: 'Secreto GROQ_API_KEY no configurado' });
+                return;
+            }
+
+            const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${apiKey}`
+                },
+                body: JSON.stringify({
+                    model: 'llama-3.3-70b-versatile',
+                    messages,
+                    temperature: 0.7,
+                    max_tokens: 1024
+                })
+            });
+
+            if (!groqRes.ok) {
+                const errText = await groqRes.text();
+                logger.error('Groq proxy error', groqRes.status, errText.slice(0, 300));
+                res.status(groqRes.status).json({
+                    error: `Error IA (${groqRes.status})`
+                });
+                return;
+            }
+
+            const data = await groqRes.json();
+            const answer = data?.choices?.[0]?.message?.content;
+            if (!answer) {
+                res.status(502).json({ error: 'Respuesta IA vacia' });
+                return;
+            }
+
+            res.status(200).json({ answer: String(answer) });
+        } catch (err) {
+            logger.error('askAIProxy exception', err);
+            res.status(500).json({ error: 'Fallo interno del proxy IA' });
+        }
     }
 );
 

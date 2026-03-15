@@ -2554,6 +2554,28 @@
             console.log("Firebase conectado");
         } catch(e) { console.log("Firebase no disponible:", e); }
 
+        // Basic output/input hardening helpers for untrusted content from DB/APIs.
+        function escapeHtml(value) {
+            return String(value ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function safeText(value, maxLen = 500) {
+            return String(value ?? '').trim().slice(0, maxLen);
+        }
+
+        function formatSafeMarkdown(value) {
+            const safe = escapeHtml(String(value ?? ''));
+            return safe
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/\n/g, '<br>');
+        }
+
         /* ═══════════════════════════════════════════════════════════════════
             FCM PUSH NOTIFICATIONS CONFIG
         ═══════════════════════════════════════════════════════════════════ */
@@ -2620,7 +2642,7 @@
         /* ═══════════════════════════════════════════════════════════════════
             GROQ AI CONFIG
         ═══════════════════════════════════════════════════════════════════ */
-        const GROQ_API_KEY = "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";
+        const AI_PROXY_URL = `https://europe-west1-${firebaseConfig.projectId}.cloudfunctions.net/askAIProxy`;
 
         /* ═══════════════════════════════════════════════════════════════════
                           DATA ARRAYS
@@ -3262,7 +3284,7 @@
 
         function addSentimiento() {
             const input = document.getElementById('sentimiento-input');
-            const t = input.value.trim();
+            const t = safeText(input.value, 220);
             if (!t) return;
             const s = { id: Date.now(), text: t, author: currentUser, date: new Date().toLocaleDateString('es-ES', { day:'numeric', month:'short' }) };
             if (firebaseEnabled) {
@@ -3302,9 +3324,11 @@
             }
             items.forEach(i => {
                 const key = i._key || i.id;
+                const safeDate = escapeHtml(i.date || '');
+                const safeMsg = escapeHtml(i.text || '');
                 const d = document.createElement('div');
                 d.className = 'shared-item';
-                d.innerHTML = `<div class="shared-item-header"><span class="shared-item-author ${i.author==='alba'?'partner':''}">${i.author==='sergio'?'Sergio':'Alba'}</span><div style="display:flex;align-items:center;gap:8px;"><span class="shared-item-date">${i.date}</span>${i.author===currentUser?`<button class="delete-item-btn" onclick="event.stopPropagation();deleteSentimiento('${key}')">✕</button>`:''}</div></div><p class="shared-item-text">${i.text}</p>`;
+                d.innerHTML = `<div class="shared-item-header"><span class="shared-item-author ${i.author==='alba'?'partner':''}">${i.author==='sergio'?'Sergio':'Alba'}</span><div style="display:flex;align-items:center;gap:8px;"><span class="shared-item-date">${safeDate}</span>${i.author===currentUser?`<button class="delete-item-btn" onclick="event.stopPropagation();deleteSentimiento('${key}')">✕</button>`:''}</div></div><p class="shared-item-text">${safeMsg}</p>`;
                 c.appendChild(d);
             });
         }
@@ -3321,7 +3345,7 @@
 
         function addPelicula() {
             const input = document.getElementById('pelicula-input');
-            const t = input.value.trim();
+            const t = safeText(input.value, 140);
             if (!t) return;
             const p = { id: Date.now(), title: t, author: currentUser, watched: false };
             if (firebaseEnabled) {
@@ -3431,12 +3455,13 @@
             }
             filtered.forEach((i, idx) => {
                 const key = i._key || i.id;
+                const safeTitle = escapeHtml(i.title || '');
                 const d = document.createElement('div');
                 d.className = 'shared-item movie-item';
                 d.style.animationDelay = (idx * 0.03) + 's';
                 d.setAttribute('data-key', key);
                 const deleteBtn = i.author === currentUser ? `<button class="delete-item-btn" onclick="event.stopPropagation();deletePelicula('${key}')">✕</button>` : '';
-                d.innerHTML = `<div class="shared-item-header"><span class="shared-item-author ${i.author==='alba'?'partner':''}">${i.author==='sergio'?'Sergio':'Alba'}</span><div style="display:flex;align-items:center;gap:8px;">${deleteBtn}</div></div><div class="shared-item-checkbox"><div class="checkbox-custom ${i.watched?'checked':''}" onclick="event.stopPropagation();togglePelicula('${key}')"></div><span class="movie-title ${i.watched?'watched':''}">${i.title}</span></div>`;
+                d.innerHTML = `<div class="shared-item-header"><span class="shared-item-author ${i.author==='alba'?'partner':''}">${i.author==='sergio'?'Sergio':'Alba'}</span><div style="display:flex;align-items:center;gap:8px;">${deleteBtn}</div></div><div class="shared-item-checkbox"><div class="checkbox-custom ${i.watched?'checked':''}" onclick="event.stopPropagation();togglePelicula('${key}')"></div><span class="movie-title ${i.watched?'watched':''}">${safeTitle}</span></div>`;
                 c.appendChild(d);
             });
         }
@@ -3448,7 +3473,7 @@
         ═══════════════════════════════════════════════════════════════════ */
         function setStatus(text) {
             if (!text || !text.trim()) return;
-            text = text.trim();
+            text = safeText(text, 120);
             const emojiMatch = text.match(/^(\p{Emoji_Presentation}|\p{Emoji}\uFE0F?)/u);
             const emoji = emojiMatch ? emojiMatch[0] : '😊';
             const statusData = {
@@ -3737,7 +3762,26 @@
             
             const toast = document.createElement('div');
             toast.className = 'toast-notification';
-            toast.innerHTML = `<span class="toast-icon">${icon}</span><div><div class="toast-text">${title}</div>${subtitle ? `<div class="toast-sub">${subtitle}</div>` : ''}</div>`;
+
+            const iconEl = document.createElement('span');
+            iconEl.className = 'toast-icon';
+            iconEl.textContent = String(icon || '');
+
+            const contentEl = document.createElement('div');
+            const titleEl = document.createElement('div');
+            titleEl.className = 'toast-text';
+            titleEl.textContent = String(title || '');
+            contentEl.appendChild(titleEl);
+
+            if (subtitle) {
+                const subEl = document.createElement('div');
+                subEl.className = 'toast-sub';
+                subEl.textContent = String(subtitle);
+                contentEl.appendChild(subEl);
+            }
+
+            toast.appendChild(iconEl);
+            toast.appendChild(contentEl);
             document.body.appendChild(toast);
             
             requestAnimationFrame(() => {
@@ -3891,8 +3935,7 @@
             } else if (q.match(/primer.*(mensaje|chat|conversacion)|primera vez.*(habla|escribi)/)) {
                 showFirstMessages();
             } else {
-                if (GROQ_API_KEY) { await askAI(query); }
-                else { searchGeneric(query); }
+                await askAI(query);
             }
           } catch(err) {
               console.error('Error en waSearch:', err);
@@ -4094,8 +4137,7 @@
                 if (query.toLowerCase().includes(name)) { targetMonth = num; break; }
             }
             if (targetMonth === -1 || targetYear === -1) {
-                if (GROQ_API_KEY) { askAI(query); return; }
-                document.getElementById('wa-results').innerHTML = `<div class="wa-result-card"><div class="result-text">Especifica mes y año, ej: "Resumen de febrero 2024"</div></div>`;
+                askAI(query);
                 return;
             }
             const filtered = waMessages.filter(m => m.month === targetMonth && m.year === targetYear);
@@ -4227,20 +4269,16 @@ ${sample.map(m => `[${m.date.toLocaleDateString('es-ES')} ${String(m.hour).padSt
 
 PREGUNTA DEL USUARIO: ${query}`;
 
-                const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                const res = await fetch(AI_PROXY_URL, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${GROQ_API_KEY}`
+                        'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        model: 'llama-3.3-70b-versatile',
                         messages: [
                             { role: 'system', content: systemPrompt },
                             { role: 'user', content: userPrompt }
-                        ],
-                        temperature: 0.7,
-                        max_tokens: 1024
+                        ]
                     })
                 });
                 
@@ -4251,20 +4289,18 @@ PREGUNTA DEL USUARIO: ${query}`;
                 }
                 
                 const data = await res.json();
-                
-                if (data.error) {
-                    throw new Error(data.error.message || 'Error de la API');
-                }
-                
-                const answer = data.choices?.[0]?.message?.content;
+                if (data.error) throw new Error(data.error);
+
+                const answer = data.answer;
                 if (answer) {
-                    results.innerHTML = `<div class="wa-result-card"><div class="result-title">✨ Respuesta IA <span class="wa-ai-badge">Llama AI</span></div><div class="result-text">${answer.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>').replace(/\n/g, '<br>')}</div></div>`;
+                    results.innerHTML = `<div class="wa-result-card"><div class="result-title">✨ Respuesta IA <span class="wa-ai-badge">Llama AI</span></div><div class="result-text">${formatSafeMarkdown(answer)}</div></div>`;
                 } else {
                     results.innerHTML = `<div class="wa-result-card"><div class="result-text">No se pudo obtener respuesta. Intenta reformular la pregunta.</div></div>`;
                 }
             } catch(e) {
                 console.error('askAI error:', e);
-                results.innerHTML = `<div class="wa-result-card"><div class="result-title">⚠️ Error</div><div class="result-text">${e.message}<br><br><small>Si el error persiste, intenta con otra pregunta o recarga la página.</small></div></div>`;
+                const safeErr = escapeHtml(e.message || 'Error desconocido');
+                results.innerHTML = `<div class="wa-result-card"><div class="result-title">⚠️ Error</div><div class="result-text">${safeErr}<br><br><small>Si el error persiste, intenta con otra pregunta o recarga la página.</small></div></div>`;
             }
         }
 
@@ -4482,7 +4518,7 @@ PREGUNTA DEL USUARIO: ${query}`;
 
         function addLoveNote() {
             const input = document.getElementById('nota-input');
-            const t = input.value.trim();
+            const t = safeText(input.value, 700);
             if (!t) return;
             const nota = {
                 id: Date.now(),
@@ -4532,6 +4568,8 @@ PREGUNTA DEL USUARIO: ${query}`;
             }
             items.forEach((n, i) => {
                 const isUnread = n.author !== currentUser && (!n.readBy || !n.readBy.includes(currentUser));
+                const safeDate = escapeHtml(n.date || '');
+                const safeNote = escapeHtml(n.text || '');
                 const d = document.createElement('div');
                 d.className = 'love-note-card' + (isUnread ? ' love-note-unread' : '');
                 d.style.animationDelay = (i * 0.05) + 's';
@@ -4540,11 +4578,11 @@ PREGUNTA DEL USUARIO: ${query}`;
                     <div class="love-note-header">
                         <span class="love-note-from ${n.author === 'alba' ? 'partner' : ''}">${n.author === 'sergio' ? 'Sergio' : 'Alba'}</span>
                         <div style="display:flex;align-items:center;gap:8px;">
-                            <span class="love-note-date">${n.date}</span>
+                            <span class="love-note-date">${safeDate}</span>
                             ${n.author === currentUser ? `<button class="delete-item-btn" onclick="deleteLoveNote('${n.firebaseKey || n.id}')">✕</button>` : ''}
                         </div>
                     </div>
-                    <p class="love-note-text">"${n.text}"</p>
+                    <p class="love-note-text">"${safeNote}"</p>
                 `;
                 c.appendChild(d);
             });

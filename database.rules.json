@@ -1,0 +1,59 @@
+{
+  "rules": {
+    ".read": true,
+    ".write": false,
+
+    "status": {
+      "$user": {
+        ".read": "$user === 'sergio' || $user === 'alba'",
+        ".write": "$user === 'sergio' || $user === 'alba'",
+        ".validate": "(newData.child('text').exists() || (newData.child('photoDataUrl').exists() && newData.child('photoDataUrl').val() !== null)) && (!newData.child('text').exists() || (newData.child('text').isString() && newData.child('text').val().length <= 120)) && (!newData.child('emoji').exists() || (newData.child('emoji').isString() && newData.child('emoji').val().length <= 8)) && newData.child('time').isNumber() && newData.child('timeStr').isString() && newData.child('timeStr').val().length <= 12 && (!newData.child('photoUpdatedAt').exists() || newData.child('photoUpdatedAt').isNumber()) && (!newData.child('photoDataUrl').exists() || newData.child('photoDataUrl').val() === null || (newData.child('photoDataUrl').isString() && newData.child('photoDataUrl').val().length <= 1300000 && newData.child('photoDataUrl').val().matches(/^data:image\\/(jpeg|jpg|png|webp);base64,[A-Za-z0-9+/=]+$/)))"
+      }
+    },
+
+    "sentimientos": {
+      ".indexOn": ["id"],
+      "$sentId": {
+        ".read": true,
+        ".write": true,
+        ".validate": "newData.hasChildren(['id','text','author','date']) && newData.child('id').isNumber() && newData.child('text').isString() && newData.child('text').val().length > 0 && newData.child('text').val().length <= 220 && newData.child('author').isString() && (newData.child('author').val() === 'sergio' || newData.child('author').val() === 'alba') && newData.child('date').isString() && newData.child('date').val().length <= 40"
+      }
+    },
+
+    "peliculas": {
+      ".indexOn": ["id"],
+      "$movieId": {
+        ".read": true,
+        ".write": true,
+        ".validate": "newData.hasChildren(['id','title','author','watched']) && newData.child('id').isNumber() && newData.child('title').isString() && newData.child('title').val().length > 0 && newData.child('title').val().length <= 140 && newData.child('author').isString() && (newData.child('author').val() === 'sergio' || newData.child('author').val() === 'alba') && newData.child('watched').isBoolean()"
+      }
+    },
+
+    "notas": {
+      ".indexOn": ["id"],
+      "$noteId": {
+        ".read": true,
+        ".write": true,
+        ".validate": "newData.hasChildren(['id','text','author','date']) && newData.child('id').isNumber() && newData.child('text').isString() && newData.child('text').val().length > 0 && newData.child('text').val().length <= 700 && newData.child('author').isString() && (newData.child('author').val() === 'sergio' || newData.child('author').val() === 'alba') && newData.child('date').isString() && newData.child('date').val().length <= 40"
+      }
+    },
+
+    "missyou": {
+      "$targetUser": {
+        ".read": "$targetUser === 'sergio' || $targetUser === 'alba'",
+        ".write": "$targetUser === 'sergio' || $targetUser === 'alba'",
+        ".validate": "newData.hasChildren(['from','time','timeStr']) && newData.child('from').isString() && (newData.child('from').val() === 'sergio' || newData.child('from').val() === 'alba') && newData.child('time').isNumber() && newData.child('timeStr').isString() && newData.child('timeStr').val().length <= 12"
+      }
+    },
+
+    "fcmTokens": {
+      "$user": {
+        ".read": "$user === 'sergio' || $user === 'alba'",
+        "$tokenId": {
+          ".write": "$user === 'sergio' || $user === 'alba'",
+          ".validate": "newData.isString() && newData.val().length >= 120 && newData.val().length <= 400"
+        }
+      }
+    }
+  }
+}
