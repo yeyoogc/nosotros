@@ -2126,6 +2126,483 @@
         }
         .date-night-btn:active { transform: scale(0.95); }
 
+        /* ═══════════════════════════════════════════════════════════════
+           NEW v5.0 - Daily Quote, Mood Ring, Timeline, Calendar, Stats
+        ═══════════════════════════════════════════════════════════════ */
+
+        /* --- Daily Love Quote Widget --- */
+        .daily-quote-widget {
+            width: 100%;
+            background: linear-gradient(135deg, rgba(232, 160, 191, 0.08), rgba(212, 165, 116, 0.06));
+            border: 1px solid rgba(232, 160, 191, 0.12);
+            border-radius: var(--radius-md);
+            padding: 14px 18px;
+            margin-bottom: 14px;
+            position: relative;
+            overflow: hidden;
+            cursor: default;
+        }
+        .daily-quote-widget::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--rose), var(--gold), var(--rose));
+            opacity: 0.4;
+        }
+        .daily-quote-label {
+            font-size: 0.58rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .daily-quote-text {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 0.88rem;
+            color: var(--text-primary);
+            font-style: italic;
+            line-height: 1.6;
+        }
+        .daily-quote-text .dq-mark {
+            color: var(--rose);
+            opacity: 0.5;
+        }
+
+        /* --- Mood Ring Widget --- */
+        .mood-ring-widget {
+            width: 100%;
+            background: var(--glass-light);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-light-border);
+            border-radius: var(--radius-md);
+            padding: 12px 16px;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            box-shadow: var(--shadow-sm);
+        }
+        .mood-ring-pair {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+        .mood-bubble {
+            width: 38px; height: 38px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem;
+            border: 2px solid rgba(232, 160, 191, 0.3);
+            background: rgba(232, 160, 191, 0.08);
+            position: relative;
+            transition: all 0.4s ease;
+        }
+        .mood-bubble.partner-mood {
+            border-color: rgba(108, 155, 210, 0.3);
+            background: rgba(108, 155, 210, 0.08);
+        }
+        .mood-link {
+            font-size: 0.6rem;
+            color: var(--rose);
+            opacity: 0.5;
+        }
+        .mood-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .mood-info-label {
+            font-size: 0.6rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+        .mood-info-detail {
+            font-size: 0.72rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .mood-change-btn {
+            background: rgba(232, 160, 191, 0.1);
+            border: 1px solid rgba(232, 160, 191, 0.15);
+            border-radius: 50px;
+            padding: 6px 12px;
+            font-size: 0.62rem;
+            font-weight: 600;
+            color: var(--rose-deep);
+            cursor: pointer;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+        .mood-change-btn:active {
+            transform: scale(0.94);
+            background: rgba(232, 160, 191, 0.2);
+        }
+        /* Mood selector overlay */
+        .mood-selector-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 5000;
+            display: flex; align-items: flex-end; justify-content: center;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .mood-selector-overlay.show { opacity: 1; pointer-events: all; }
+        .mood-selector-panel {
+            background: linear-gradient(145deg, #1A1025, #2D1B3D);
+            border: 1px solid rgba(232, 160, 191, 0.15);
+            border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+            padding: 20px 24px calc(20px + var(--safe-bottom));
+            width: 100%; max-width: 420px;
+            transform: translateY(100%);
+            transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+        }
+        .mood-selector-overlay.show .mood-selector-panel {
+            transform: translateY(0);
+        }
+        .mood-selector-title {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1rem;
+            color: var(--text-light);
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        .mood-selector-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        .mood-option {
+            display: flex; flex-direction: column;
+            align-items: center; gap: 4px;
+            padding: 12px 8px;
+            border-radius: var(--radius-sm);
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.04);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .mood-option:active {
+            transform: scale(0.92);
+            background: rgba(232, 160, 191, 0.15);
+            border-color: var(--rose);
+        }
+        .mood-option .mo-emoji { font-size: 1.6rem; }
+        .mood-option .mo-label {
+            font-size: 0.58rem;
+            color: var(--text-light-secondary);
+            font-weight: 500;
+            text-align: center;
+        }
+
+        /* --- Timeline Section --- */
+        #timeline-section {
+            background: linear-gradient(180deg, #1A0F25 0%, #0F0A1A 100%);
+        }
+        #timeline-section .back-button {
+            background: var(--glass-dark);
+            color: var(--text-light);
+            border: 1px solid var(--glass-dark-border);
+        }
+        #timeline-section .section-title { color: var(--text-light); }
+        .timeline-container {
+            width: 100%; max-width: 380px;
+            position: relative;
+            padding-left: 28px;
+            padding-bottom: 40px;
+        }
+        .timeline-container::before {
+            content: '';
+            position: absolute;
+            left: 8px; top: 0; bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, var(--rose), var(--gold), rgba(232,160,191,0.1));
+        }
+        .timeline-event {
+            position: relative;
+            margin-bottom: 20px;
+            animation: timelineSlideIn 0.5s cubic-bezier(0.32, 0.72, 0, 1) both;
+        }
+        @keyframes timelineSlideIn {
+            from { opacity: 0; transform: translateX(12px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .timeline-event::before {
+            content: '';
+            position: absolute;
+            left: -24px; top: 14px;
+            width: 12px; height: 12px;
+            border-radius: 50%;
+            background: var(--rose);
+            border: 2px solid var(--plum);
+            box-shadow: 0 0 8px var(--rose-glow);
+            z-index: 1;
+        }
+        .timeline-event:nth-child(even)::before {
+            background: var(--gold);
+            box-shadow: 0 0 8px var(--gold-glow);
+        }
+        .timeline-card {
+            background: var(--glass-dark);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-dark-border);
+            border-radius: var(--radius-md);
+            padding: 14px 16px;
+        }
+        .timeline-date {
+            font-size: 0.6rem;
+            color: var(--rose);
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+        .timeline-event:nth-child(even) .timeline-date { color: var(--gold); }
+        .timeline-title {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 0.92rem;
+            color: var(--text-light);
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .timeline-desc {
+            font-size: 0.72rem;
+            color: var(--text-light-secondary);
+            line-height: 1.5;
+        }
+        .timeline-emoji {
+            float: right;
+            font-size: 1.4rem;
+            margin-left: 8px;
+        }
+
+        /* --- Calendario Compartido --- */
+        #calendario-section {
+            background: linear-gradient(180deg, #0D1F2D 0%, #0F0A1A 100%);
+        }
+        #calendario-section .back-button {
+            background: var(--glass-dark);
+            color: var(--text-light);
+            border: 1px solid var(--glass-dark-border);
+        }
+        #calendario-section .section-title { color: var(--text-light); }
+        .cal-form {
+            width: 100%; max-width: 380px;
+            margin-bottom: 16px;
+        }
+        .cal-form-row {
+            display: flex; gap: 8px;
+            margin-bottom: 8px;
+        }
+        .cal-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: none;
+            border-radius: var(--radius-md);
+            background: rgba(255,255,255,0.08);
+            color: var(--text-light);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.82rem;
+            outline: none;
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
+            -webkit-user-select: text; user-select: text;
+        }
+        .cal-input::placeholder { color: var(--text-light-secondary); }
+        .cal-input:focus {
+            background: rgba(255,255,255,0.12);
+            border-color: var(--glass-dark-border);
+        }
+        .cal-input[type="date"], .cal-input[type="time"] {
+            color-scheme: dark;
+        }
+        .cal-emoji-btn {
+            width: 48px; height: 48px;
+            border-radius: var(--radius-sm);
+            border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.05);
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+        }
+        .cal-emoji-btn:active {
+            transform: scale(0.9);
+            background: rgba(255,255,255,0.1);
+        }
+        .cal-add-btn {
+            width: 48px; height: 48px;
+            border-radius: 50%; border: none;
+            background: linear-gradient(135deg, #6C9BD2, #4A7FB5);
+            color: white; font-size: 1.3rem;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(108, 155, 210, 0.3);
+            transition: all 0.3s ease;
+        }
+        .cal-add-btn:active { transform: scale(0.88); }
+        .cal-event-card {
+            background: var(--glass-dark);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-dark-border);
+            border-radius: var(--radius-md);
+            padding: 14px 16px;
+            margin-bottom: 8px;
+            display: flex; align-items: center; gap: 12px;
+            animation: movieItemIn 0.35s cubic-bezier(0.32, 0.72, 0, 1) both;
+            position: relative;
+            overflow: hidden;
+        }
+        .cal-event-card.today {
+            border-color: rgba(76, 175, 130, 0.3);
+            background: rgba(76, 175, 130, 0.08);
+        }
+        .cal-event-card.today::before {
+            content: ''; position: absolute;
+            top: 0; left: 0; right: 0; height: 2px;
+            background: var(--success);
+        }
+        .cal-event-card.past {
+            opacity: 0.4;
+        }
+        .cal-event-emoji {
+            font-size: 1.5rem;
+            width: 42px; height: 42px;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(108, 155, 210, 0.1);
+            border-radius: var(--radius-sm);
+            flex-shrink: 0;
+        }
+        .cal-event-info { flex: 1; min-width: 0; }
+        .cal-event-title {
+            font-size: 0.85rem; font-weight: 600;
+            color: var(--text-light);
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .cal-event-meta {
+            font-size: 0.65rem;
+            color: var(--text-light-secondary);
+            display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+        }
+        .cal-event-countdown {
+            font-size: 0.6rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 20px;
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+        .cal-event-countdown.soon {
+            background: rgba(76, 175, 130, 0.12);
+            color: var(--success);
+        }
+        .cal-event-countdown.upcoming {
+            background: rgba(108, 155, 210, 0.12);
+            color: var(--info);
+        }
+        .cal-event-countdown.far {
+            background: rgba(255,255,255,0.06);
+            color: var(--text-light-secondary);
+        }
+        .cal-event-countdown.passed {
+            background: rgba(255,255,255,0.04);
+            color: var(--text-light-secondary);
+        }
+        .cal-section-label {
+            font-size: 0.62rem;
+            font-weight: 700;
+            color: var(--text-light-secondary);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin: 16px 0 8px;
+        }
+        .cal-section-label:first-child { margin-top: 0; }
+
+        /* --- Stats Section --- */
+        #stats-section {
+            background: linear-gradient(180deg, #1A1025 0%, #0F0A1A 100%);
+        }
+        #stats-section .back-button {
+            background: var(--glass-dark);
+            color: var(--text-light);
+            border: 1px solid var(--glass-dark-border);
+        }
+        #stats-section .section-title { color: var(--text-light); }
+        .stats-grid {
+            width: 100%; max-width: 380px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            padding-bottom: 40px;
+        }
+        .stat-card {
+            background: var(--glass-dark);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-dark-border);
+            border-radius: var(--radius-md);
+            padding: 16px 14px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            animation: cardFadeIn 0.6s cubic-bezier(0.32, 0.72, 0, 1) both;
+        }
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            opacity: 0.6;
+        }
+        .stat-card:nth-child(1)::before { background: linear-gradient(90deg, var(--rose), var(--rose-light)); }
+        .stat-card:nth-child(2)::before { background: linear-gradient(90deg, var(--gold), var(--gold-light)); }
+        .stat-card:nth-child(3)::before { background: linear-gradient(90deg, var(--success), #7dcea0); }
+        .stat-card:nth-child(4)::before { background: linear-gradient(90deg, var(--info), #a0c4e8); }
+        .stat-card:nth-child(5)::before { background: linear-gradient(90deg, #9b59b6, #c39bd3); }
+        .stat-card:nth-child(6)::before { background: linear-gradient(90deg, var(--apple-red), #ff6b81); }
+        .stat-card .stat-emoji {
+            font-size: 1.4rem;
+            margin-bottom: 6px;
+        }
+        .stat-card .stat-number {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-light);
+            margin-bottom: 2px;
+        }
+        .stat-card .stat-desc {
+            font-size: 0.62rem;
+            color: var(--text-light-secondary);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .stat-card.wide {
+            grid-column: span 2;
+        }
+        .stat-highlight {
+            font-size: 0.78rem;
+            color: var(--text-light);
+            font-weight: 600;
+            line-height: 1.5;
+        }
+        .stat-highlight strong {
+            color: var(--rose);
+        }
+
+
+
     </style>
 </head>
 <body>
@@ -2188,6 +2665,26 @@
                     </button>
                 </div>
 
+                <!-- Daily Love Quote -->
+                <div class="daily-quote-widget" id="daily-quote-widget">
+                    <div class="daily-quote-label">💕 Frase del día</div>
+                    <p class="daily-quote-text"><span class="dq-mark">❝</span> <span id="daily-quote-text">...</span> <span class="dq-mark">❞</span></p>
+                </div>
+
+                <!-- Mood Ring Widget -->
+                <div class="mood-ring-widget" id="mood-ring-widget">
+                    <div class="mood-ring-pair">
+                        <div class="mood-bubble" id="mood-me">😊</div>
+                        <span class="mood-link">❤️</span>
+                        <div class="mood-bubble partner-mood" id="mood-partner">😊</div>
+                    </div>
+                    <div class="mood-info">
+                        <div class="mood-info-label">Nuestro humor</div>
+                        <div class="mood-info-detail" id="mood-detail">Toca para cambiar</div>
+                    </div>
+                    <button class="mood-change-btn" onclick="openMoodSelector()">Cambiar</button>
+                </div>
+
                 <!-- Status banner -->
                 <div class="status-banner" id="home-status-banner" onclick="navigateTo('estado')">
                     <div class="status-dot"></div>
@@ -2237,6 +2734,19 @@
                         <span class="icon">&#128140;</span>
                         <span class="label">Notas de amor</span>
                         <span class="menu-badge" id="notas-badge" style="display:none;"></span>
+                    </button>
+                    <button class="menu-card" onclick="navigateTo('timeline')">
+                        <span class="icon">💍</span>
+                        <span class="label">Nuestra historia</span>
+                    </button>
+                    <button class="menu-card" onclick="navigateTo('calendario')">
+                        <span class="icon">📅</span>
+                        <span class="label">Calendario</span>
+                        <span class="menu-badge" id="cal-badge" style="display:none;"></span>
+                    </button>
+                    <button class="menu-card" onclick="navigateTo('stats')">
+                        <span class="icon">🏆</span>
+                        <span class="label">Nuestras stats</span>
                     </button>
                     <button class="menu-card vip" onclick="navigateTo('vip')" style="grid-column: span 2;">
                         <span class="icon">&#128274;</span>
@@ -2528,6 +3038,62 @@
                 </div>
             </div>
         </section>
+
+        <!-- ═══ TIMELINE ═══ -->
+        <section id="timeline-section" class="screen section-screen">
+            <button class="back-button" onclick="navigateTo('home')"><span class="back-arrow">&#8592;</span> Volver</button>
+            <header class="section-header">
+                <span class="section-icon">💍</span>
+                <h2 class="section-title">Nuestra historia</h2>
+                <p class="section-subtitle" style="color: var(--text-light-secondary);">Los momentos que nos definen</p>
+            </header>
+            <div class="timeline-container" id="timeline-container"></div>
+        </section>
+
+        <!-- ═══ CALENDARIO COMPARTIDO ═══ -->
+        <section id="calendario-section" class="screen section-screen">
+            <button class="back-button" onclick="navigateTo('home')"><span class="back-arrow">&#8592;</span> Volver</button>
+            <header class="section-header">
+                <span class="section-icon">📅</span>
+                <h2 class="section-title">Calendario</h2>
+                <p class="section-subtitle" style="color: var(--text-light-secondary);">Nuestros planes juntos</p>
+            </header>
+            <div class="user-switch">
+                <button class="user-switch-btn active" onclick="setUser('sergio')">Sergio</button>
+                <button class="user-switch-btn" onclick="setUser('alba')">Alba</button>
+            </div>
+            <div class="cal-form">
+                <div class="cal-form-row">
+                    <input type="text" class="cal-input" id="cal-title-input" placeholder="¿Qué plan tenemos?">
+                    <button class="cal-emoji-btn" id="cal-emoji-btn" onclick="cycleCalEmoji()">📌</button>
+                </div>
+                <div class="cal-form-row">
+                    <input type="date" class="cal-input" id="cal-date-input">
+                    <input type="time" class="cal-input" id="cal-time-input" style="max-width:120px;">
+                    <button class="cal-add-btn" onclick="addEvento()">+</button>
+                </div>
+            </div>
+            <div class="shared-list" id="calendario-list"></div>
+        </section>
+
+        <!-- ═══ ESTADÍSTICAS ═══ -->
+        <section id="stats-section" class="screen section-screen">
+            <button class="back-button" onclick="navigateTo('home')"><span class="back-arrow">&#8592;</span> Volver</button>
+            <header class="section-header">
+                <span class="section-icon">🏆</span>
+                <h2 class="section-title">Nuestras stats</h2>
+                <p class="section-subtitle" style="color: var(--text-light-secondary);">Los números de lo nuestro</p>
+            </header>
+            <div class="stats-grid" id="stats-grid"></div>
+        </section>
+
+        <!-- Mood Selector Overlay -->
+        <div class="mood-selector-overlay" id="mood-selector-overlay" onclick="closeMoodSelector(event)">
+            <div class="mood-selector-panel">
+                <div class="mood-selector-title">¿Cómo te sientes?</div>
+                <div class="mood-selector-grid" id="mood-selector-grid"></div>
+            </div>
+        </div>
         
     </div>
 
@@ -3153,7 +3719,10 @@
             estado: document.getElementById('estado-section'),
             whatsapp: document.getElementById('whatsapp-section'),
             notas: document.getElementById('notas-section'),
-            vip: document.getElementById('vip-section')
+            vip: document.getElementById('vip-section'),
+            timeline: document.getElementById('timeline-section'),
+            calendario: document.getElementById('calendario-section'),
+            stats: document.getElementById('stats-section')
         };
 
         let currentScreen = 'home';
@@ -3172,7 +3741,10 @@
                 if (screenId === 'canciones') { renderSongs(); updateSongCount(); }
                 if (screenId === 'estado') loadStatuses();
                 if (screenId === 'notas') loadLoveNotes();
-                if (screenId === 'home') { loadPartnerStatus(); updateMilestone(); checkUnreadNotes(); }
+                if (screenId === 'timeline') renderTimeline();
+                if (screenId === 'calendario') loadEventos();
+                if (screenId === 'stats') renderStats();
+                if (screenId === 'home') { loadPartnerStatus(); updateMilestone(); checkUnreadNotes(); updateDailyQuote(); loadMoods(); checkCalendarReminders(); }
             }, 100);
         }
 
@@ -4861,8 +5433,445 @@ PREGUNTA DEL USUARIO: ${query}`;
             origShowRandom(section);
         };
 
+        /* ═══════════════════════════════════════════════════════════════════
+                    DAILY LOVE QUOTE
+        ═══════════════════════════════════════════════════════════════════ */
+        const dailyQuotes = [
+            "Cada día contigo es mi día favorito.",
+            "Eres el plan perfecto para cualquier día.",
+            "Contigo aprendí que el amor no es perfecto, es real.",
+            "Mi lugar favorito es a tu lado.",
+            "Eres esa persona con la que quiero hacer todo y nada a la vez.",
+            "Gracias por elegirme todos los días.",
+            "Lo mejor de mis días eres tú.",
+            "Contigo hasta los lunes son bonitos.",
+            "Eres mi persona favorita del universo entero.",
+            "Cada vez que te veo me enamoro un poco más.",
+            "Eres mi mejor descubrimiento.",
+            "El amor es encontrar a alguien con quien ser tú mismo. Te encontré.",
+            "Ojalá poder rebobinar cada momento contigo y vivirlo de nuevo.",
+            "Tú haces que lo ordinario sea extraordinario.",
+            "Eres la razón de mis mejores sonrisas.",
+            "Contigo entendí que se puede querer sin medida.",
+            "El mejor regalo que me ha dado la vida eres tú.",
+            "Eres casa, refugio y aventura al mismo tiempo.",
+            "Quiero despertar a tu lado todos los días que me queden.",
+            "Contigo no necesito wifi, ya tengo conexión.",
+            "Eres mi canción favorita en repeat.",
+            "Aún me pongo nervioso cuando me miras.",
+            "Tú eres mi hoy, mi mañana y mi siempre.",
+            "Cada momento contigo es un recuerdo que quiero guardar.",
+            "Eres mi motivo para ser mejor cada día.",
+            "Lo que siento por ti no cabe en un estado de WhatsApp.",
+            "Eres la prueba de que las cosas bonitas sí existen.",
+            "Mi parte favorita del día es cuando estoy contigo.",
+            "Contigo quiero todas las primaveras.",
+            "Eres lo más bonito que me ha pasado sin buscarlo.",
+            "Gracias por hacer de mi vida algo increíble."
+        ];
+
+        function updateDailyQuote() {
+            const now = new Date();
+            const dayIndex = Math.floor(now.getTime() / (1000 * 60 * 60 * 24)) % dailyQuotes.length;
+            const el = document.getElementById('daily-quote-text');
+            if (el) el.textContent = dailyQuotes[dayIndex];
+        }
+        updateDailyQuote();
+
+        /* ═══════════════════════════════════════════════════════════════════
+                    MOOD RING
+        ═══════════════════════════════════════════════════════════════════ */
+        const moodOptions = [
+            { emoji: '😊', label: 'Feliz' },
+            { emoji: '🥰', label: 'Enamorado/a' },
+            { emoji: '😴', label: 'Cansado/a' },
+            { emoji: '😢', label: 'Triste' },
+            { emoji: '🤩', label: 'Emocionado/a' },
+            { emoji: '😤', label: 'Enfadado/a' },
+            { emoji: '🤒', label: 'Malito/a' },
+            { emoji: '🥳', label: 'De fiesta' },
+            { emoji: '😌', label: 'En paz' },
+            { emoji: '🤔', label: 'Pensativo/a' },
+            { emoji: '😏', label: 'Travieso/a' },
+            { emoji: '💪', label: 'Motivado/a' }
+        ];
+
+        function buildMoodSelector() {
+            const grid = document.getElementById('mood-selector-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+            moodOptions.forEach(m => {
+                const opt = document.createElement('div');
+                opt.className = 'mood-option';
+                opt.innerHTML = `<span class="mo-emoji">${m.emoji}</span><span class="mo-label">${m.label}</span>`;
+                opt.onclick = () => selectMood(m);
+                grid.appendChild(opt);
+            });
+        }
+        buildMoodSelector();
+
+        function openMoodSelector() {
+            const ov = document.getElementById('mood-selector-overlay');
+            if (ov) ov.classList.add('show');
+            if (navigator.vibrate) navigator.vibrate(15);
+        }
+        function closeMoodSelector(e) {
+            if (e && e.target !== e.currentTarget) return;
+            const ov = document.getElementById('mood-selector-overlay');
+            if (ov) ov.classList.remove('show');
+        }
+
+        function selectMood(mood) {
+            closeMoodSelector({target:document.getElementById('mood-selector-overlay'),currentTarget:document.getElementById('mood-selector-overlay')});
+            if (firebaseEnabled) {
+                database.ref('moods/' + currentUser).set({
+                    emoji: mood.emoji,
+                    label: mood.label,
+                    time: Date.now()
+                });
+            }
+            const meEl = document.getElementById('mood-me');
+            if (meEl) meEl.textContent = mood.emoji;
+            updateMoodDetail();
+            showToast(mood.emoji, 'Humor actualizado', mood.label);
+            if (navigator.vibrate) navigator.vibrate(30);
+        }
+
+        function loadMoods() {
+            if (!firebaseEnabled) return;
+            ['sergio', 'alba'].forEach(user => {
+                database.ref('moods/' + user).on('value', snap => {
+                    const data = snap.val();
+                    const isMe = user === currentUser;
+                    const bubbleId = isMe ? 'mood-me' : 'mood-partner';
+                    const el = document.getElementById(bubbleId);
+                    if (el && data) el.textContent = data.emoji || '😊';
+                    updateMoodDetail();
+                });
+            });
+        }
+        function updateMoodDetail() {
+            const me = document.getElementById('mood-me')?.textContent || '😊';
+            const partner = document.getElementById('mood-partner')?.textContent || '😊';
+            const meLabel = moodOptions.find(m => m.emoji === me)?.label || '';
+            const partnerLabel = moodOptions.find(m => m.emoji === partner)?.label || '';
+            const detail = document.getElementById('mood-detail');
+            if (detail) {
+                const meName = currentUser === 'sergio' ? 'Sergio' : 'Alba';
+                const partnerName = currentUser === 'sergio' ? 'Alba' : 'Sergio';
+                detail.textContent = `${meName}: ${meLabel} · ${partnerName}: ${partnerLabel}`;
+            }
+        }
+        loadMoods();
+
+        /* ═══════════════════════════════════════════════════════════════════
+                    TIMELINE
+        ═══════════════════════════════════════════════════════════════════ */
+        const timelineEvents = [
+            { date: '2024-05-14', emoji: '💕', title: 'Empezamos a salir', desc: 'El día que todo comenzó' },
+            { date: '2024-05-14', emoji: '🚲', title: 'Cádiz en bici', desc: 'Te pedí que fueras mi novia y dijiste que sí' },
+            { date: '2024-06-01', emoji: '💋', title: 'Primer te quiero', desc: 'El primer "te quiero" susurrado en la oscuridad' },
+            { date: '2024-07-15', emoji: '🏖️', title: 'Verano juntos', desc: 'Noches de verano bajo las estrellas' },
+            { date: '2024-08-20', emoji: '🍝', title: 'Torrenueva', desc: 'Cuando me enseñaste la ensalada suprema' },
+            { date: '2024-10-01', emoji: '🎓', title: 'Mi graduación', desc: 'Te miraba desde el escenario' },
+            { date: '2024-12-25', emoji: '🎄', title: 'Primera Navidad', desc: 'Nuestra primera Navidad juntos' },
+            { date: '2025-01-01', emoji: '🎆', title: 'Año Nuevo juntos', desc: 'Empezando el año de la mejor forma posible' },
+            { date: '2025-02-14', emoji: '❤️', title: 'San Valentín', desc: 'Nuestro primer San Valentín' },
+            { date: '2025-05-14', emoji: '🎂', title: '1 año juntos', desc: '¡Un año de amor y aventuras!' },
+            { date: '2025-11-14', emoji: '🌟', title: '18 meses', desc: 'Medio año y medio, y lo que nos queda' },
+            { date: '2026-02-14', emoji: '💝', title: '2º San Valentín', desc: 'Segundo San Valentín juntos' },
+        ];
+
+        function renderTimeline() {
+            const container = document.getElementById('timeline-container');
+            if (!container) return;
+            container.innerHTML = '';
+            const sorted = [...timelineEvents].sort((a, b) => new Date(a.date) - new Date(b.date));
+            sorted.forEach((evt, i) => {
+                const d = new Date(evt.date);
+                const dateStr = d.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
+                const div = document.createElement('div');
+                div.className = 'timeline-event';
+                div.style.animationDelay = (i * 0.08) + 's';
+                div.innerHTML = `
+                    <div class="timeline-card">
+                        <span class="timeline-emoji">${evt.emoji}</span>
+                        <div class="timeline-date">${dateStr}</div>
+                        <div class="timeline-title">${escapeHtml(evt.title)}</div>
+                        <div class="timeline-desc">${escapeHtml(evt.desc)}</div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        /* ═══════════════════════════════════════════════════════════════════
+                    CALENDARIO COMPARTIDO
+        ═══════════════════════════════════════════════════════════════════ */
+        const calEmojis = ['📌','🍽️','🎉','✈️','🏥','🎂','💼','🎬','🏋️','📚','🎵','💕','🛒','🚗'];
+        let calEmojiIndex = 0;
+
+        function cycleCalEmoji() {
+            calEmojiIndex = (calEmojiIndex + 1) % calEmojis.length;
+            const btn = document.getElementById('cal-emoji-btn');
+            if (btn) btn.textContent = calEmojis[calEmojiIndex];
+            if (navigator.vibrate) navigator.vibrate(10);
+        }
+
+        function addEvento() {
+            const titleInput = document.getElementById('cal-title-input');
+            const dateInput = document.getElementById('cal-date-input');
+            const timeInput = document.getElementById('cal-time-input');
+            const title = safeText(titleInput.value, 120);
+            const date = dateInput.value;
+            if (!title || !date) {
+                showToast('⚠️', 'Rellena título y fecha', '');
+                return;
+            }
+            const emoji = calEmojis[calEmojiIndex];
+            const time = timeInput.value || null;
+            const evento = {
+                id: Date.now(),
+                title, date, time, emoji,
+                author: currentUser,
+                createdAt: Date.now()
+            };
+            if (firebaseEnabled) {
+                database.ref('eventos').push(evento);
+            }
+            titleInput.value = '';
+            dateInput.value = '';
+            timeInput.value = '';
+            if (navigator.vibrate) navigator.vibrate(30);
+            showToast('📅', 'Evento añadido', title);
+        }
+
+        function loadEventos() {
+            if (!firebaseEnabled) return;
+            database.ref('eventos').off('value');
+            database.ref('eventos').on('value', snap => {
+                const d = snap.val();
+                if (d) {
+                    const items = Object.entries(d).map(([key, val]) => ({...val, _key: key}));
+                    renderEventos(items);
+                } else {
+                    renderEventos([]);
+                }
+            });
+        }
+
+        function renderEventos(items) {
+            const c = document.getElementById('calendario-list');
+            if (!c) return;
+            c.innerHTML = '';
+            if (!items.length) {
+                c.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📅</div><p class="empty-state-text">Añade vuestro primer plan juntos</p></div>';
+                return;
+            }
+            const now = new Date();
+            const todayStr = now.toISOString().slice(0, 10);
+
+            const sorted = [...items].sort((a, b) => {
+                const da = new Date(a.date); const db = new Date(b.date);
+                return da - db;
+            });
+
+            const upcoming = sorted.filter(e => e.date >= todayStr);
+            const past = sorted.filter(e => e.date < todayStr).reverse();
+
+            if (upcoming.length) {
+                const label = document.createElement('div');
+                label.className = 'cal-section-label';
+                label.textContent = '📍 Próximos eventos';
+                c.appendChild(label);
+                upcoming.forEach((evt, i) => c.appendChild(createEventCard(evt, i, todayStr, false)));
+            }
+            if (past.length) {
+                const label = document.createElement('div');
+                label.className = 'cal-section-label';
+                label.textContent = '📋 Eventos pasados';
+                c.appendChild(label);
+                past.slice(0, 10).forEach((evt, i) => c.appendChild(createEventCard(evt, i, todayStr, true)));
+            }
+            updateCalBadge(upcoming);
+        }
+
+        function createEventCard(evt, idx, todayStr, isPast) {
+            const d = document.createElement('div');
+            d.className = 'cal-event-card' + (isPast ? ' past' : '') + (evt.date === todayStr ? ' today' : '');
+            d.style.animationDelay = (idx * 0.04) + 's';
+            const evtDate = new Date(evt.date + 'T00:00:00');
+            const now = new Date();
+            const diffDays = Math.ceil((evtDate - new Date(now.getFullYear(), now.getMonth(), now.getDate())) / (1000*60*60*24));
+            let countdownText = '', countdownClass = '';
+            if (isPast) { countdownText = 'Pasado'; countdownClass = 'passed'; }
+            else if (diffDays === 0) { countdownText = '¡Hoy!'; countdownClass = 'soon'; }
+            else if (diffDays === 1) { countdownText = 'Mañana'; countdownClass = 'soon'; }
+            else if (diffDays <= 7) { countdownText = `${diffDays} días`; countdownClass = 'upcoming'; }
+            else { countdownText = `${diffDays} días`; countdownClass = 'far'; }
+
+            const dateStr = evtDate.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short' });
+            const timeStr = evt.time ? ` · ${evt.time}` : '';
+            const deleteBtn = evt.author === currentUser ? `<button class="delete-item-btn" onclick="event.stopPropagation();deleteEvento('${evt._key}')">✕</button>` : '';
+
+            d.innerHTML = `
+                <div class="cal-event-emoji">${evt.emoji || '📌'}</div>
+                <div class="cal-event-info">
+                    <div class="cal-event-title">${escapeHtml(evt.title)}</div>
+                    <div class="cal-event-meta">
+                        <span>${dateStr}${timeStr}</span>
+                        <span>· ${evt.author === 'sergio' ? 'Sergio' : 'Alba'}</span>
+                    </div>
+                </div>
+                <span class="cal-event-countdown ${countdownClass}">${countdownText}</span>
+                ${deleteBtn}
+            `;
+            return d;
+        }
+
+        function deleteEvento(key) {
+            showConfirmModal('¿Eliminar este evento?', () => {
+                if (firebaseEnabled) database.ref('eventos/' + key).remove();
+                showToast('🗑️', 'Evento eliminado', '');
+            });
+        }
+
+        function updateCalBadge(upcomingEvents) {
+            const badge = document.getElementById('cal-badge');
+            if (!badge) return;
+            const now = new Date();
+            const todayStr = now.toISOString().slice(0, 10);
+            const soonEvents = upcomingEvents.filter(e => {
+                const diff = Math.ceil((new Date(e.date + 'T00:00:00') - new Date(now.getFullYear(), now.getMonth(), now.getDate())) / (1000*60*60*24));
+                return diff >= 0 && diff <= 3;
+            });
+            if (soonEvents.length > 0) {
+                badge.textContent = soonEvents.length;
+                badge.style.display = 'flex';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+
+        function checkCalendarReminders() {
+            if (!firebaseEnabled) return;
+            database.ref('eventos').once('value', snap => {
+                const d = snap.val();
+                if (!d) return;
+                const now = new Date();
+                const todayStr = now.toISOString().slice(0, 10);
+                const tomorrowDate = new Date(now);
+                tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+                const tomorrowStr = tomorrowDate.toISOString().slice(0, 10);
+
+                const items = Object.values(d);
+                items.forEach(evt => {
+                    if (evt.date === todayStr) {
+                        showToast('📅', '¡Hoy!', evt.title);
+                    } else if (evt.date === tomorrowStr) {
+                        showToast('📅', 'Mañana:', evt.title);
+                    }
+                });
+            });
+        }
+
+        document.getElementById('cal-title-input')?.addEventListener('keypress', e => { if (e.key === 'Enter') addEvento(); });
+
+        /* ═══════════════════════════════════════════════════════════════════
+                    ESTADÍSTICAS DE PAREJA
+        ═══════════════════════════════════════════════════════════════════ */
+        function renderStats() {
+            const grid = document.getElementById('stats-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            const daysTogether = Math.floor((new Date() - ANNIVERSARY_DATE) / (1000 * 60 * 60 * 24));
+            const weeksTogether = Math.floor(daysTogether / 7);
+            const monthsTogether = Math.floor(daysTogether / 30.44);
+
+            const stats = [
+                { emoji: '❤️', number: daysTogether, desc: 'Días juntos' },
+                { emoji: '📅', number: weeksTogether, desc: 'Semanas juntos' },
+                { emoji: '🎵', number: cancionesList.length, desc: 'Canciones nuestras' },
+                { emoji: '💝', number: razonesList.length, desc: 'Razones de amor' },
+                { emoji: '✈️', number: planesList.length, desc: 'Planes soñados' },
+                { emoji: '📸', number: recuerdosList.length, desc: 'Recuerdos guardados' }
+            ];
+
+            stats.forEach((s, i) => {
+                const card = document.createElement('div');
+                card.className = 'stat-card';
+                card.style.animationDelay = (i * 0.08) + 's';
+                card.innerHTML = `
+                    <div class="stat-emoji">${s.emoji}</div>
+                    <div class="stat-number">${s.number}</div>
+                    <div class="stat-desc">${s.desc}</div>
+                `;
+                grid.appendChild(card);
+            });
+
+            // Firebase stats
+            if (firebaseEnabled) {
+                database.ref('sentimientos').once('value', snap => {
+                    const d = snap.val();
+                    const count = d ? Object.keys(d).length : 0;
+                    const card = document.createElement('div');
+                    card.className = 'stat-card';
+                    card.style.animationDelay = '0.48s';
+                    card.innerHTML = `<div class="stat-emoji">💭</div><div class="stat-number">${count}</div><div class="stat-desc">Sentimientos compartidos</div>`;
+                    grid.appendChild(card);
+                });
+                database.ref('peliculas').once('value', snap => {
+                    const d = snap.val();
+                    const items = d ? Object.values(d) : [];
+                    const total = items.length;
+                    const watched = items.filter(i => i.watched).length;
+                    const card = document.createElement('div');
+                    card.className = 'stat-card';
+                    card.style.animationDelay = '0.56s';
+                    card.innerHTML = `<div class="stat-emoji">🎬</div><div class="stat-number">${watched}/${total}</div><div class="stat-desc">Pelis vistas</div>`;
+                    grid.appendChild(card);
+                });
+                database.ref('notas').once('value', snap => {
+                    const d = snap.val();
+                    const count = d ? Object.keys(d).length : 0;
+                    const card = document.createElement('div');
+                    card.className = 'stat-card';
+                    card.style.animationDelay = '0.64s';
+                    card.innerHTML = `<div class="stat-emoji">💌</div><div class="stat-number">${count}</div><div class="stat-desc">Notas de amor</div>`;
+                    grid.appendChild(card);
+                });
+                database.ref('eventos').once('value', snap => {
+                    const d = snap.val();
+                    const items = d ? Object.values(d) : [];
+                    const upcoming = items.filter(e => e.date >= new Date().toISOString().slice(0,10)).length;
+                    const card = document.createElement('div');
+                    card.className = 'stat-card';
+                    card.style.animationDelay = '0.72s';
+                    card.innerHTML = `<div class="stat-emoji">📅</div><div class="stat-number">${upcoming}</div><div class="stat-desc">Planes próximos</div>`;
+                    grid.appendChild(card);
+                });
+
+                // Special wide card with fun stats
+                const wideCard = document.createElement('div');
+                wideCard.className = 'stat-card wide';
+                wideCard.style.animationDelay = '0.8s';
+                const hoursLoving = daysTogether * 24;
+                const kisses = daysTogether * 10;
+                wideCard.innerHTML = `
+                    <div class="stat-emoji">✨</div>
+                    <div class="stat-highlight">
+                        <strong>${hoursLoving.toLocaleString()}</strong> horas amándote<br>
+                        ~<strong>${kisses.toLocaleString()}</strong> besos (estimados 😏)<br>
+                        <strong>${monthsTogether}</strong> meses construyendo algo increíble
+                    </div>
+                `;
+                grid.appendChild(wideCard);
+            }
+        }
+
         // Init on load
-        setTimeout(() => { checkUnreadNotes(); updateMilestone(); }, 1000);
+        setTimeout(() => { checkUnreadNotes(); updateMilestone(); updateDailyQuote(); loadMoods(); checkCalendarReminders(); }, 1000);
 
         if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
             navigator.serviceWorker.register('./sw.js')

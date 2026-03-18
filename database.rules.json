@@ -54,6 +54,23 @@
           ".validate": "newData.isString() && newData.val().length >= 120 && newData.val().length <= 400"
         }
       }
+    },
+
+    "moods": {
+      "$user": {
+        ".read": "$user === 'sergio' || $user === 'alba'",
+        ".write": "$user === 'sergio' || $user === 'alba'",
+        ".validate": "newData.hasChildren(['emoji','label','time']) && newData.child('emoji').isString() && newData.child('emoji').val().length <= 8 && newData.child('label').isString() && newData.child('label').val().length <= 30 && newData.child('time').isNumber()"
+      }
+    },
+
+    "eventos": {
+      ".indexOn": ["id", "date"],
+      "$eventoId": {
+        ".read": true,
+        ".write": true,
+        ".validate": "newData.hasChildren(['id','title','date','author']) && newData.child('id').isNumber() && newData.child('title').isString() && newData.child('title').val().length > 0 && newData.child('title').val().length <= 120 && newData.child('date').isString() && newData.child('date').val().length <= 10 && newData.child('author').isString() && (newData.child('author').val() === 'sergio' || newData.child('author').val() === 'alba')"
+      }
     }
   }
 }
